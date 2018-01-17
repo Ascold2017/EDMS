@@ -14,56 +14,71 @@ module.exports = {
     module: {
         rules: [
             {
-            test: /\.vue$/,
-            use: [{
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        sass: [
-                            'vue-style-loader',
-                            'css-loader',
-                            'svg-fill-loader/encodeSharp',
-                            'sass-loader?indentedSyntax',
-                            {
-                                loader: 'sass-resources-loader',
-                                options: {
-                                    resources: [
-                                        './src/styles/common/variables.sass',
-                                        './src/styles/common/mixins.sass',
-                                    ],
-                                },
-                            },
-                        ],
-                    },
-                },
-            }],
-        },
-        {
-            test: /\.js$/,
-            use: ['babel-loader'],
-            exclude: /node_modules/,
-        },
-        {
-            test: /\.sass$/,
-            use: ['style-loader', 'css-loader', 'sass-loader?indentedSyntax'],
-            exclude: /node_modules/,
-        },
-        {
-            test: /\.(png|jpg|gif|woff|woff2)$/,
-            loader: 'file-loader',
-            options: {
-                name: '[name].[ext]?[hash]',
+                test: /\.css$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader',
+                ],
             },
-        },
-        {
-            test: /\.svg$/,
-            use: [
-                'url-loader',
-                {
-                    loader: 'svg-fill-loader?fill=white',
+            {
+                test: /\.scss$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader',
+                    'sass-loader',
+                ],
+            },
+            {
+                test: /\.vue$/,
+                use: [{
+                    loader: 'vue-loader',
+                    options: {
+                        loaders: {
+                            sass: [
+                                'vue-style-loader',
+                                'css-loader',
+                                'svg-fill-loader/encodeSharp',
+                                'sass-loader?indentedSyntax',
+                                {
+                                    loader: 'sass-resources-loader',
+                                    options: {
+                                        resources: [
+                                            './src/styles/common/variables.sass',
+                                            './src/styles/common/mixins.sass',
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                }],
+            },
+            {
+                test: /\.js$/,
+                use: ['babel-loader'],
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.sass$/,
+                use: ['style-loader', 'css-loader', 'sass-loader?indentedSyntax'],
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.(png|jpg|gif|woff|woff2)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]?[hash]',
                 },
-            ],
-        },
+            },
+            {
+                test: /\.svg$/,
+                use: [
+                    'url-loader',
+                    {
+                        loader: 'svg-fill-loader?fill=white',
+                    },
+                ],
+            },
         /*
         {
             test: /\.mp3$/,

@@ -1,8 +1,11 @@
 import { Api } from './../Api';
-const someModule = {
+const docksStore = {
     namespaced: true,
-    state: {},
+    state: {
+        data:[],
+    },
     getters: {},
     mutations: {},
     actions: {},
 };
+export default docksStore;
