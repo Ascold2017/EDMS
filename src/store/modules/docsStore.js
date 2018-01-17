@@ -2,10 +2,26 @@ import { Api } from './../Api';
 const docksStore = {
     namespaced: true,
     state: {
-        data:[],
+        data: [],
     },
-    getters: {},
+    getters: {
+        data(state) {
+            return state.data;
+        },
+    },
     mutations: {},
-    actions: {},
+    actions: {
+        getPreviewsForUser(context, token) {
+            Api.getPreviewsJSON(token)
+                .then(response => { context.state.data = response; });
+        },
+        getDocumentById(context, id) {
+            Api.getDocumentByIdJSON(id)
+                .then(response => { context.state.data = response; });
+        },
+        postVote(context, data) {
+            console.log(data);
+        },
+    },
 };
 export default docksStore;

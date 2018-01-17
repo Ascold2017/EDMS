@@ -2,9 +2,13 @@ import { Api } from './../Api';
 const usersStore = {
     namespaced: true,
     state: {
-        data:[],
+        data: [],
     },
-    getters: {},
+    getters: {
+        token(state) {
+            return '';
+        },
+    },
     mutations: {},
     actions: {},
 };
