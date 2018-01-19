@@ -35,6 +35,7 @@ export default {
     }
   },
   created() {
+      console.log(this.token);
       this.getPreviewsForUser(this.token);
   }
 }

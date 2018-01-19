@@ -3,7 +3,7 @@
     section.addNewDoc
         h1.title Добавить новый документ
         time.date Текущее время: {{date}}
-        b-form(@submit.prevent.stop="addNewDoc")
+        b-form(@submit.prevent.stop="addNewDoc" enctype="multipart/form-data")
             b-row
                 b-col
                     b-form-group(
@@ -22,7 +22,7 @@
                         description="Добавьте файл документа")
                         b-form-file(
                             id="file"
-                            v-model="file"
+                            @change="getFile($event)"
                             choose-label="Выберите файл"
                             accept=".doc, .docx, .pdf"
                             required)
@@ -87,7 +87,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('usersStore', ['users']),
+        ...mapGetters('usersStore', ['users', 'token']),
         computedUsers() {
             // filtering selected users from result collection
             const filterSelected = (users) => {
@@ -125,10 +125,13 @@ export default {
     methods: {
         ...mapActions('usersStore', ['getAllUsers']),
         ...mapActions('docsStore', ['addNewDocument']),
+        getFile(event) {
+            this.file = event.target.files[0];
+        },
         timer() {
             const timerID = setInterval(() => {
                     const time = new Date;
-                    this.date = `${time.getUTCDay()}/${time.getUTCMonth() + 1}/${time.getFullYear()} - ${time.getHours()}.${time.getMinutes()}.${time.getSeconds()}`;
+                    this.date = `${time.getUTCDay()}.${time.getUTCMonth() + 1}.${time.getFullYear()} - ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
                 }, 1000);
         },
         addAuthor(user) {
@@ -142,17 +145,19 @@ export default {
                 this.showAlert('Укажите исполнителей!');
                 return;
             } 
-            const newDoc = {
-                author: '',
-                date: this.date,
-                title: this.docName,
-                author_id: '',
-                state: `0 / ${this.selectedUsers.length}`,
-                globalStatus: 'waiting',
-                status: 'waiting',
-                routes: this.selectedUsers,
-            };
-            this.addNewDocument(newDoc)
+            const formData = new FormData();
+            formData.append('file', this.file);
+            formData.append('author', 'Автор');
+            formData.append('date', this.date);
+            formData.append('title', this.docName);
+            formData.append('author_id', '');
+            formData.append('state', `0 / ${this.selectedUsers.length}`);
+            formData.append('globalStatus', 'waiting');
+            formData.append('status', 'waiting');
+            formData.append('routes', JSON.stringify(this.selectedUsers));
+            formData.append('token', this.token);
+            
+            this.addNewDocument(formData)
                 .then(() => this.showAlert('Документ успешно опубликован!'));
         },
         showAlert(title) {

@@ -25,9 +25,9 @@ const docksStore = {
             console.log(data);
         },
         addNewDocument(context, document) {
+            console.log(document);
             return new Promise(resolve => {
-                console.log(document);
-                resolve();
+                Api.postNewDocument(document).then(() => resolve());
             }).catch(e => { console.error(e); });
         },
     },

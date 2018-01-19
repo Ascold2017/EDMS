@@ -3,10 +3,11 @@ const usersStore = {
     namespaced: true,
     state: {
         data: [],
+        token: 'secretToken',
     },
     getters: {
         token(state) {
-            return '';
+            return state.token;
         },
         users(state) {
             return state.data;

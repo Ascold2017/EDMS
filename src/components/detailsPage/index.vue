@@ -6,7 +6,7 @@
         b-embed(
             type="embed"
             aspect="16by9"
-            :src="file"
+            :src="data.document"
             allowfullscreen
             )
         b-form-group(label="Выберите действие").details__form
@@ -43,37 +43,9 @@ export default {
     },
     computed: {
         ...mapGetters('docsStore', ['data']),
-        file() {
-            return this.convertToFile(this.data.document);
-        },
     },
     methods: {
         ...mapActions('docsStore', ['getDocumentById', 'postVote']),
-        convertDataUriToBlob(dataURI) {
-            // convert base64/URLEncoded data component to raw binary data held in a string
-            let byteString;
-            if (dataURI.split(',')[0].indexOf('base64') >= 0)
-                byteString = atob(dataURI.split(',')[1]);
-            else
-                byteString = unescape(dataURI.split(',')[1]);
-
-            // separate out the mime component
-            let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-            // write the bytes of the string to a typed array
-            let ia = new Uint8Array(byteString.length);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-
-            return new Blob([ia], {type:mimeString});
-        },
-        convertToFile(dataURI) {
-            let blob = this.convertDataUriToBlob(dataURI);
-            let file = new File([blob], 'myFile');
-            console.log(file);
-            // todo create file
-            return URL.createObjectURL(blob);
-        },
         submitDoc() {
             if (this.selected) {
                 // post our vote to server
