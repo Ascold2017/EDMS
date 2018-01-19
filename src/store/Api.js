@@ -23,4 +23,9 @@ export const Api = {
         return axios.post('/api/postVote', data)
             .catch(e => { console.log(e); return []; });
     },
+    getAllUsers() {
+        return axios.get('./src/store/data-users.json')
+            .then(response => { return response.data; })
+            .catch(e => { console.log(e); return []; });
+    },
 };

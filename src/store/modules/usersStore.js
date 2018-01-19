@@ -8,8 +8,19 @@ const usersStore = {
         token(state) {
             return '';
         },
+        users(state) {
+            return state.data;
+        },
     },
     mutations: {},
-    actions: {},
+    actions: {
+        getAllUsers(context) {
+            Api.getAllUsers()
+                .then(response => {
+                    context.state.data = response;
+                })
+                .catch(e => console.log(e));
+        },
+    },
 };
 export default usersStore;
