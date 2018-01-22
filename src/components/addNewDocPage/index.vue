@@ -24,7 +24,7 @@
                             id="file"
                             @change="getFile($event)"
                             choose-label="Выберите файл"
-                            accept=".doc, .docx, .pdf"
+                            accept=".pdf"
                             required)
                     b-progress(
                         :value="percentLoaded"
@@ -32,10 +32,12 @@
                         v-if="file && percentLoaded < 100"
                         show-progress
                         animated)
-                    embed(
+                    b-embed(
                         v-if="percentLoaded === 100"
                         :src="previewDoc"
-                        type="application/pdf"
+                        type="embed"
+                        aspect="16by9"
+                        allowfullscreen
                         ).pdf-container
             b-row
                 b-col
@@ -86,7 +88,6 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import pdf from 'vue-pdf';
 export default {
     data() {
         return {
@@ -141,17 +142,20 @@ export default {
         ...mapActions('docsStore', ['addNewDocument']),
         getFile(event) {
             const file = event.target.files[0];
+            if (!file) return;
+            // save to send on server
+            this.file = file;
             // check size image
             /*
             if (file.size / 1024 > 2000) {
                 console.log('Большой файл');
                 return false;
             }*/
+            // read to create preview
             const reader = new FileReader();
-            reader.readAsDataURL(file);
             reader.onload = () => {
+                console.log('loaded');
                 this.previewDoc = reader.result;
-                this.file = file;
             };
             // processing progress load
             reader.onerror = (e) => {
@@ -170,15 +174,22 @@ export default {
                     }
                 }
             };
+            reader.readAsDataURL(file);
         },
         timer() {
             const timerID = setInterval(() => {
                     const time = new Date;
-                    this.date = `${time.getUTCDay()}.${time.getUTCMonth() + 1}.${time.getFullYear()} - ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+                    let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
+                    let month = time.getMonth() < 10 ? '0' + (time.getMonth() +1) : time.getMonth() + 1;
+                    let hours = time.getHours() < 10 ? '0' + time.getHours() : time.getHours();
+                    let minutes = time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes();
+                    let seconds = time.getSeconds() < 10 ? '0' + time.getSeconds() : time.getSeconds();
+                    this.date = `${day}.${month}.${time.getFullYear()} - ${hours}:${minutes}:${seconds}`;
                 }, 1000);
         },
         addAuthor(user) {
-            this.selectedUsers.push(user);
+            user.status = 'waiting';
+            this.selectedUsers.push({...user});
         },
         removeAuthor(user) {
             this.selectedUsers = this.selectedUsers.filter(item => item._id !== user._id);
@@ -188,6 +199,7 @@ export default {
                 this.showAlert('Укажите исполнителей!');
                 return;
             } 
+            console.log(this.selectedUsers);
             const formData = new FormData();
             formData.append('file', this.file);
             formData.append('author', 'Автор');
@@ -207,9 +219,6 @@ export default {
             this.infoAlert = title;
             this.$refs.alertModal.show();
         }
-    },
-    components: {
-        pdf,
     },
     created() {
         this.timer();

@@ -22,7 +22,9 @@ const docksStore = {
                 .catch(e => { console.error(e); return []; });
         },
         postVote(context, data) {
-            console.log(data);
+            Api.postVote(data)
+                .then(response => response.data)
+                .catch(e => { console.error(e); });
         },
         addNewDocument(context, document) {
             console.log(document);

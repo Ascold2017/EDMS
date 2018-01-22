@@ -14,17 +14,17 @@ export const Api = {
             .catch(e => { console.error(e); return []; });
     },
     getDocumentByIdJSON(id) {
-        // return axios.get('/api/getDocById', id)
         return axios.get(`http://localhost:3000/api/getDocument/${id}`)
             .then(response => { return response.data; })
             .catch(e => { console.log(e); return []; });
     },
     postVote(data) {
-        return axios.post('/api/postVote', data)
+        return axios.post('http://localhost:3000/api/postVote', data)
+            .then(response => { return response.data; })
             .catch(e => { console.log(e); });
     },
     getAllUsers() {
-        return axios.get('./src/store/data-users.json')
+        return axios.get('http://localhost:3000/api/getAllUsers')
             .then(response => { return response.data; })
             .catch(e => { console.log(e); return []; });
     },

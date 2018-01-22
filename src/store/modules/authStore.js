@@ -4,7 +4,11 @@ const authStore = {
     state: {
         data: [],
     },
-    getters: {},
+    getters: {
+        currentUser(state) {
+            return 'someUser';
+        },
+    },
     mutations: {},
     actions: {
         logout() {
