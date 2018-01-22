@@ -26,6 +26,17 @@
                             choose-label="Выберите файл"
                             accept=".doc, .docx, .pdf"
                             required)
+                    b-progress(
+                        :value="percentLoaded"
+                        :max="100"
+                        v-if="file && percentLoaded < 100"
+                        show-progress
+                        animated)
+                    embed(
+                        v-if="percentLoaded === 100"
+                        :src="previewDoc"
+                        type="application/pdf"
+                        ).pdf-container
             b-row
                 b-col
                     b-form-group(
@@ -75,6 +86,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import pdf from 'vue-pdf';
 export default {
     data() {
         return {
@@ -84,6 +96,8 @@ export default {
             authorNameOrRole: '',
             selectedUsers: [],
             infoAlert: '',
+            previewDoc: '',
+            percentLoaded: 0,
         };
     },
     computed: {
@@ -126,7 +140,36 @@ export default {
         ...mapActions('usersStore', ['getAllUsers']),
         ...mapActions('docsStore', ['addNewDocument']),
         getFile(event) {
-            this.file = event.target.files[0];
+            const file = event.target.files[0];
+            // check size image
+            /*
+            if (file.size / 1024 > 2000) {
+                console.log('Большой файл');
+                return false;
+            }*/
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                this.previewDoc = reader.result;
+                this.file = file;
+            };
+            // processing progress load
+            reader.onerror = (e) => {
+                console.log('error', e);
+            };
+            reader.onabort = () => {
+                console.log('abort');
+            }
+            reader.onprogress = (e) =>  {
+                if (e.lengthComputable) {
+                    const percentLoaded = Math.round((e.loaded / e.total) * 100);
+                    // Increase the progress bar length.
+                    if (percentLoaded <= 100) {
+                        this.percentLoaded = percentLoaded;
+                        console.log(percentLoaded);
+                    }
+                }
+            };
         },
         timer() {
             const timerID = setInterval(() => {
@@ -165,6 +208,9 @@ export default {
             this.$refs.alertModal.show();
         }
     },
+    components: {
+        pdf,
+    },
     created() {
         this.timer();
         this.getAllUsers();
@@ -185,5 +231,11 @@ export default {
         cursor: pointer
         &:hover
             background-color: #cccccc
+.pdf-container
+    display: block
+    height: 500px
+    width: 100%
+    overflow-x: hidden
+    overflow-y: scroll
 </style>
 
