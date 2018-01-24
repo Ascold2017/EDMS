@@ -3,6 +3,7 @@
     .details
         h1.details__title {{ data.title }}
         time.details__date Дата публикации {{ data.date }}
+        p.details__author Автор публикации {{ data.author}}
         b-embed(
             type="embed"
             aspect="16by9"
@@ -55,8 +56,7 @@ export default {
   },
   computed: {
     ...mapGetters("docsStore", ["data"]),
-    ...mapGetters("usersStore", ["token"]),
-    ...mapGetters("authStore", ["currentUser"])
+    ...mapGetters("usersStore", ["token", "currentUser"]),
   },
   methods: {
     ...mapActions("docsStore", ["getDocumentById", "postVote"]),
@@ -70,15 +70,15 @@ export default {
           token: this.token,
           author: this.currentUser
         })
-          .then(response => console.log(response))
+          .then(response => { console.log(response); this.getDocumentById(this.id); })
           .catch(e => console.log(e));
       }
     },
     statusVariant(state) {
       switch (state) {
-        case "resolved":
+        case "resolve":
           return "success";
-        case "rejected":
+        case "reject":
           return "danger";
         case "waiting":
           return "primary";
@@ -88,7 +88,11 @@ export default {
     }
   },
   created() {
-    this.getDocumentById(this.id);
+    this.getDocumentById(this.id)
+      .catch(() => {
+          console.log('redirect');
+          // this.$router.go('/');
+        });
   }
 };
 </script>

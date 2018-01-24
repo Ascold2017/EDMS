@@ -1,11 +1,11 @@
 <template lang="pug">
 .container
     b-list-group
-        b-list-group-item(
+        router-link(
             v-for="preview in sortingData"
             :key="preview._id"
-            :href="preview._id"
-            class="preview-item"
+            :to="'/edms/' + preview._id"
+            class="list-group-item preview-item list-group-item-action"
             )
             .preview-item__icon(:class="iconStatus(preview.status)")
                 i(class="fa fa-file-text-o" aria-hidden="true")
@@ -34,6 +34,7 @@ export default {
   },
   methods: {
       ...mapActions('docsStore', ['getPreviewsForUser']),
+      ...mapActions('usersStore', ['getCurrentUser']),
       iconStatus(status) {
         switch(status) {
             case "waiting":
@@ -47,8 +48,9 @@ export default {
     }
   },
   created() {
-      console.log(this.token);
-      this.getPreviewsForUser(this.token);
+      this.getCurrentUser()
+        .then(() => this.getPreviewsForUser(this.token))
+        .catch(e => console.log(e));
   }
 }
 </script>

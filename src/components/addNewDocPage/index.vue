@@ -32,13 +32,6 @@
                         v-if="file && percentLoaded < 100"
                         show-progress
                         animated)
-                    b-embed(
-                        v-if="percentLoaded === 100"
-                        :src="previewDoc"
-                        type="embed"
-                        aspect="16by9"
-                        allowfullscreen
-                        ).pdf-container
             b-row
                 b-col
                     b-form-group(
@@ -102,7 +95,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('usersStore', ['users', 'token']),
+        ...mapGetters('usersStore', ['users', 'token', 'currentUser']),
         computedUsers() {
             // filtering selected users from result collection
             const filterSelected = (users) => {
@@ -202,11 +195,12 @@ export default {
             console.log(this.selectedUsers);
             const formData = new FormData();
             formData.append('file', this.file);
-            formData.append('author', 'Автор');
+            formData.append('author', this.currentUser.author);
             formData.append('date', this.date);
             formData.append('title', this.docName);
-            formData.append('author_id', '');
-            formData.append('state', `0 / ${this.selectedUsers.length}`);
+            formData.append('author_id', this.currentUser._id);
+            formData.append('state', 0);
+            formData.append('total', this.selectedUsers.length)
             formData.append('globalStatus', 'waiting');
             formData.append('status', 'waiting');
             formData.append('routes', JSON.stringify(this.selectedUsers));
