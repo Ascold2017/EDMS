@@ -2,12 +2,13 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
-Vue.http.options.root = '/src/components';
 //  Import modules
-//  import someModule from './modules/someModule'
+import usersStore from './modules/usersStore';
+import docsStore from './modules/docsStore';
 
 export const store = new Vuex.Store({
     modules: {
-    //  someModule,
+        usersStore,
+        docsStore,
     },
 });
