@@ -1,23 +1,23 @@
 .details
     display: grid
-    grid-template-columns: 1fr 300px
-    grid-template-areas: "title date" "reader reader" "authors form" "comment comment" "empty button"
+    grid-template-columns: 1fr 1fr
+    grid-template-areas: "title date" "reader reader" "authors form"
     grid-gap: 40px
     padding: 40px 0
     &__title
         grid-area: title
+        margin: 0
     &__date
         grid-area: date
+        display: flex
+        justify-content: flex-end
+        align-items: center
     .embed-responsive
         grid-area: reader
     &__link
         grid-area: link
     &__form
         grid-area: form
-    &__comment
-        grid-area: comment
-    &__submit
-        grid-area: button
     &__authors
         grid-area: authors
         max-height: 300px

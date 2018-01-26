@@ -25,15 +25,16 @@ const docksStore = {
             });
         },
         postVote(context, data) {
-            Api.postVote(data)
+            return Api.postVote(data)
                 .then(response => response.data)
-                .catch(e => { console.error(e); });
+                .catch(e => { console.error(e); throw new Error(e); });
         },
         addNewDocument(context, document) {
-            console.log(document);
-            return new Promise(resolve => {
-                Api.postNewDocument(document).then(() => resolve());
-            }).catch(e => { console.error(e); });
+            return new Promise((resolve, reject) => {
+                Api.postNewDocument(document)
+                    .then(() => resolve())
+                    .catch(e => reject(e));
+            }).catch(e => { console.error(e); return e; });
         },
     },
 };

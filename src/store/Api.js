@@ -5,7 +5,7 @@ export const Api = {
     logout() {
         return axios.post('http://localhost:3000/logout')
             .then(response => { window.location.href = response.data; })
-            .catch(e => console.error(e));
+            .catch(e => { console.error(e); throw new Error(e); });
     },
     getCurrentUser() {
         return axios.get('http://localhost:3000/api/getCurrentUser')
@@ -25,7 +25,7 @@ export const Api = {
     postVote(data) {
         return axios.post('http://localhost:3000/api/postVote', data)
             .then(response => { return response.data; })
-            .catch(e => { console.log(e); });
+            .catch(e => { console.error(e.response.data.message); throw new Error(e.response.data.message); });
     },
     getAllUsers() {
         return axios.get('http://localhost:3000/api/getAllUsers')
@@ -34,6 +34,6 @@ export const Api = {
     },
     postNewDocument(document) {
         return axios.post('http://localhost:3000/api/postNewDocument', document)
-            .catch(e => { console.log(e); });
+            .catch(e => { console.log(e); throw new Error(e); });
     },
 };

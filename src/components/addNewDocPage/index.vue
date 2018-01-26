@@ -5,7 +5,7 @@
         time.date Текущее время: {{date}}
         b-form(@submit.prevent.stop="addNewDoc" enctype="multipart/form-data")
             b-row
-                b-col
+                b-col(class="xs-6")
                     b-form-group(
                             label="Название документа:"
                             label-for="docname"
@@ -25,6 +25,7 @@
                             @change="getFile($event)"
                             choose-label="Выберите файл"
                             accept=".pdf"
+                            ref="fileInput"
                             required)
                     b-progress(
                         :value="percentLoaded"
@@ -32,8 +33,8 @@
                         v-if="file && percentLoaded < 100"
                         show-progress
                         animated)
-            b-row
-                b-col
+            
+                
                     b-form-group(
                         label="Исполнитель:"
                         label-for="authors"
@@ -42,8 +43,8 @@
                             type="text"
                             v-model="authorNameOrRole"
                             placeholder="Начните поиск исполнителей")
-            b-row
-                b-col
+            
+                b-col(class="xs-6")
                     b-form-group(
                         label=""
                         label-for="authors"
@@ -57,6 +58,7 @@
                                 )
                                 h3.subtitle {{ user.author }}
                                 p.subtitle {{ user.role }}
+            b-row
                 b-col
                     b-form-group(
                         label=""
@@ -138,12 +140,11 @@ export default {
             if (!file) return;
             // save to send on server
             this.file = file;
-            // check size image
-            /*
-            if (file.size / 1024 > 2000) {
-                console.log('Большой файл');
+            // check size file
+            if (file.size / 1024 > 50000) {
+                this.showAlert('Загружаемый файл должен быть меньше 50 МБ!');
                 return false;
-            }*/
+            }
             // read to create preview
             const reader = new FileReader();
             reader.onload = () => {
@@ -187,12 +188,11 @@ export default {
         removeAuthor(user) {
             this.selectedUsers = this.selectedUsers.filter(item => item._id !== user._id);
         },
-        addNewDoc() {
+        addNewDoc(e) {
             if (!this.selectedUsers.length) {
                 this.showAlert('Укажите исполнителей!');
                 return;
             } 
-            console.log(this.selectedUsers);
             const formData = new FormData();
             formData.append('file', this.file);
             formData.append('author', this.currentUser.author);
@@ -207,7 +207,15 @@ export default {
             formData.append('token', this.token);
             
             this.addNewDocument(formData)
-                .then(() => this.showAlert('Документ успешно опубликован!'));
+                .then(() => {
+                    this.showAlert('Документ успешно опубликован!');
+                    e.target.reset();
+                    this.$refs.fileInput.reset();
+                    this.selectedUsers = [];
+                })
+                .catch(e => {
+                    this.showAlert('Произошла ошибка!');
+                });
         },
         showAlert(title) {
             this.infoAlert = title;

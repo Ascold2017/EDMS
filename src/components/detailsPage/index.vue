@@ -1,42 +1,43 @@
 <template lang="pug">
 .content
-    .details
-        h1.details__title {{ data.title }}
-        time.details__date Дата публикации {{ data.date }}
-        p.details__author Автор публикации {{ data.author}}
-        b-embed(
-            type="embed"
-            aspect="16by9"
-            :src="data.document"
-            allowfullscreen
-            )
-        b-list-group.details__authors
-            b-list-group-item(
-                v-for="author in data.routes"
-                :key="author._id"
-                :variant="statusVariant(author.status)"
-                )
-                p.subtitle {{ author.author }}
-                p.subtitle {{ author.role }}
-        b-form-group(label="Выберите действие").details__form
-            b-form-radio-group(
-                v-model="selected"
-                name="radioSubComponent"
-                stacked
-                :options="options"
-                )
-        b-form-group(
-            label="Ваш комментарий"
-            description="Укажите причину вашего отказа"
-            v-if="selected === 'reject'"
-            ).details__comment
-            b-form-textarea(
-                v-model="comment"
-                placeholder="Оставьте комментарий"
-                :rows="3"
-                :max-rows="6"
-                )
-        b-button(@click="submitDoc").details__submit Отправить
+	.details
+		h1.details__title {{ data.title }}
+		time.details__date Дата публикации {{ data.date }}
+		p.details__author Автор публикации {{ data.author}}
+		b-embed(
+			type="embed"
+			aspect="16by9"
+			:src="data.document"
+			allowfullscreen
+			)
+		b-list-group.details__authors
+			b-list-group-item(
+				v-for="author in data.routes"
+				:key="author._id"
+				:variant="statusVariant(author.status)"
+				)
+				p.subtitle {{ author.author }}
+				p.subtitle {{ author.role }}
+		b-form(@submit.prevent="submitDoc").details__form
+			b-form-group(label="Выберите действие")
+				b-form-radio-group(
+					v-model="selected"
+					name="radioSubComponent"
+					:options="options"
+					)
+			b-form-group(
+				label="Ваш комментарий"
+				description="Укажите причину вашего отказа"
+				v-if="selected === 'reject'"
+				).details__comment
+				b-form-textarea(
+					v-model="comment"
+					placeholder="Оставьте комментарий"
+					:rows="3"
+					:max-rows="6"
+					)
+			b-button(type="submit").details__submit Отправить
+	b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
@@ -51,16 +52,17 @@ export default {
         { value: "resolve", text: "Согласен" },
         { value: "reject", text: "НЕ согласен" }
       ],
-      comment: ""
+      comment: "",
+      infoAlert: ""
     };
   },
   computed: {
     ...mapGetters("docsStore", ["data"]),
-    ...mapGetters("usersStore", ["token", "currentUser"]),
+    ...mapGetters("usersStore", ["token", "currentUser"])
   },
   methods: {
     ...mapActions("docsStore", ["getDocumentById", "postVote"]),
-    submitDoc() {
+    submitDoc(e) {
       if (this.selected) {
         // post our vote to server
         this.postVote({
@@ -70,8 +72,15 @@ export default {
           token: this.token,
           author: this.currentUser
         })
-          .then(response => { console.log(response); this.getDocumentById(this.id); })
-          .catch(e => console.log(e));
+          .then(response => {
+			this.showAlert('Ваш голос успешно добавлен!');
+			e.target.reset();
+            this.getDocumentById(this.id);
+          })
+          .catch(e => {
+			  console.log(e);
+			  this.showAlert(`Произошла ошибка: ${e}`);
+		  });
       }
     },
     statusVariant(state) {
@@ -85,16 +94,19 @@ export default {
         default:
           return "warning";
       }
+    },
+    showAlert(title) {
+      this.infoAlert = title;
+      this.$refs.alertModal.show();
     }
   },
   created() {
-    this.getDocumentById(this.id)
-      .catch(() => {
-          console.log('redirect');
-          // this.$router.go('/');
-        });
+	this.getDocumentById(this.id)
+	.catch(() => {
+      console.log("redirect");
+      // this.$router.go('/');
+    });
   }
 };
 </script>
 <style lang="sass" src="./style.sass" scoped></style>
-
