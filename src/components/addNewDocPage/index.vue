@@ -27,13 +27,21 @@
                             accept=".pdf"
                             ref="fileInput"
                             required)
+
                     b-progress(
                         :value="percentLoaded"
                         :max="100"
                         v-if="file && percentLoaded < 100"
                         show-progress
                         animated)
-            
+
+                    b-embed(
+                        type="embed"
+                        :src="previewDoc"
+                        v-if="previewDoc"
+                    )
+                    
+                b-col(class="xs-6")
                 
                     b-form-group(
                         label="Исполнитель:"
@@ -43,8 +51,7 @@
                             type="text"
                             v-model="authorNameOrRole"
                             placeholder="Начните поиск исполнителей")
-            
-                b-col(class="xs-6")
+
                     b-form-group(
                         label=""
                         label-for="authors"
@@ -143,32 +150,10 @@ export default {
             // check size file
             if (file.size / 1024 > 50000) {
                 this.showAlert('Загружаемый файл должен быть меньше 50 МБ!');
-                return false;
+                return;
             }
-            // read to create preview
-            const reader = new FileReader();
-            reader.onload = () => {
-                console.log('loaded');
-                this.previewDoc = reader.result;
-            };
-            // processing progress load
-            reader.onerror = (e) => {
-                console.log('error', e);
-            };
-            reader.onabort = () => {
-                console.log('abort');
-            }
-            reader.onprogress = (e) =>  {
-                if (e.lengthComputable) {
-                    const percentLoaded = Math.round((e.loaded / e.total) * 100);
-                    // Increase the progress bar length.
-                    if (percentLoaded <= 100) {
-                        this.percentLoaded = percentLoaded;
-                        console.log(percentLoaded);
-                    }
-                }
-            };
-            reader.readAsDataURL(file);
+
+            this.previewDoc = `${URL.createObjectURL(file)}`;
         },
         timer() {
             const timerID = setInterval(() => {

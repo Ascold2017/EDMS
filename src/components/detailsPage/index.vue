@@ -7,7 +7,7 @@
 		b-embed(
 			type="embed"
 			aspect="16by9"
-			:src="data.document"
+		  :src="data.document"
 			allowfullscreen
 			)
 		b-list-group.details__authors
@@ -42,6 +42,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 export default {
+  //'https://view.officeapps.live.com/op/embed.aspx?src=' + data.document
   data() {
     return {
       // get id of current document
@@ -101,11 +102,7 @@ export default {
     }
   },
   created() {
-	this.getDocumentById(this.id)
-	.catch(() => {
-      console.log("redirect");
-      // this.$router.go('/');
-    });
+	this.getDocumentById(this.id);
   }
 };
 </script>
