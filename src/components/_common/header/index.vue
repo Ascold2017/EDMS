@@ -5,6 +5,8 @@ b-navbar(toggleable="md" type="dark" variant="info")
         b-navbar-nav(class="ml-auto")
             router-link(to="/edms" class="nav-item nav-link") Новые
             router-link(to="/edms/addNew" class="nav-item nav-link") Добавить
+            router-link(to="/edms/admin" class="nav-item nav-link") Панель администрирования админа
+            router-link(to="/edms/superAdmin" class="nav-item nav-link") Панель администрирования суперадмина
             b-button(size="sm" class="my-2 my-sm-0" type="button" @click="logout") Выйти
 </template>
 

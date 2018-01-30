@@ -54,6 +54,11 @@ const usersStore = {
         logout() {
             Api.logout();
         },
+        sendMail(context, data) {
+            return Api.sendMail(data)
+                .then(response => response)
+                .catch(e => { throw new Error(e); });
+        },
     },
 };
 export default usersStore;

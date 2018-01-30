@@ -36,4 +36,23 @@ export const Api = {
         return axios.post('http://localhost:3000/api/postNewDocument', document)
             .catch(e => { console.log(e); throw new Error(e); });
     },
+
+    getAllGroups() {
+        return axios.get('http://localhost:3000/api/getAllGroups')
+            .then(response => { return response.data; })
+            .catch(e => { console.log(e); return []; });
+    },
+    createNewGroup(group) {
+        return axios.post('http://localhost:3000/api/createNewGroup', group)
+            .catch(e => { console.log(e); throw new Error(e); });
+    },
+    createNewAdmin(admin) {
+        return axios.post('http://localhost:3000/api/createNewUser', admin)
+            .catch(e => { console.log(e); throw new Error(e); });
+    },
+    sendMail(body) {
+        return axios.post('http://localhost:3000/api/mail', body)
+            .then(response => response.data)
+            .catch(e => { console.log(e); throw new Error(e); });
+    },
 };

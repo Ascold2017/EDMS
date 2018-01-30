@@ -1,0 +1,191 @@
+<template lang="pug">
+    b-container
+        section.admin
+            h1.title.mb-3 Панель главного администратора EDMS
+            b-row
+                b-col
+                    b-form(@submit.prevent="createGroup" class="mb-3")
+                        h2.subtitle.mb-2 Создать новую группу
+                        b-form-group(
+                            description="Введите название группы")
+                            b-form-input(
+                            type="text"
+                            v-model="group.name"
+                            required
+                            placeholder="Введите название группы")
+                        b-form-group(
+                            label="Сгенерировать инвайт-код группы:"
+                            description="Код сгенерируется автоматически")
+                            b-form-input(
+                            type="text"
+                            v-model="group.invite"
+                            required
+                            placeholder="Код группы")
+                            b-button(type="button" @click="group.invite = generateInvite()" class="mt-3") Сгенерировать
+
+                        b-form-group(
+                            label="Сгенерировать инвайт-код админа:"
+                            description="Код сгенерируется автоматически")
+                            b-form-input(
+                                type="text"
+                                v-model="group.adminInvite"
+                                required
+                                placeholder="Код администратора")
+                            b-button(type="button" @click="group.adminInvite = generateInvite()" class="mt-3") Сгенерировать
+                        b-form-group(
+                            label="Сгенерировать логин админа:"
+                            description="Логин сгенерируется автоматически")
+                            b-form-input(
+                                type="text"
+                                v-model="group.adminLogin"
+                                required
+                                placeholder="Логин администратора")
+                            b-button(type="button" @click="group.adminLogin = generateInvite()" class="mt-3") Сгенерировать
+                            
+                        b-button(type="submit" variant="primary") Создать группу
+
+                b-col
+                    h2.subtitle.mb-2 Список групп
+                    b-alert(v-if="!groups.length" variant="warning" show) Групп пока нет...
+                    b-list-group(v-else)
+                        b-list-group-item(v-for="group in groups" :key="group._id")
+                            h3 {{ group.name }}
+                            h4 Пользователи: {{ group.users.length }}
+                            b-list-group
+                                b-alert(v-if="!group.users.length" variant="warning" show) Пользователей пока нет
+                                b-list-group-item(
+                                    v-for="user in group.users"
+                                    :key="user._id"
+                                    v-else)
+                                    b-btn(v-if="user.role === 'Admin' && !user.author" @click="openSendModal(user)") Отправить доступ
+                                    h4 {{ user.author ? user.author : 'Не зарегистрирован' }}
+                                    small Роль: {{ user.role ? user.role : 'Не зарегистрирован' }}
+            b-row
+                b-col
+                    b-form(@submit.prevent="createAdmin" v-if="groupsOptions.length")
+                        h2.subtitle Создать администратора группы
+                        b-form-group(
+                                label="Выберите группу:"
+                                description="Группа, для которой создать администратора")
+                            b-form-select(
+                                v-model="selectedGroup"
+                                :options="groupsOptions"
+                                class="mb-3")
+                        b-form-group(
+                            label="Сгенерировать инвайт-код админа:"
+                            description="Код сгенерируется автоматически")
+                            b-form-input(
+                                type="text"
+                                v-model="admin.invite"
+                                required
+                                placeholder="Код администратора"
+                                readonly)
+                            b-button(type="button" @click="admin.invite = generateInvite()" class="mt-3") Сгенерировать
+                        
+
+                        b-button(type="submit" variant="primary") Создать админа
+
+            b-modal(ref="modalSend" title="Отправить доступы админу" hide-footer)
+                b-form(@submit.prevent="sendInvite")
+
+                    b-form-group(label="Логин:")
+                        b-form-input(
+                            type="text"
+                            v-model="userForMail.login"
+                            readonly)
+
+                    b-form-group(label="Инвайт-код:")
+                        b-form-input(
+                            type="text"
+                            v-model="userForMail.token"
+                            readonly)
+
+                    b-form-group(label="Почта:" description="На эту почту отправится доступ! Будьте внимательны!")
+                        b-form-input(type="email" v-model="userForMail.email" required)
+
+                    b-button(type="submit") Отправить
+
+</template>
+
+<script>
+import randomizer from '../modulesJs/randomizer';
+import { mapGetters, mapActions } from 'vuex';
+export default {
+    data() {
+        return {
+            group: {
+                name: '',
+                invite: '',
+                adminInvite: '',
+                adminLogin: '',
+            },
+            admin: {
+                invite: '',
+            },
+            selectedGroup: '',
+            userForMail: {
+                token: '',
+                login: '',
+                email: '',
+            },
+        }
+    },
+    computed: {
+        ...mapGetters('groupsStore', ['groups']),
+        groupsOptions() {
+            let resultOptions = [{value: '', text: 'Не выбрано'}];
+            this.groups.map(group => {
+                resultOptions.push({ value: group._id, text: group.name });
+            });
+
+            return resultOptions;
+        }
+    },
+    methods: {
+        ...mapActions('groupsStore', ['getAllGroups', 'createNewGroup', 'createNewAdmin']),
+        ...mapActions('usersStore', ['sendMail']),
+        generateInvite(){
+            return randomizer(5);
+        },
+        createGroup(e) {
+            this.createNewGroup(this.group)
+            .then(response => {
+                e.target.reset();
+                this.getAllGroups();
+            });
+        },
+        createAdmin(e) {
+            this.createNewAdmin({ invite: this.admin.invite, group: this.selectedGroup })
+            .then(response => {
+                e.target.reset();
+                this.getAllGroups();
+            });
+        },
+        openSendModal(user) {
+            this.userForMail = { ...user };
+            this.$refs.modalSend.show();
+        },
+        sendInvite(e) {
+            console.log(this.userForMail);
+            this.sendMail(this.userForMail)
+                .then(response => {
+                    console.log(response);
+                    e.target.reset();
+                    this.$refs.modalSend.hide();
+                })
+                .catch(e = console.error(e));
+            
+        },
+    },
+    created() {
+        this.getAllGroups();
+    }
+}
+</script>
+<style lang="sass" scoped>
+.admin
+    padding: 40px 0
+ol
+    list-style: inside
+</style>
+
