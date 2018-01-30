@@ -39,7 +39,12 @@ export const Api = {
 
     getAllGroups() {
         return axios.get('http://localhost:3000/api/getAllGroups')
-            .then(response => { return response.data; })
+            .then(response => response.data)
+            .catch(e => { console.log(e); return []; });
+    },
+    getGroupByToken(token) {
+        return axios.get(`http://localhost:3000/api/getGroup/${token}`)
+            .then(response => response.data)
             .catch(e => { console.log(e); return []; });
     },
     createNewGroup(group) {
@@ -48,6 +53,10 @@ export const Api = {
     },
     createNewAdmin(admin) {
         return axios.post('http://localhost:3000/api/createNewUser', admin)
+            .catch(e => { console.log(e); throw new Error(e); });
+    },
+    createNewUser(user) {
+        return axios.post('http://localhost:3000/api/createNewUser', user)
             .catch(e => { console.log(e); throw new Error(e); });
     },
     sendMail(body) {

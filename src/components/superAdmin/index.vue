@@ -72,6 +72,15 @@
                                 :options="groupsOptions"
                                 class="mb-3")
                         b-form-group(
+                            label="Сгенерировать логин админа:"
+                            description="Логин сгенерируется автоматически")
+                            b-form-input(
+                                type="text"
+                                v-model="admin.login"
+                                required
+                                placeholder="Логин администратора")
+                            b-button(type="button" @click="admin.login = generateInvite()" class="mt-3") Сгенерировать
+                        b-form-group(
                             label="Сгенерировать инвайт-код админа:"
                             description="Код сгенерируется автоматически")
                             b-form-input(
@@ -121,6 +130,7 @@ export default {
             },
             admin: {
                 invite: '',
+                login: '',
             },
             selectedGroup: '',
             userForMail: {
@@ -155,7 +165,7 @@ export default {
             });
         },
         createAdmin(e) {
-            this.createNewAdmin({ invite: this.admin.invite, group: this.selectedGroup })
+            this.createNewAdmin({ invite: this.admin.invite, group: this.selectedGroup, role: 'Admin' })
             .then(response => {
                 e.target.reset();
                 this.getAllGroups();
@@ -174,7 +184,6 @@ export default {
                     this.$refs.modalSend.hide();
                 })
                 .catch(e = console.error(e));
-            
         },
     },
     created() {
