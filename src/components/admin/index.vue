@@ -74,11 +74,6 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
-      group: {
-        name: "ФИТКБ",
-        token: "53hle",
-        _id: "5a70c442c6b46614d9c3a1cf"
-      },
       user: {
         role: "",
         invite: "",
@@ -93,13 +88,17 @@ export default {
   },
   computed: {
     ...mapGetters("groupsStore", ["groups"]),
+    ...mapGetters('usersStore', ['currentUser']),
     users() {
       return this.groups[0].users;
+    },
+    group() {
+        return this.groups[0];
     }
   },
   methods: {
     ...mapActions("groupsStore", ["createNewUser", "getCurrentGroup"]),
-    ...mapActions("usersStore", ["sendMail"]),
+    ...mapActions("usersStore", ["sendMail", "getCurrentUser"]),
     generateInvite() {
       return randomizer(5);
     },
@@ -107,12 +106,12 @@ export default {
       this.createNewUser({ ...this.user, group: this.group._id })
         .then(response => {
           e.target.reset();
-          this.getCurrentGroup(this.group.token);
+          this.getCurrentGroup(this.group.groupInvite);
         })
         .catch(e => console.log(e));
     },
     openSendModal(user) {
-      this.userForMail = { ...user };
+      this.userForMail = { ...user, groupInvite: this.group.groupInvite, subject: `Доступ "${user.role}" в группу ${this.group.name}` };
       this.$refs.modalSend.show();
     },
     sendInvite(e) {
@@ -127,7 +126,10 @@ export default {
     }
   },
   created() {
-    this.getCurrentGroup(this.group.token);
+    this.getCurrentUser().then(() => {
+        console.log(this.currentUser);
+        this.getCurrentGroup(this.currentUser.groupInvite);
+    });
   }
 };
 </script>

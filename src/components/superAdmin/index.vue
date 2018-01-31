@@ -57,7 +57,7 @@
                                     v-for="user in group.users"
                                     :key="user._id"
                                     v-else)
-                                    b-btn(v-if="user.role === 'Admin' && !user.author" @click="openSendModal(user)") Отправить доступ
+                                    b-btn(v-if="user.role === 'Admin' && !user.author" @click="openSendModal(user, group)") Отправить доступ
                                     h4 {{ user.author ? user.author : 'Не зарегистрирован' }}
                                     small Роль: {{ user.role ? user.role : 'Не зарегистрирован' }}
             b-row
@@ -171,11 +171,12 @@ export default {
                 this.getAllGroups();
             });
         },
-        openSendModal(user) {
-            this.userForMail = { ...user };
+        openSendModal(user, group) {
+            this.userForMail = { ...user, subject: `Доступ "Админ" для группы ${group.name}` };
             this.$refs.modalSend.show();
         },
         sendInvite(e) {
+            this.userForMail.groupInvite = this.group.invite;
             console.log(this.userForMail);
             this.sendMail(this.userForMail)
                 .then(response => {

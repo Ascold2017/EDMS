@@ -30,17 +30,6 @@ const usersStore = {
         },
         getCurrentUser(context) {
             return new Promise((resolve, reject) => {
-                /*
-                context.state.user = {
-                    author: 'Аскольд Аскольдович Аскольдов',
-                    login: 'someLogin',
-                    role: 'Студент',
-                    token: 'secretToken',
-                    __v: 0,
-                    _id: '5a6889013f42e641ae930e4f',
-                };
-                context.state.token = 'secretToken';
-                */
                 Api.getCurrentUser()
                     .then(response => {
                         context.state.user = response;
