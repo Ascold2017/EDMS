@@ -104,7 +104,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('usersStore', ['users', 'token', 'currentUser']),
+        ...mapGetters('usersStore', ['users', 'currentUser']),
         computedUsers() {
             // filtering selected users from result collection
             const filterSelected = (users) => {
@@ -140,7 +140,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions('usersStore', ['getAllUsers']),
+        ...mapActions('usersStore', ['getAllUsersFromGroup']),
         ...mapActions('docsStore', ['addNewDocument']),
         getFile(event) {
             const file = event.target.files[0];
@@ -189,7 +189,7 @@ export default {
             formData.append('globalStatus', 'waiting');
             formData.append('status', 'waiting');
             formData.append('routes', JSON.stringify(this.selectedUsers));
-            formData.append('token', this.token);
+            formData.append('token', this.currentUser.token);
             
             this.addNewDocument(formData)
                 .then(() => {
@@ -207,9 +207,13 @@ export default {
             this.$refs.alertModal.show();
         }
     },
+    watch: {
+        currentUser: function() {
+            if(this.currentUser) this.getAllUsersFromGroup(this.currentUser.groupInvite);
+        }
+    },
     created() {
         this.timer();
-        this.getAllUsers();
     }
 }
 </script>

@@ -1,16 +1,11 @@
-import { Api } from './../Api';
+import { Api } from './../Api/Api';
 const usersStore = {
     namespaced: true,
     state: {
         data: [],
-        token: '',
         user: {},
     },
     getters: {
-        token(state) {
-            console.log(state.token);
-            return state.token;
-        },
         users(state) {
             return state.data;
         },
@@ -21,20 +16,18 @@ const usersStore = {
     },
     mutations: {},
     actions: {
-        getAllUsers(context) {
-            Api.getAllUsers()
+        getAllUsersFromGroup(context) {
+            Api.usersApi.getAllUsersFromGroup()
                 .then(response => {
                     context.state.data = response;
                 })
-                .catch(e => console.log(e));
+                .catch(e => { console.log(e); return []; });
         },
         getCurrentUser(context) {
             return new Promise((resolve, reject) => {
-                Api.getCurrentUser()
+                Api.usersApi.getCurrentUser()
                     .then(response => {
                         context.state.user = response;
-                        context.state.token = response.token;
-                        console.log('state token: ', context.state.token);
                         resolve();
                     })
                     .catch(e => reject(e));
@@ -45,7 +38,7 @@ const usersStore = {
         },
         sendMail(context, data) {
             return Api.sendMail(data)
-                .then(response => response)
+                .then(response => response.data)
                 .catch(e => { throw new Error(e); });
         },
     },

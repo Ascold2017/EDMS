@@ -18,7 +18,7 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   computed: {
     ...mapGetters('docsStore', ['data']),
-    ...mapGetters('usersStore', ['token']),
+    ...mapGetters('usersStore', ['currentUser']),
     sortingData() {
         const toDate = (date) => {
             const day = date.substring(0,2);
@@ -33,7 +33,7 @@ export default {
     }
   },
   methods: {
-      ...mapActions('docsStore', ['getPreviewsForUser']),
+      ...mapActions('docsStore', ['getPreviews']),
       ...mapActions('usersStore', ['getCurrentUser']),
       iconStatus(status) {
         switch(status) {
@@ -47,11 +47,14 @@ export default {
         }
     }
   },
-  created() {
-      this.getCurrentUser()
-        .then(() => this.getPreviewsForUser(this.token))
-        .catch(e => console.log(e));
-  }
+   watch: {
+      currentUser: function(){
+          if (this.currentUser) {
+            console.log('get previews for user:', this.currentUser);
+            this.getPreviews();
+          }
+      },
+  },
 }
 </script>
 <style lang="sass" src="./style.sass" scoped></style>

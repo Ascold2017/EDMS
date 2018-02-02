@@ -1,13 +1,13 @@
 <template lang="pug">
     #app
         app-header
-        .container
+        b-container
             router-view
 </template>
 
 <script>
 import AppHeader from './components/_common/header';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 export default {
     name: 'app',
     methods: {

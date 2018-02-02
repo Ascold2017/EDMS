@@ -88,17 +88,17 @@ export default {
   },
   computed: {
     ...mapGetters("groupsStore", ["groups"]),
-    ...mapGetters('usersStore', ['currentUser']),
+    ...mapGetters('usersStore',['currentUser']),
     users() {
       return this.groups[0].users;
     },
     group() {
         return this.groups[0];
-    }
+    },
   },
   methods: {
     ...mapActions("groupsStore", ["createNewUser", "getCurrentGroup"]),
-    ...mapActions("usersStore", ["sendMail", "getCurrentUser"]),
+    ...mapActions("usersStore", ["sendMail"]),
     generateInvite() {
       return randomizer(5);
     },
@@ -122,15 +122,17 @@ export default {
           e.target.reset();
           this.$refs.modalSend.hide();
         })
-        .catch((e = console.error(e)));
+        .catch((e = console.error(e))); 
     }
   },
-  created() {
-    this.getCurrentUser().then(() => {
-        console.log(this.currentUser);
-        this.getCurrentGroup(this.currentUser.groupInvite);
-    });
-  }
+  watch: {
+      currentUser: function(value){
+          if (value) {
+            console.log('get previews for user:', this.currentUser);
+            this.getCurrentGroup(this.currentUser.groupInvite);
+          }
+      },
+  },
 };
 </script>
 <style lang="sass" scoped>
