@@ -9,9 +9,9 @@ const router = new VueRouter({
     mode: 'history',
 });
 
+let flag = false;
 router.beforeEach((to, from, next) => {
     const redirect = (userRole) => {
-        console.log(userRole);
         if (userRole && (
             (userRole === 'Admin' && to.path === '/edms/admin') ||
             (userRole === 'superAdmin' && to.path === '/edms/superAdmin') ||
@@ -19,17 +19,24 @@ router.beforeEach((to, from, next) => {
                 (userRole !== 'superAdmin' && userRole !== 'Admin') &&
                 (to.path !== '/edms/admin' && to.path !== '/edms/superAdmin')
             )
-        )) { next(); } else { next(from.path); }
+        )) { next(); } else { next('/404'); }
+        flag = false;
     };
     let userRole = store.state.usersStore.user.role;
-    if (!userRole) {
+    console.log('redirect', userRole);
+    if (!userRole && !flag) {
+        flag = true;
         store.dispatch('usersStore/getCurrentUser')
             .then(() => {
+                console.log(userRole);
                 userRole = store.state.usersStore.user.role;
                 redirect(userRole);
+                return;
             });
-    } else {
+    } else if (!flag) {
+        flag = true;
         redirect(userRole);
+        return;
     }
 });
 

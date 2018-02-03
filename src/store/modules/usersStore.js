@@ -13,11 +13,6 @@ const usersStore = {
             console.log(state.user);
             return state.user;
         },
-        userLoaded(state) {
-            return new Promise(resolve => {
-                if (state.user !== {}) resolve(true);
-            });
-        },
     },
     mutations: {},
     actions: {
