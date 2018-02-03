@@ -99,7 +99,11 @@ export default {
 		}
 	},
 	created() {
-		this.getDocumentById(this.id);
+		this.getDocumentById(this.id)
+		.catch(e => {
+			console.log(e);
+			this.$router.push('404');
+		});
 	}
 };
 </script>

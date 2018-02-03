@@ -131,7 +131,7 @@ export default {
             } else {
                     this.modalTitle = 'Произошла ошибка при отправке!';
             }
-        })
+        });
     }
   },
   created() {

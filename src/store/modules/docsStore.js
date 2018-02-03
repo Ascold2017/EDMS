@@ -17,11 +17,9 @@ const docsStore = {
                 .catch(e => { console.error(e); return []; });
         },
         getDocumentById(context, id) {
-            return new Promise((resolve, reject) => {
-                Api.documentsApi.getDocumentByIdJSON(id)
-                    .then(response => { context.state.data = response; resolve(); })
-                    .catch(e => { console.error(e); reject(); });
-            });
+            return Api.documentsApi.getDocumentByIdJSON(id)
+                .then(response => { context.state.data = response; return; })
+                .catch(e => { console.error(e); throw new Error(e); });
         },
         postVote(context, data) {
             return Api.documentsApi.postVote(data)

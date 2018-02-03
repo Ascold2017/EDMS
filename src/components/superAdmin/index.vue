@@ -94,7 +94,7 @@
 
                         b-button(type="submit" variant="primary") Создать админа
 
-            b-modal(ref="modalSend" title="Отправить доступы админу" hide-footer)
+            b-modal(ref="modalSend" :title="modalTitle" hide-footer)
                 b-form(@submit.prevent="sendInvite")
 
                     b-form-group(label="Логин:")
@@ -138,6 +138,7 @@ export default {
                 login: '',
                 email: '',
             },
+            modalTitle: 'Отправить доступы админу',
         }
     },
     computed: {
@@ -178,13 +179,23 @@ export default {
         sendInvite(e) {
             this.userForMail.groupInvite = this.group.invite;
             console.log(this.userForMail);
+
+            const modal = this.$refs.modalSend;
+            this.modalTitle = 'Письмо отправляется...';
             this.sendMail(this.userForMail)
-                .then(response => {
-                    console.log(response);
-                    e.target.reset();
-                    this.$refs.modalSend.hide();
-                })
-                .catch(e = console.error(e));
+            .then(response => {
+                if (response.result) {
+                    this.modalTitle = 'Письмо успешно отправлено!';
+                    setTimeout(() => {
+                        e.target.reset();
+                        modal.hide();
+                        this.modalTitle = 'Отправить доступы админу';
+                    }, 1500);
+                    
+                } else {
+                        this.modalTitle = 'Произошла ошибка при отправке!';
+                }
+            });
         },
     },
     created() {
