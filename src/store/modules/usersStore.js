@@ -38,8 +38,7 @@ const usersStore = {
         },
         sendMail(context, data) {
             return Api.sendMail(data)
-                .then(response => response.data)
-                .catch(e => { throw new Error(e); });
+                .then(response => response);
         },
     },
 };

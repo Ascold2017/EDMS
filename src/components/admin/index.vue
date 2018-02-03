@@ -46,7 +46,7 @@
                             h4 {{ сurrUser.author ? сurrUser.author : 'Не зарегистрирован' }}
                             small Роль: {{ сurrUser.role }}
 
-            b-modal(ref="modalSend" title="Отправить доступы пользователю" hide-footer)
+            b-modal(ref="modalSend" :title="modalTitle" hide-footer)
                 b-form(@submit.prevent="sendInvite")
 
                     b-form-group(label="Логин:")
@@ -83,7 +83,8 @@ export default {
         token: "",
         login: "",
         email: ""
-      }
+      },
+      modalTitle: 'Отправить доступы пользователю',
     };
   },
   computed: {
@@ -115,14 +116,22 @@ export default {
       this.$refs.modalSend.show();
     },
     sendInvite(e) {
-      console.log(this.userForMail);
-      this.sendMail(this.userForMail)
+        const modal = this.$refs.modalSend;
+        this.modalTitle = 'Письмо отправляется...';
+        this.sendMail(this.userForMail)
         .then(response => {
-          console.log(response);
-          e.target.reset();
-          this.$refs.modalSend.hide();
+            if (response.result) {
+                this.modalTitle = 'Письмо успешно отправлено!';
+                setTimeout(() => {
+                    e.target.reset();
+                    modal.hide();
+                    this.modalTitle = 'Отправить доступы пользователю';
+                }, 1500);
+                
+            } else {
+                    this.modalTitle = 'Произошла ошибка при отправке!';
+            }
         })
-        .catch((e = console.error(e))); 
     }
   },
   created() {

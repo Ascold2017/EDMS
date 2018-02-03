@@ -15,6 +15,6 @@ export const Api = {
     sendMail(body) {
         return axios.post('http://localhost:3000/api/mail', body)
             .then(response => response.data)
-            .catch(e => { console.log(e); throw new Error(e); });
+            .catch(e => e.response);
     },
 };
