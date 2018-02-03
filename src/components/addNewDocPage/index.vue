@@ -2,7 +2,7 @@
 .content
     section.addNewDoc
         h1.title Добавить новый документ
-        time.date Текущее время: {{date}}
+        app-timer(@dateUpdate="dateUpd")
         b-form(@submit.prevent.stop="addNewDoc" enctype="multipart/form-data")
             b-row
                 b-col(class="xs-6")
@@ -28,13 +28,6 @@
                             ref="fileInput"
                             required)
 
-                    b-progress(
-                        :value="percentLoaded"
-                        :max="100"
-                        v-if="file && percentLoaded < 100"
-                        show-progress
-                        animated)
-
                     b-embed(
                         type="embed"
                         :src="previewDoc"
@@ -42,47 +35,10 @@
                     )
                     
                 b-col(class="xs-6")
-                
-                    b-form-group(
-                        label="Исполнитель:"
-                        label-for="authors"
-                        description="Выберите исполнителей")
-                        b-form-input(
-                            type="text"
-                            v-model="authorNameOrRole"
-                            placeholder="Начните поиск исполнителей")
-
-                    b-form-group(
-                        label=""
-                        label-for="authors"
-                        description="Список исполнителей")
-                        b-list-group(id="authors").authors-list
-                            b-list-group-item(
-                                v-for="user in computedUsers"
-                                :key="user.author"
-                                @click="addAuthor(user)"
-                                class="authors-list__item"
-                                )
-                                h3.subtitle {{ user.author }}
-                                p.subtitle {{ user.role }}
+                    preset-routes(@choosePreset="updateSelectedUser")
+                    choose-authors(:selectedUsers="selectedUsers" @updateSelectedUsers="updateSelectedUser")
             b-row
-                b-col
-                    b-form-group(
-                        label=""
-                        label-for="authors-selected"
-                        description="Выбранные исполнители"
-                        v-if="selectedUsers")
-                        b-list-group(id="authors-selected").authors-list
-                            b-list-group-item(
-                                v-for="user in selectedUsers"
-                                :key="user.author"
-                                variant="success"
-                                )
-                                .authors-list__top
-                                    h3.subtitle {{ user.author }}
-                                    button(type="button" @click="removeAuthor(user)").close X
-                                p.subtitle {{ user.role }}
-                    b-alert(variant="danger") Выберите исполнителей
+                authors-list(:selectedUsers="selectedUsers" @updateSelectedUser="updateSelectedUser")
 
             b-button(type="submit") Опубликовать
 
@@ -96,7 +52,6 @@ export default {
             date: '',
             docName: '',
             file: '',
-            authorNameOrRole: '',
             selectedUsers: [],
             infoAlert: '',
             previewDoc: '',
@@ -104,74 +59,28 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('usersStore', ['users', 'currentUser']),
-        computedUsers() {
-            // filtering selected users from result collection
-            const filterSelected = (users) => {
-                // if no selected users
-                if (!this.selectedUsers.length) return users;
-                // filtering selected users
-                return users.filter(resultItem => {
-                    let selectedUser = 
-                        this.selectedUsers.find(selectedUser => selectedUser._id === resultItem._id);
-                    // if user is selected - filtering from collection
-                    if(!selectedUser) { return resultItem; }
-                    else { return null; }
-                });
-            };
-
-            if (!this.authorNameOrRole) return filterSelected(this.users);
-            // live search by author or role
-            let result = this.users.filter(user => {
-                // are exist author with input name
-                let existByName = user.author
-                                .toLowerCase()
-                                .indexOf(this.authorNameOrRole.toLowerCase()) !== -1;
-                // are exist author with input role
-                let existByRole = user.role
-                                .toLowerCase()
-                                .indexOf(this.authorNameOrRole.toLowerCase()) !== -1;
-                // if exist author with search name or role
-                if (existByName || existByRole) return user;
-                return null;
-            });
-            // filtering selected users from collection
-            return filterSelected(result);
-        },
+        ...mapGetters('usersStore', ['currentUser']),
     },
     methods: {
-        ...mapActions('usersStore', ['getAllUsersFromGroup']),
         ...mapActions('docsStore', ['addNewDocument']),
+        ...mapActions('usersStore', ['getAllUsersFromGroup']),
+        dateUpd(newDate) {
+            this.date = newDate;
+        },
         getFile(event) {
             const file = event.target.files[0];
             if (!file) return;
-            // save to send on server
-            this.file = file;
             // check size file
             if (file.size / 1024 > 50000) {
                 this.showAlert('Загружаемый файл должен быть меньше 50 МБ!');
                 return;
             }
-
+            // save to send on server
+            this.file = file;
             this.previewDoc = `${URL.createObjectURL(file)}`;
         },
-        timer() {
-            const timerID = setInterval(() => {
-                    const time = new Date;
-                    let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
-                    let month = time.getMonth() < 10 ? '0' + (time.getMonth() +1) : time.getMonth() + 1;
-                    let hours = time.getHours() < 10 ? '0' + time.getHours() : time.getHours();
-                    let minutes = time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes();
-                    let seconds = time.getSeconds() < 10 ? '0' + time.getSeconds() : time.getSeconds();
-                    this.date = `${day}.${month}.${time.getFullYear()} - ${hours}:${minutes}:${seconds}`;
-                }, 1000);
-        },
-        addAuthor(user) {
-            user.status = 'waiting';
-            this.selectedUsers.push({...user});
-        },
-        removeAuthor(user) {
-            this.selectedUsers = this.selectedUsers.filter(item => item._id !== user._id);
+        updateSelectedUser(users) {
+            this.selectedUsers = users;
         },
         addNewDoc(e) {
             if (!this.selectedUsers.length) {
@@ -208,25 +117,19 @@ export default {
         }
     },
     created() {
-        this.timer();
-        this.getAllUsersFromGroup()
+        this.getAllUsersFromGroup();
+    },
+    components: {
+        chooseAuthors: require('./innerComponents/chooseAuthors'),
+        authorsList: require('./innerComponents/authorsList.vue'),
+        appTimer: require('./innerComponents/timer.vue'),
+        presetRoutes: require('./innerComponents/presetRoutes'),
     }
 }
 </script>
 <style lang="sass" scoped>
 .addNewDoc
     padding: 40px 0
-.authors-list
-    max-height: 300px
-    oveflow-y: scroll
-    overflow-x: hidden
-    &__top
-        display: flex
-        justify-content: space-between
-    &__item
-        cursor: pointer
-        &:hover
-            background-color: #cccccc
 .pdf-container
     display: block
     height: 500px

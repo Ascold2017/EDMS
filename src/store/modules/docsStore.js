@@ -2,11 +2,15 @@ import { Api } from './../Api/Api';
 const docsStore = {
     namespaced: true,
     state: {
-        data: [],
+        documents: [],
+        presets: [],
     },
     getters: {
         data(state) {
-            return state.data;
+            return state.documents;
+        },
+        presets(state) {
+            return state.presets;
         },
     },
     mutations: {},
@@ -32,6 +36,16 @@ const docsStore = {
                     .then(() => resolve())
                     .catch(e => reject(e));
             }).catch(e => { console.error(e); return e; });
+        },
+        getPresets(context) {
+            Api.documentsApi.getPresets()
+                .then(response => { context.state.presets = response; })
+                .catch(e => console.log(e));
+        },
+        createPreset(context, preset) {
+            return Api.documentsApi.createPreset(preset)
+                .then(response => response)
+                .catch(e => { console.log(e); throw new Error(e); });
         },
     },
 };

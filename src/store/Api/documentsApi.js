@@ -20,6 +20,16 @@ const documensApi = {
         return axios.post('http://localhost:3000/api/postNewDocument', document)
             .catch(e => { console.log(e); throw new Error(e); });
     },
+    getPresets() {
+        return axios.get('http://localhost:3000/api/getDocPresets')
+            .then(response => response.data)
+            .catch(err => { throw new Error(err); });
+    },
+    createPreset(preset) {
+        return axios.post('http://localhost:3000/api//createPreset', preset)
+            .then(response => response.data)
+            .catch(err => { throw new Error(err); });
+    },
 };
 
 export default documensApi;
