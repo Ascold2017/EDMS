@@ -14,48 +14,47 @@
             span.preview-item__author {{ preview.author }}
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from "vuex";
 export default {
   computed: {
-    ...mapGetters('docsStore', ['data']),
-    ...mapGetters('usersStore', ['currentUser']),
+    ...mapGetters("docsStore", ["data"]),
+    ...mapGetters("usersStore", ["currentUser"]),
     sortingData() {
-        const toDate = (date) => {
-            const day = date.substring(0,2);
-            const month = date.substring(3, 5);
-            const year = date.substring(6, 10);
-            const hours = date.substring(13, 15);
-            const minutes = date.substring(16, 18);
-            const seconds = date.substring(19, 21);
-            return Date.parse(new Date(+day, +month - 1, +year, +hours, +minutes, +seconds));
-        }
-        return this.data.sort((prev, next) =>  toDate(prev.date) <= toDate(next.date));
+      const toDate = date => {
+        const day = date.substring(0, 2);
+        const month = date.substring(3, 5);
+        const year = date.substring(6, 10);
+        const hours = date.substring(13, 15);
+        const minutes = date.substring(16, 18);
+        const seconds = date.substring(19, 21);
+        return Date.parse(
+          new Date(+day, +month - 1, +year, +hours, +minutes, +seconds)
+        );
+      };
+      return this.data.sort(
+        (prev, next) => toDate(prev.date) <= toDate(next.date)
+      );
     }
   },
   methods: {
-      ...mapActions('docsStore', ['getPreviews']),
-      ...mapActions('usersStore', ['getCurrentUser']),
-      iconStatus(status) {
-        switch(status) {
-            case "waiting":
-                return "waiting";
-            case "resolved":
-                return "resolved";
-            case "rejected":
-                return "rejected";
-            default: return "";
-        }
+    ...mapActions("docsStore", ["getPreviews"]),
+    ...mapActions("usersStore", ["getCurrentUser"]),
+    iconStatus(status) {
+      switch (status) {
+        case "waiting":
+          return "waiting";
+        case "resolved":
+          return "resolved";
+        case "rejected":
+          return "rejected";
+        default:
+          return "";
+      }
     }
   },
-   watch: {
-      currentUser: function(){
-          if (this.currentUser) {
-            console.log('get previews for user:', this.currentUser);
-            this.getPreviews();
-          }
-      },
-  },
-}
+  created() {
+    this.getPreviews();
+  }
+};
 </script>
 <style lang="sass" src="./style.sass" scoped></style>
-

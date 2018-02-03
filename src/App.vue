@@ -10,12 +10,15 @@ import AppHeader from './components/_common/header';
 import { mapActions, mapGetters } from 'vuex';
 export default {
     name: 'app',
+    computed: {
+
+    },
     methods: {
         ...mapActions('usersStore', ['getCurrentUser']),
     },
     created() {
-        console.log('get user');
-        this.getCurrentUser();
+        // console.log('get user');
+        // this.getCurrentUser();
     },
     components: {
         AppHeader,

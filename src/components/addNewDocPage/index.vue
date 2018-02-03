@@ -207,13 +207,9 @@ export default {
             this.$refs.alertModal.show();
         }
     },
-    watch: {
-        currentUser: function() {
-            if(this.currentUser) this.getAllUsersFromGroup(this.currentUser.groupInvite);
-        }
-    },
     created() {
         this.timer();
+        this.getAllUsersFromGroup()
     }
 }
 </script>

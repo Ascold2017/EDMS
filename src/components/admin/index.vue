@@ -125,14 +125,9 @@ export default {
         .catch((e = console.error(e))); 
     }
   },
-  watch: {
-      currentUser: function(value){
-          if (value) {
-            console.log('get previews for user:', this.currentUser);
-            this.getCurrentGroup(this.currentUser.groupInvite);
-          }
-      },
-  },
+  created() {
+      this.getCurrentGroup();
+  }
 };
 </script>
 <style lang="sass" scoped>

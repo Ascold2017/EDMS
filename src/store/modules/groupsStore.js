@@ -1,4 +1,6 @@
 import { Api } from './../Api/Api';
+import usersStore from './usersStore';
+
 const groupsStore = {
     namespaced: true,
     state: {
@@ -14,10 +16,14 @@ const groupsStore = {
             return Api.groupsApi.getAllGroups()
                 .then(response => { context.state.data = response; });
         },
-        getCurrentGroup(context, token) {
-            return Api.groupsApi.getGroupByToken(token)
-                .then(response => { context.state.data = response; return; })
-                .catch(e => { console.log(e); throw new Error(e); });
+        getCurrentGroup(context) {
+            const groupInvite = usersStore.state.user.groupInvite;
+            console.log('get user in getCurrentGroup', groupInvite);
+            if (groupInvite) {
+                return Api.groupsApi.getGroupByToken(usersStore.state.user.groupInvite)
+                    .then(response => { context.state.data = response; return; })
+                    .catch(e => { console.log(e); throw new Error(e); });
+            }
         },
         createNewGroup(context, group) {
             return Api.groupsApi.createNewGroup(group)
