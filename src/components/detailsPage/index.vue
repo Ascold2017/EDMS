@@ -1,18 +1,18 @@
 <template lang="pug">
 .content
 	.details
-		h1.details__title {{ data.title }}
-		time.details__date Дата публикации {{ data.date }}
-		p.details__author Автор публикации {{ data.author}}
+		h1.details__title {{ documents.title }}
+		time.details__date Дата публикации {{ documents.date }}
+		p.details__author Автор публикации {{ documents.author}}
 		b-embed(
 			type="embed"
 			aspect="16by9"
-			:src="data.document"
+			:src="documents.document"
 			allowfullscreen
 			)
 		b-list-group.details__authors
 			b-list-group-item(
-				v-for="author in data.routes"
+				v-for="author in documents.routes"
 				:key="author._id"
 				:variant="statusVariant(author.status)"
 				)
@@ -55,8 +55,8 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters("docsStore", ["data"]),
-		...mapGetters("usersStore", ["token", "currentUser"])
+		...mapGetters("docsStore", ["documents"]),
+		...mapGetters("usersStore", ["currentUser"])
 	},
 	methods: {
 		...mapActions("docsStore", ["getDocumentById", "postVote"]),
@@ -67,7 +67,7 @@ export default {
 					id: this.id,
 					vote: this.selected,
 					comment: this.comment,
-					token: this.token,
+					token: this.currentUser.token,
 					author: this.currentUser
 				})
 					.then(response => {
@@ -107,4 +107,3 @@ export default {
 	}
 };
 </script>
-<style lang="sass" src="./style.sass" scoped></style>

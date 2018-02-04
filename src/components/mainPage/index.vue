@@ -17,7 +17,7 @@
 import { mapGetters, mapActions } from "vuex";
 export default {
   computed: {
-    ...mapGetters("docsStore", ["data"]),
+    ...mapGetters("docsStore", ["documents"]),
     ...mapGetters("usersStore", ["currentUser"]),
     sortingData() {
       const toDate = date => {
@@ -31,7 +31,8 @@ export default {
           new Date(+day, +month - 1, +year, +hours, +minutes, +seconds)
         );
       };
-      return this.data.sort(
+      console.log('documents: ', this.documents);
+      return this.documents.sort(
         (prev, next) => toDate(prev.date) <= toDate(next.date)
       );
     }
@@ -57,4 +58,3 @@ export default {
   }
 };
 </script>
-<style lang="sass" src="./style.sass" scoped></style>

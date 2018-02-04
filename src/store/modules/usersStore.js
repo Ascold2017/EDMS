@@ -1,16 +1,9 @@
-import { Api } from "./../Api/Api";
+import { Api } from './../Api/Api';
 const usersStore = {
     namespaced: true,
     state: {
         data: [],
-        user: {
-            author: "Шестопалов Сергей Викторович",
-            groupInvite: "hgundefined3f",
-            login: "fle6e",
-            role: "Доцент",
-            token: "c23b2",
-            _id: "5a721c536ba3e60ae446d66c"
-        },
+        user: {"_id":"5a721c536ba3e60ae446d66c","role":"Доцент","login":"fle6e","author":"Шестопалов Сергей Викторович","token":"c23b2","groupInvite":"hgundefined3f"},
     },
     getters: {
         users(state) {
@@ -19,7 +12,7 @@ const usersStore = {
         currentUser(state) {
             console.log(state.user);
             return state.user;
-        }
+        },
     },
     mutations: {},
     actions: {
@@ -50,7 +43,7 @@ const usersStore = {
         },
         sendMail(context, data) {
             return Api.sendMail(data).then(response => response);
-        }
-    }
+        },
+    },
 };
 export default usersStore;

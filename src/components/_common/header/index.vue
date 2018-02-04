@@ -14,6 +14,16 @@ b-navbar(toggleable="md" type="dark" variant="info")
                 v-if="userRole !== 'Admin' && userRole !== 'superAdmin'"
                 ) Добавить
             router-link(
+                to="/edms/myDocuments"
+                class="nav-item nav-link"
+                v-if="userRole !== 'Admin' && userRole !== 'superAdmin'"
+                ) Мои документы
+            router-link(
+                to="/edms/archive"
+                class="nav-item nav-link"
+                v-if="userRole !== 'Admin' && userRole !== 'superAdmin'"
+                ) Архив
+            router-link(
                 to="/edms/admin"
                 class="nav-item nav-link"
                 v-if="userRole === 'Admin'"

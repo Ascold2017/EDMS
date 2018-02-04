@@ -6,7 +6,8 @@ const docsStore = {
         presets: [],
     },
     getters: {
-        data(state) {
+        documents(state) {
+            console.log(state.documents);
             return state.documents;
         },
         presets(state) {
@@ -17,12 +18,12 @@ const docsStore = {
     actions: {
         getPreviews(context) {
             Api.documentsApi.getPreviewsJSON()
-                .then(response => { context.state.data = response; })
+                .then(response => { console.log('response: ', response); context.state.documents = response; })
                 .catch(e => { console.error(e); return []; });
         },
         getDocumentById(context, id) {
             return Api.documentsApi.getDocumentByIdJSON(id)
-                .then(response => { context.state.data = response; return; })
+                .then(response => { context.state.documents = response; return; })
                 .catch(e => { console.error(e); throw new Error(e); });
         },
         postVote(context, data) {
@@ -45,6 +46,11 @@ const docsStore = {
         createPreset(context, preset) {
             return Api.documentsApi.createPreset(preset)
                 .then(response => response)
+                .catch(e => { console.log(e); throw new Error(e); });
+        },
+        getOurDocuments(context) {
+            return Api.documentsApi.getOurDocumentsPreview()
+                .then(response =>  { context.state.documents = response; return; })
                 .catch(e => { console.log(e); throw new Error(e); });
         },
     },
