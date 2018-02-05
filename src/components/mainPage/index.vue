@@ -12,6 +12,7 @@
             h2.preview-item__title {{ preview.title }}
             time.preview-item__date {{ preview.date }}
             span.preview-item__author {{ preview.author }}
+            span.preview-item__state Текущий маршрут: {{ preview.state }} / {{ preview.total }}
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";

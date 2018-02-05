@@ -7,7 +7,7 @@
                 :to="'/edms/archive/' + preview._id"
                 class="list-group-item preview-item list-group-item-action"
                 )
-                .preview-item__icon(:class="iconStatus(preview.globalStatus)")
+                .preview-item__icon(:class="preview.globalStatus")
                     i(class="fa fa-file-text-o" aria-hidden="true")
                 h2.preview-item__title {{ preview.title }}
                 time.preview-item__date {{ preview.date }}
@@ -24,18 +24,6 @@ export default {
     },
     methods: {
         ...mapActions('docsStore', ['getArchiveDocuments']),
-        iconStatus(status) {
-            switch (status) {
-                case "waiting":
-                    return "waiting";
-                case "resolved":
-                    return "resolved";
-                case "rejected":
-                    return "rejected";
-                default:
-                    return "";
-            }
-        },
     },
     created() {
         this.getArchiveDocuments();

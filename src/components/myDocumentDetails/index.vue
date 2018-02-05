@@ -17,6 +17,25 @@
 				p.subtitle {{ author.author }}
 				p.subtitle {{ author.role }}
 				p.text {{ author.comment }}
+		b-alert(
+			variant="success"
+			v-if="documents.globalStatus === 'resolved'"
+			class="mb-0"
+			show
+			).details__form Документ подписан, его можно найти в 
+			router-link(:to="'/edms/archive/' + documents._id") Архиве
+		b-alert(
+			variant="primary"
+			v-if="documents.globalStatus === 'waiting'"
+			class="mb-0"
+			show
+			).details__form Документ на стадии рассмотрения
+		b-alert(
+			variant="danger"
+			v-if="documents.globalStatus === 'rejected'"
+			class="mb-0"
+			show
+			).details__form Документ отказан в подписи. Вы можете его доработать или закрыть
 </template>
 
 <script>

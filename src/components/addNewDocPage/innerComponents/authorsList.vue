@@ -26,6 +26,11 @@ export default {
     },
     methods: {
         removeAuthor(user) {
+            // if we removing first user - second must switch canSee in 'yes' - he will be first after remove current first
+            if (this.selectedUsers.indexOf(user) === 0) {
+                if (this.selectedUsers[1])
+                    this.selectedUsers[1].canSee = 'yes';
+            }
             this.$emit('updateSelectedUser', this.selectedUsers.filter(item => item._id !== user._id));
         },
     },
