@@ -15,6 +15,7 @@
                         h3.subtitle {{ user.author }}
                         button(type="button" @click="removeAuthor(user)").close X
                     p.subtitle {{ user.role }}
+                    p.subtitle {{ selectedUsers.indexOf(user)}}
         b-alert(variant="warning" v-else) Выберите исполнителей
 </template>
 

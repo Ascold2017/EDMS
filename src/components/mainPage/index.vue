@@ -7,7 +7,7 @@
             :to="'/edms/' + preview._id"
             class="list-group-item preview-item list-group-item-action"
             )
-            .preview-item__icon(:class="iconStatus(preview.status)")
+            .preview-item__icon(:class="iconStatus(preview.globalStatus)")
                 i(class="fa fa-file-text-o" aria-hidden="true")
             h2.preview-item__title {{ preview.title }}
             time.preview-item__date {{ preview.date }}

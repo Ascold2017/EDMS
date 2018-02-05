@@ -3,7 +3,7 @@ const usersStore = {
     namespaced: true,
     state: {
         data: [],
-        user: {"_id":"5a721c536ba3e60ae446d66c","role":"Доцент","login":"fle6e","author":"Шестопалов Сергей Викторович","token":"c23b2","groupInvite":"hgundefined3f"},
+        user: {},
     },
     getters: {
         users(state) {

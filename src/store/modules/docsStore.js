@@ -26,6 +26,11 @@ const docsStore = {
                 .then(response => { context.state.documents = response; return; })
                 .catch(e => { console.error(e); throw new Error(e); });
         },
+        getMyDocumentById(context, id) {
+            return Api.documentsApi.getMyDocumentByIdJSON(id)
+                .then(response => { context.state.documents = response; return; })
+                .catch(e => { console.error(e); throw new Error(e); });
+        },
         postVote(context, data) {
             return Api.documentsApi.postVote(data)
                 .then(response => response.data)
@@ -50,7 +55,12 @@ const docsStore = {
         },
         getOurDocuments(context) {
             return Api.documentsApi.getOurDocumentsPreview()
-                .then(response =>  { context.state.documents = response; return; })
+                .then(response => { context.state.documents = response; return; })
+                .catch(e => { console.log(e); throw new Error(e); });
+        },
+        getArchiveDocuments(context) {
+            return Api.documentsApi.getArchiveDocuments()
+                .then(response => { context.state.documents = response; return; })
                 .catch(e => { console.log(e); throw new Error(e); });
         },
     },

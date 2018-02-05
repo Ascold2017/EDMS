@@ -98,7 +98,7 @@ export default {
             formData.append('globalStatus', 'waiting');
             formData.append('status', 'waiting');
             formData.append('routes', JSON.stringify(this.selectedUsers));
-            formData.append('token', this.currentUser.token);
+            formData.append('token', this.currentUser.groupInvite);
             
             this.addNewDocument(formData)
                 .then(() => {

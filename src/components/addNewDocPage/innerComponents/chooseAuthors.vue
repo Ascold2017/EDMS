@@ -73,6 +73,13 @@ export default {
     },
     methods: {
         addAuthor(user) {
+            
+            if (!this.selectedUsers.length) {
+                user.canSee = 'yes';
+            } else {
+                user.canSee = 'no';
+            }
+            console.log('canSee: ', user.canSee);
             user.status = 'waiting';
             this.selectedUsers.push({...user})
             this.$emit('updateSelectedUsers', this.selectedUsers);

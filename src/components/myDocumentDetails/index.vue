@@ -31,7 +31,7 @@ export default {
 		...mapGetters("docsStore", ["documents"]),
 	},
 	methods: {
-		...mapActions("docsStore", ["getDocumentById"]),
+		...mapActions("docsStore", ["getMyDocumentById"]),
 		statusVariant(state) {
 			switch (state) {
 				case "resolve":
@@ -46,7 +46,7 @@ export default {
 		},
 	},
 	created() {
-		this.getDocumentById(this.id)
+		this.getMyDocumentById(this.id)
 		.catch(e => {
 			console.log(e);
 			this.$router.push('404');

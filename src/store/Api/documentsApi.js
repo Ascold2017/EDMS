@@ -11,6 +11,11 @@ const documensApi = {
             .then(response => response.data)
             .catch(e => { console.log(e); throw new Error(e); });
     },
+    getMyDocumentByIdJSON(id) {
+        return axios.get(`http://localhost:3000/api/getMyDocument/${id}`)
+            .then(response => response.data)
+            .catch(e => { console.log(e); throw new Error(e); });
+    },
     getPresets() {
         return axios.get('http://localhost:3000/api/getDocPresets')
             .then(response => response.data)
