@@ -3,11 +3,15 @@ import App from './App.vue';
 import { store } from './store';
 import router from './router';
 import BootstrapVue from 'bootstrap-vue';
+import { sync } from 'vuex-router-sync';
+sync(store, router);
 Vue.use(BootstrapVue);
-
-new Vue({
-    el: '#app',
-    store,
-    router,
-    render: h => h(App),
+store.dispatch('usersStore/getCurrentUser').then(() => {
+    new Vue({
+        el: '#app',
+        store,
+        router,
+        render: h => h(App),
+    });
 });
+
