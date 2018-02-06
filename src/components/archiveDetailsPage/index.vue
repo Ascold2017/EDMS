@@ -2,12 +2,17 @@
 	b-container.details
 		h1.details__title {{ documents.title }}
 		time.details__date Дата публикации {{ documents.date }}
-		b-embed(
-			type="embed"
-			aspect="16by9"
-			:src="documents.document"
-			allowfullscreen
-			)
+		b-tabs.details__versions
+			b-tab(
+				v-for="document in documents.versions"
+				:title="document.version")
+				p.details__description Описание: {{ document.description }}
+				b-embed(
+					type="embed"
+					aspect="16by9"
+					:src="document.file"
+					allowfullscreen
+					)
 		b-list-group.details__authors
 			b-list-group-item(
 				v-for="author in documents.routes"

@@ -77,7 +77,7 @@ body
 .details
     display: grid
     grid-template-columns: 1fr 1fr
-    grid-template-areas: "title date" "reader reader" "authors form"
+    grid-template-areas: "title date" "versions versions" "authors form"
     grid-gap: 40px
     padding: 40px 0
     &__title
@@ -90,6 +90,8 @@ body
         align-items: center
     .embed-responsive
         grid-area: reader
+    &__versions
+        grid-area: versions
     &__link
         grid-area: link
     &__form

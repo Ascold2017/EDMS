@@ -40,6 +40,10 @@ const documensApi = {
         return axios.post('http://localhost:3000/api/postNewDocument', document)
             .catch(e => { console.log(e); throw new Error(e); });
     },
+    postNewVersion(document) {
+        return axios.put('http://localhost:3000/api/postNewVersion', document)
+            .catch(e => { console.log(e); throw new Error(e); });
+    },
     createPreset(preset) {
         return axios.post('http://localhost:3000/api/createPreset', preset)
             .then(response => response.data)

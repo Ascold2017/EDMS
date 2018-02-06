@@ -2,12 +2,13 @@
 .content
 	.details
 		h1.details__title {{ documents.title }}
-		time.details__date Дата публикации {{ documents.date }}
 		p.details__author Автор публикации {{ documents.author}}
+		time.details__date Дата первой публикации {{ documents.date }}
+		p.details__description Описание: {{ documents.versions[0].description }}
 		b-embed(
 			type="embed"
 			aspect="16by9"
-			:src="documents.document"
+			:src="documents.versions[0].file"
 			allowfullscreen
 			)
 		b-list-group.details__authors

@@ -1,21 +1,21 @@
 <template lang="pug">
 .content
     section.addNewDoc
-        h1.title Добавить новый документ
+        h1.title Создать новую версию {{ documents.title }}
         app-timer(@dateUpdate="dateUpd")
-        b-form(@submit.prevent.stop="addNewDoc" enctype="multipart/form-data")
+        b-form(@submit.prevent.stop="addNewVersion" enctype="multipart/form-data")
             b-row
-                b-col(class="xs-6")
+                b-col
+
                     b-form-group(
-                            label="Название документа:"
-                            label-for="docname"
-                            description="Добавьте название документа")
+                        label="Название версии:"
+                        label-for="version"
+                        description="Добавьте версию документа")
                         b-form-input(
-                            id="docname"
-                            type="text"
-                            v-model="docName"
-                            required
-                            placeholder="Введите название документа")
+                            id="version"
+                            v-model="docVersion"
+                            required)
+
                     b-form-group(
                         label="Файл:"
                         label-for="file"
@@ -32,10 +32,10 @@
                         type="embed"
                         :src="previewDoc"
                         v-if="previewDoc"
-                    )
+                        )
 
                     b-form-group(
-                        label="Введите краткое описание документа"
+                        label="Введите краткое описание версии"
                         )   
                         b-form-textarea(
                             v-model="docDescription"
@@ -43,39 +43,30 @@
                             :rows="3"
                             :max-rows="6"
                             )
-                    
-                b-col(class="xs-6")
-                    preset-routes(@choosePreset="updateSelectedUser")
-                    choose-authors(:selectedUsers="selectedUsers" @updateSelectedUsers="updateSelectedUser")
-            b-row
-                authors-list(:selectedUsers="selectedUsers" @updateSelectedUser="updateSelectedUser")
-
             b-button(type="submit") Опубликовать
 
         b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
 </template>
+
 <script>
 import { mapGetters, mapActions } from 'vuex';
 export default {
     data() {
         return {
             date: '',
-            docName: '',
-            docVersion: '1.0.0',
+            docVersion: '',
             docDescription: '',
             file: '',
-            selectedUsers: [],
             infoAlert: '',
             previewDoc: '',
-            percentLoaded: 0,
+            id: this.$router.currentRoute.params.id,
         };
     },
     computed: {
-        ...mapGetters('usersStore', ['currentUser']),
+        ...mapGetters("docsStore", ["documents"]),
     },
     methods: {
-        ...mapActions('docsStore', ['addNewDocument']),
-        ...mapActions('usersStore', ['getAllUsersFromGroup']),
+        ...mapActions('docsStore', ['addNewDocumentVersion', 'getMyDocumentById']),
         dateUpd(newDate) {
             this.date = newDate;
         },
@@ -91,32 +82,19 @@ export default {
             this.file = file;
             this.previewDoc = `${URL.createObjectURL(file)}`;
         },
-        updateSelectedUser(users) {
-            this.selectedUsers = users;
-        },
-        addNewDoc(e) {
-            if (!this.selectedUsers.length) {
-                this.showAlert('Укажите исполнителей!');
-                return;
-            } 
+        addNewVersion() {
             const formData = new FormData();
-            formData.append('title', this.docName);
+            formData.append('id', this.documents._id);
             formData.append('date', this.date);
-            formData.append('author', this.currentUser.author);
-            formData.append('author_id', this.currentUser._id);
-            formData.append('total', this.selectedUsers.length);
-            formData.append('groupToken', this.currentUser.groupInvite);
-            formData.append('routes', JSON.stringify(this.selectedUsers));
             formData.append('file', this.file);
             formData.append('version', this.docVersion);
             formData.append('description', this.docDescription);
 
-            this.addNewDocument(formData)
+            this.addNewDocumentVersion(formData)
                 .then(() => {
                     this.showAlert('Документ успешно опубликован!');
                     e.target.reset();
                     this.$refs.fileInput.reset();
-                    this.selectedUsers = [];
                 })
                 .catch(e => {
                     this.showAlert('Произошла ошибка!');
@@ -128,24 +106,14 @@ export default {
         }
     },
     created() {
-        this.getAllUsersFromGroup();
+       this.getMyDocumentById(this.id)
+       .catch(e => {
+            console.log(e);
+            this.$router.push("404");
+        });
     },
     components: {
-        chooseAuthors: require('./innerComponents/chooseAuthors'),
-        authorsList: require('./innerComponents/authorsList.vue'),
-        appTimer: require('./innerComponents/timer.vue'),
-        presetRoutes: require('./innerComponents/presetRoutes'),
+        appTimer: require('../addNewDocPage/innerComponents/timer.vue'),
     }
 }
 </script>
-<style lang="sass" scoped>
-.addNewDoc
-    padding: 40px 0
-.pdf-container
-    display: block
-    height: 500px
-    width: 100%
-    overflow-x: hidden
-    overflow-y: scroll
-</style>
-

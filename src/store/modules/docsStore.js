@@ -43,6 +43,13 @@ const docsStore = {
                     .catch(e => reject(e));
             }).catch(e => { console.error(e); return e; });
         },
+        addNewDocumentVersion(context, data) {
+            return new Promise((resolve, reject) => {
+                Api.documentsApi.postNewVersion(data)
+                    .then(() => resolve())
+                    .catch(e => reject(e));
+            }).catch(e => { console.error(e); return e; });
+        },
         getPresets(context) {
             Api.documentsApi.getPresets()
                 .then(response => { context.state.presets = response; })

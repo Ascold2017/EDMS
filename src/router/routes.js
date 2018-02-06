@@ -4,6 +4,7 @@ const routes = [
     { path: '/edms/addNew', component: require('../components/addNewDocPage') },
     { path: '/edms/myDocuments', component: require('../components/myDocumentsPage') },
     { path: '/edms/myDocuments/:id', component: require('../components/myDocumentDetails') },
+    { path: '/edms/myDocumentEdit/:id', component: require('../components/myDocumentEditor') },
     { path: '/edms/archive', component: require('../components/archivePage') },
     { path: '/edms/archive/:id', component: require('../components/archiveDetailsPage') },
     { path: '/edms/admin', component: require('../components/admin') },
