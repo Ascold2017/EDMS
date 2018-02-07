@@ -5,21 +5,24 @@
             label-for="authors-selected"
             description="Выбранные исполнители"
             v-if="selectedUsers.length")
-            b-list-group(id="authors-selected").authors-list
+            draggable(id="authors-selected" class="list-group" v-model="selectedUsers").authors-list
                 b-list-group-item(
                     v-for="user in selectedUsers"
                     :key="user.author"
                     variant="success"
+                    class="authors-item"
+                    href="#"
                     )
                     .authors-list__top
                         h3.subtitle {{ user.author }}
                         button(type="button" @click="removeAuthor(user)").close X
                     p.subtitle {{ user.role }}
                     p.subtitle {{ selectedUsers.indexOf(user)}}
-        b-alert(variant="warning" v-else) Выберите исполнителей
+        b-alert(variant="warning" show v-else) Выберите исполнителей
 </template>
 
 <script>
+import draggable from 'vuedraggable';
 export default {
     props: {
         selectedUsers: Array
@@ -34,9 +37,20 @@ export default {
             this.$emit('updateSelectedUser', this.selectedUsers.filter(item => item._id !== user._id));
         },
     },
+    watch: {
+        selectedUsers(changingList) {
+            console.log(changingList);
+            changingList.map(item => {
+                // update canSee
+                changingList.indexOf(item) === 0 ? item.canSee = 'yes' : item.canSee = 'no';
+                return item;
+            })
+            this.$emit('updateSelectedUser', changingList);
+        }
+    },
+    components: {
+        draggable,
+    }
 }
 </script>
 
-<style>
-
-</style>
