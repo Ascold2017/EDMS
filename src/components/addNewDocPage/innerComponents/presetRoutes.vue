@@ -1,34 +1,27 @@
 <template lang="pug">
-    div
+    b-card
         b-form-group(
-            label="Выбрать готовый пресет"
-            )
-            b-form-select(
-                v-model="selectedPreset"
-                :options="presetsOptions"
-                )
-        b-form-group(
-            label="Создать новый пресет"
+            label="Создать новый маршрут Подписантов"
             )
             b-btn(type="button" @click="showEditor") Открыть редактор
 
-        b-modal(ref="routesEditor" title="Создать новый пресет маршрута" hide-footer)
+        b-modal(ref="routesEditor" title="Создать новый Маршрут" hide-footer)
             b-form(@submit.prevent.stop="createNewPreset")
                 b-form-group(
-                    label="Задайте название пресета"
+                    label="Задайте название Маршрута"
                     )
                     b-form-input(
                         id="presetname"
                         type="text"
                         v-model="presetName"
                         required
-                        placeholder="Введите название пресета")
+                        placeholder="Введите название маршрута")
                 choose-authors(
                     @updateSelectedUsers="updatePresetRoute"
                     :selectedUsers="selectedUsers"
                     )
                 authors-list(:selectedUsers="selectedUsers" @updateSelectedUser="updatePresetRoute")
-                b-btn(type="submit") Создать пресет
+                b-btn(type="submit") Создать Маршрут
 </template>
 
 <script>
@@ -36,23 +29,12 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
     data() {
         return {
-            selectedPreset: [],
             selectedUsers: [],
             presetName: '',
         };
     },
-    computed: {
-        ...mapGetters('docsStore', ['presets']),
-        presetsOptions() {
-            let result = [{value: [], text: 'Не выбрано'}];
-            this.presets.map(preset => {
-                result.push({value: preset.routes, text: preset.title });
-            });
-            return result;
-        }
-    },
     methods: {
-        ...mapActions('docsStore', ['createPreset', 'getPresets']),
+        ...mapActions('docsStore', ['createPreset']),
         showEditor() {
             this.$refs.routesEditor.show();
         },
@@ -73,15 +55,6 @@ export default {
             })
             console.log(newPreset);
         }
-    },
-    watch: {
-        selectedPreset: function() {
-            console.log(this.selectedPreset);
-            this.$emit('choosePreset', this.selectedPreset);
-        }
-    },
-    created() {
-        this.getPresets();
     },
     components: {
         chooseAuthors: require('./chooseAuthors'),

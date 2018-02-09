@@ -1,27 +1,37 @@
 <template lang="pug">
-	b-container.details
-		h1.details__title {{ documents.title }}
-		time.details__date Дата публикации {{ documents.date }}
-		b-tabs.details__versions
-			b-tab(
-				v-for="document in documents.versions"
-				:title="document.version")
-				p.details__description Описание: {{ document.description }}
-				b-embed(
-					type="embed"
-					aspect="16by9"
-					:src="document.file"
-					allowfullscreen
+b-container
+	b-row
+		b-col
+			b-card.mb-3
+				h1.title {{ documents.title }}
+	b-row
+		b-col
+			b-tabs(class="mb-3")
+				b-tab(
+					v-for="document in documents.versions"
+					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
+					time.text Дата публикации {{ document.date }}
+					p.details__description Описание: {{ document.description }}
+					b-embed(
+						type="embed"
+						aspect="16by9"
+						:src="document.file"
+						allowfullscreen
+						)
+				
+	b-row
+		b-col(sm="12")
+			b-list-group(style="max-height: 300px; overflow-y: scroll;")
+				b-list-group-item(
+					v-for="author in documents.routes"
+					:key="author._id"
+					:variant="statusVariant(author.status)"
 					)
-		b-list-group.details__authors
-			b-list-group-item(
-				v-for="author in documents.routes"
-				:key="author._id"
-				:variant="statusVariant(author.status)"
-				)
-				p.subtitle {{ author.author }}
-				p.subtitle {{ author.role }}
-				p.text {{ author.comment }}
+					p.subtitle.subtitle_small {{ author.author }}
+					p.subtitle.subtitle_small {{ author.role }}
+					b-card(v-if="author.comment" class="mt-1")
+						p.text Комментарий подписанта:
+						p.text {{ author.comment }}
 </template>
 
 <script>
@@ -59,7 +69,3 @@ export default {
 	}
 }
 </script>
-
-<style>
-
-</style>

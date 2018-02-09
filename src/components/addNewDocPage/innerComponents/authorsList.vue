@@ -1,9 +1,8 @@
 <template lang="pug">
     b-col
         b-form-group(
-            label=""
+            label="Выбранные Подписанты:"
             label-for="authors-selected"
-            description="Выбранные исполнители"
             v-if="selectedUsers.length")
             draggable(id="authors-selected" class="list-group" v-model="selectedUsers").authors-list
                 b-list-group-item(
@@ -14,10 +13,10 @@
                     href="#"
                     )
                     .authors-list__top
-                        h3.subtitle {{ user.author }}
+                        h3.subtitle.subtitle_small {{ user.author }}
                         button(type="button" @click="removeAuthor(user)").close X
-                    p.subtitle {{ user.role }}
-                    p.subtitle {{ selectedUsers.indexOf(user)}}
+                    p.subtitle.subtitle_small {{ user.role }}
+                    p.subtitle.subtitle_small Порядок в маршруте: {{ selectedUsers.indexOf(user) + 1 }}
         b-alert(variant="warning" show v-else) Выберите исполнителей
 </template>
 

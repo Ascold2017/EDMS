@@ -1,12 +1,15 @@
 <template lang="pug">
-.content
-    section.addNewDoc
-        h1.title Создать новую версию {{ documents.title }}
-        app-timer(@dateUpdate="dateUpd")
-        b-form(@submit.prevent.stop="addNewVersion" enctype="multipart/form-data")
-            b-row
-                b-col
-
+b-container
+    b-row
+        b-col(sm="12" class="mb-6")
+            b-card
+                h1.title {{ documents.title }}
+                app-timer(@dateUpdate="dateUpd")
+                
+    b-row
+        b-col
+            b-card.mt-3
+                b-form(@submit.prevent.stop="addNewVersion" enctype="multipart/form-data")
                     b-form-group(
                         label="Название версии:"
                         label-for="version"
@@ -14,6 +17,7 @@
                         b-form-input(
                             id="version"
                             v-model="docVersion"
+                            placeholder="Название версии"
                             required)
 
                     b-form-group(
@@ -32,10 +36,13 @@
                         type="embed"
                         :src="previewDoc"
                         v-if="previewDoc"
-                        )
+                    )
+                    .empty-pdf(v-else)
+                        | Загрузите файл документа
 
                     b-form-group(
                         label="Введите краткое описание версии"
+                        class="mt-3"
                         )   
                         b-form-textarea(
                             v-model="docDescription"
@@ -43,7 +50,7 @@
                             :rows="3"
                             :max-rows="6"
                             )
-            b-button(type="submit") Опубликовать
+                    b-button(type="submit") Опубликовать
 
         b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
 </template>

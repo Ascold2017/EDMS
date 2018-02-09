@@ -3,10 +3,13 @@
         app-header
         b-container
             router-view
+        app-footer
 </template>
 
 <script>
 import AppHeader from './components/_common/header';
+import AppFooter from './components/_common/footer';
+
 import { mapActions, mapGetters } from 'vuex';
 export default {
     name: 'app',
@@ -16,12 +19,9 @@ export default {
     methods: {
         ...mapActions('usersStore', ['getCurrentUser']),
     },
-    created() {
-        // console.log('get user');
-        // this.getCurrentUser();
-    },
     components: {
         AppHeader,
+        AppFooter
     }
 };
 </script>

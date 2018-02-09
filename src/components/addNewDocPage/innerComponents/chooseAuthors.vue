@@ -1,18 +1,22 @@
 <template lang="pug">
-    div
+    b-card.mt-3
         b-form-group(
-            label="Исполнитель:"
-            label-for="authors"
-            description="Выберите исполнителей")
+            label="Выстроить маршрут подписантов:"
+            label-for="authors")
             b-form-input(
                 type="text"
                 v-model="authorNameOrRole"
-                placeholder="Начните поиск исполнителей")
-
+                placeholder="Начните поиск по ФИО или Роли")
         b-form-group(
-            label=""
-            label-for="authors"
-            description="Список исполнителей")
+            label="Или выберите готовый маршрут Подписантов:"
+            )
+            b-form-select(
+                v-model="selectedPreset"
+                :options="presetsOptions"
+                )
+        b-form-group(
+            label="Список доступных Подписантов"
+            label-for="authors")
             b-list-group(id="authors").authors-list
                 b-list-group-item(
                     v-for="user in computedUsers"
@@ -20,8 +24,8 @@
                     @click="addAuthor(user)"
                     class="authors-list__item"
                     )
-                    h3.subtitle {{ user.author }}
-                    p.subtitle {{ user.role }}
+                    h3.subtitle.subtitle_small ФИО: {{ user.author }}
+                    p.subtitle.subtitle_small Роль: {{ user.role }}
 </template>
 
 <script>
@@ -30,6 +34,7 @@ export default {
     data() {
         return {
             authorNameOrRole: '',
+            selectedPreset: [],
         };
     },
     props: {
@@ -37,6 +42,7 @@ export default {
     },
     computed: {
         ...mapGetters('usersStore', ['users']),
+        ...mapGetters('docsStore', ['presets']),
         computedUsers() {
             // filtering selected users from result collection
             const filterSelected = (users) => {
@@ -70,8 +76,16 @@ export default {
             // filtering selected users from collection
             return filterSelected(result);
         },
+        presetsOptions() {
+            let result = [{value: [], text: 'Не выбрано'}];
+            this.presets.map(preset => {
+                result.push({value: preset.routes, text: preset.title });
+            });
+            return result;
+        }
     },
     methods: {
+        ...mapActions('docsStore', ['getPresets']),
         addAuthor(user) {
             
             if (!this.selectedUsers.length) {
@@ -79,18 +93,26 @@ export default {
             } else {
                 user.canSee = 'no';
             }
-            console.log('canSee: ', user.canSee);
             user.status = 'waiting';
             this.selectedUsers.push({...user})
             this.$emit('updateSelectedUsers', this.selectedUsers);
         },
     },
+    watch: {
+        selectedPreset() {
+            this.$emit('updateSelectedUsers', this.selectedPreset);
+        }
+    },
+    created() {
+        this.getPresets();
+    },
 }
 </script>
 <style lang="sass" scoped>
 .authors-list
-    max-height: 300px
-    oveflow-y: scroll
+    max-height: 335px
+    height: 100%
+    overflow-y: scroll
     overflow-x: hidden
     &__top
         display: flex

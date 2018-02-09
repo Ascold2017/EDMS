@@ -1,46 +1,63 @@
 <template lang="pug">
-.content
-	.details
-		h1.details__title {{ documents.title }}
-		p.details__author Автор публикации {{ documents.author}}
-		time.details__date Дата первой публикации {{ documents.date }}
-		p.details__description Описание: {{ documents.versions[0].description }}
-		b-embed(
-			type="embed"
-			aspect="16by9"
-			:src="documents.versions[0].file"
-			allowfullscreen
-			)
-		b-list-group.details__authors
-			b-list-group-item(
-				v-for="author in documents.routes"
-				:key="author._id"
-				:variant="statusVariant(author.status)"
-				)
-				p.subtitle {{ author.author }}
-				p.subtitle {{ author.role }}
-				p.text {{ author.comment }}
-		b-form(@submit.prevent="submitDoc").details__form
-			b-form-group(label="Выберите действие")
-				b-form-radio-group(
-					v-model="selected"
-					name="radioSubComponent"
-					:options="options"
+b-container
+	b-row
+		b-col(sm="12" class="mb-3")
+			b-card
+				h1.title {{ documents.title }}
+		b-col(sm="12" class="mb-3")
+			b-card
+				p.text Автор публикации {{ documents.author}}
+				time.text Дата первой публикации {{ documents.date }}
+				p.text(v-if="documents.versions.length > 1") Текущая версия документа {{ documents.versions[0].version }}
+				time.text(v-if="documents.versions.length > 1") Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
+	b-row
+		b-col
+			b-tabs(class="mb-3")
+				b-tab(
+					v-for="document in documents.versions"
+					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
+					p.text Описание: {{ document.description }}
+					b-embed(
+						type="embed"
+						aspect="16by9"
+						:src="document.file"
+						allowfullscreen
+						)
+	b-row
+		b-col(sm="12" lg="6")
+			b-list-group(style="max-height: 300px; overflow-y: scroll;")
+				b-list-group-item(
+					v-for="author in documents.routes"
+					:key="author._id"
+					:variant="statusVariant(author.status)"
 					)
-			b-form-group(label="Ваш комментарий").details__comment
-				b-form-textarea(
-					v-model="comment"
-					placeholder="Оставьте комментарий"
-					:rows="3"
-					:max-rows="6"
-					)
-			b-button(type="submit").details__submit Отправить
+					p.subtitle.subtitle_small {{ author.author }}
+					p.subtitle.subtitle_small {{ author.role }}
+					b-card(v-if="author.comment" class="mt-1")
+						p.text Комментарий подписанта:
+						p.text {{ author.comment }}
+		b-col(sm="12" lg="6")
+			b-form(@submit.prevent="submitDoc")
+				b-card
+					b-form-group(label="Выберите действие")
+						b-form-radio-group(
+							v-model="selected"
+							name="radioSubComponent"
+							:options="options"
+							)
+					b-form-group(label="Ваш комментарий")
+						b-form-textarea(
+							v-model="comment"
+							placeholder="Оставьте комментарий"
+							:rows="3"
+							:max-rows="6"
+							)
+					b-button(type="submit") Отправить
 	b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
 export default {
-	//'https://view.officeapps.live.com/op/embed.aspx?src=' + data.document
 	data() {
 		return {
 			// get id of current document
@@ -48,11 +65,11 @@ export default {
 			// current status of doc
 			selected: "",
 			options: [
-				{ value: "resolve", text: "Согласен" },
-				{ value: "reject", text: "НЕ согласен" }
+				{ value: "resolve", text: "Подписать документ" },
+				{ value: "reject", text: "Отказать в подписи" }
 			],
 			comment: "",
-			infoAlert: ""
+			infoAlert: "",
 		};
 	},
 	computed: {
@@ -68,7 +85,6 @@ export default {
 					id: this.id,
 					vote: this.selected,
 					comment: this.comment,
-					token: this.currentUser.token,
 					author: this.currentUser
 				})
 					.then(response => {
@@ -97,7 +113,7 @@ export default {
 		showAlert(title) {
 			this.infoAlert = title;
 			this.$refs.alertModal.show();
-		}
+		},
 	},
 	created() {
 		this.getDocumentById(this.id)

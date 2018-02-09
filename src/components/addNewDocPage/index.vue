@@ -1,56 +1,67 @@
 <template lang="pug">
-.content
-    section.addNewDoc
-        h1.title Добавить новый документ
-        app-timer(@dateUpdate="dateUpd")
-        b-form(@submit.prevent.stop="addNewDoc" enctype="multipart/form-data")
-            b-row
-                b-col(class="xs-6")
-                    b-form-group(
-                            label="Название документа:"
-                            label-for="docname"
-                            description="Добавьте название документа")
-                        b-form-input(
-                            id="docname"
-                            type="text"
-                            v-model="docName"
-                            required
-                            placeholder="Введите название документа")
-                    b-form-group(
-                        label="Файл:"
-                        label-for="file"
-                        description="Добавьте файл документа")
-                        b-form-file(
-                            id="file"
-                            @change="getFile($event)"
-                            choose-label="Выберите файл"
-                            accept=".pdf"
-                            ref="fileInput"
-                            required)
+b-container
+    b-row
+        b-col
+            b-card(class="mb-3")
+                h1.title Добавить новый документ
+                app-timer(@dateUpdate="dateUpd")
+    b-row
+        b-col
+            b-form(@submit.prevent.stop="addNewDoc" enctype="multipart/form-data")
+                b-row
+                    b-col(md="12" lg="6")
+                        b-card
+                            b-form-group(
+                                    label="Название документа:"
+                                    label-for="docname"
+                                    description="Добавьте название документа")
+                                b-form-input(
+                                    id="docname"
+                                    type="text"
+                                    v-model="docName"
+                                    required
+                                    placeholder="Введите название документа")
+                            b-form-group(
+                                label="Файл:"
+                                label-for="file"
+                                description="Добавьте файл документа")
+                                b-form-file(
+                                    id="file"
+                                    @change="getFile($event)"
+                                    choose-label="Выберите файл"
+                                    accept=".pdf"
+                                    ref="fileInput"
+                                    required)
 
-                    b-embed(
-                        type="embed"
-                        :src="previewDoc"
-                        v-if="previewDoc"
-                    )
-
-                    b-form-group(
-                        label="Введите краткое описание документа"
-                        )   
-                        b-form-textarea(
-                            v-model="docDescription"
-                            placeholder="Описание.."
-                            :rows="3"
-                            :max-rows="6"
+                            b-embed(
+                                type="embed"
+                                :src="previewDoc"
+                                v-if="previewDoc"
                             )
-                    
-                b-col(class="xs-6")
-                    preset-routes(@choosePreset="updateSelectedUser")
-                    choose-authors(:selectedUsers="selectedUsers" @updateSelectedUsers="updateSelectedUser")
-            b-row
-                authors-list(:selectedUsers="selectedUsers" @updateSelectedUser="updateSelectedUser")
+                            .empty-pdf(v-else)
+                                | Загрузите файл документа
 
-            b-button(type="submit") Опубликовать
+                            b-form-group(
+                                label="Введите краткое описание документа"
+                                class="mt-3"
+                                )   
+                                b-form-textarea(
+                                    v-model="docDescription"
+                                    placeholder="Описание.."
+                                    :rows="3"
+                                    :max-rows="6"
+                                    )
+                        
+                    b-col(md="12" lg="6")
+                        preset-routes(@choosePreset="updateSelectedUser")
+                        choose-authors(:selectedUsers="selectedUsers" @updateSelectedUsers="updateSelectedUser")
+
+                b-row(class="mt-3")
+                    b-col
+                        b-card
+                            authors-list(:selectedUsers="selectedUsers" @updateSelectedUser="updateSelectedUser")
+
+                b-button(type="submit" class="mt-3") Опубликовать
 
         b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
 </template>
@@ -98,6 +109,10 @@ export default {
             if (!this.selectedUsers.length) {
                 this.showAlert('Укажите исполнителей!');
                 return;
+            }
+            if (!this.docDescription) {
+                this.showAlert('Укажите описание!');
+                return;
             } 
             const formData = new FormData();
             formData.append('title', this.docName);
@@ -117,6 +132,7 @@ export default {
                     e.target.reset();
                     this.$refs.fileInput.reset();
                     this.selectedUsers = [];
+                    this.previewDoc = '';
                 })
                 .catch(e => {
                     this.showAlert('Произошла ошибка!');
@@ -138,14 +154,5 @@ export default {
     }
 }
 </script>
-<style lang="sass" scoped>
-.addNewDoc
-    padding: 40px 0
-.pdf-container
-    display: block
-    height: 500px
-    width: 100%
-    overflow-x: hidden
-    overflow-y: scroll
-</style>
+
 
