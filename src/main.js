@@ -15,3 +15,4 @@ store.dispatch('initApp').then(() => {
         render: h => h(App),
     });
 });
+

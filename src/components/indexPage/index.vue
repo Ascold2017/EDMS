@@ -39,7 +39,8 @@ export default {
         }
     },
     methods: {
-        ...mapActions('usersStore', ['logIn', 'getCurrentUser']),
+        ...mapActions('usersStore', ['getCurrentUser']),
+        ...mapActions(['logIn']),
         signIn(e) {
             this.logIn({
                 userLogin: this.userLogin,

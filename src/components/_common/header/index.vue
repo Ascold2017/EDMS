@@ -46,7 +46,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('usersStore', ['logout', 'getCurrentUser']),
+        ...mapActions(['logout']),
         logOut() {
             this.logout()
                 .then(() =>  this.$router.push('/'));

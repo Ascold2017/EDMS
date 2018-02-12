@@ -96,7 +96,7 @@ export default {
 		}
   },
   methods: {
-    ...mapActions("docsStore", ["getMyDocumentById"]),
+    ...mapActions("docsStore", ["getMyDocumentById", 'closeDocumentById']),
     statusVariant(state) {
       switch (state) {
         case "resolve":
@@ -108,10 +108,11 @@ export default {
         default:
           return "warning";
       };
-	},
-	closeDocument() {
-		console.log('close!');
-	}
+		},
+		closeDocument() {
+			console.log('close!', this.id);
+			this.closeDocumentById(this.id);
+		}
   },
   created() {
     this.getMyDocumentById(this.id).catch(e => {

@@ -1,4 +1,6 @@
-import { Api } from './../Api/Api';
+import { Api } from './../../Api/Api';
+import { store } from '../index';
+
 const usersStore = {
     namespaced: true,
     state: {
@@ -14,11 +16,15 @@ const usersStore = {
             return state.user;
         },
     },
-    mutations: {},
+    mutations: {
+        setUser(state, user) {
+            state.user = user;
+        },
+    },
     actions: {
         getAllUsersFromGroup(context) {
             Api.usersApi
-                .getAllUsersFromGroup()
+                .getAllUsersFromGroup(store.getters['headerToken'])
                 .then(response => {
                     context.state.data = response;
                 })
@@ -28,29 +34,16 @@ const usersStore = {
                 });
         },
         getCurrentUser(context) {
+            console.log(store.state.token);
             return new Promise((resolve, reject) => {
                 Api.usersApi
-                    .getCurrentUser()
+                    .getCurrentUser(store.getters['headerToken'])
                     .then(response => {
-                        context.state.user = response;
+                        context.commit('setUser', response);
                         resolve();
                     })
                     .catch(e => reject(e));
             });
-        },
-        logout(context) {
-            context.state.user = {};
-            return Api.logout().then(response => {
-                localStorage.removeItem('token');
-            });
-        },
-        logIn(context, data) {
-            return Api.logIn(data)
-                .then(response => {
-                    localStorage.setItem('token', response.token);
-                    return response.message;
-                })
-                .catch(error => { console.error(error); throw new Error(error); });
         },
         sendMail(context, data) {
             return Api.sendMail(data).then(response => response);
