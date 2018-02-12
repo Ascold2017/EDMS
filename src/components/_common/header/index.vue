@@ -2,47 +2,76 @@
 b-navbar(toggleable="md" type="dark" variant="info")
     div.acc-title {{ currentUser.author }}
     b-collapse(is-nav id="nav_collapse")
-        b-navbar-nav(class="ml-auto")
+        b-navbar-nav(
+            class="ml-auto"
+            v-if="show === 'userBar'")
             router-link(
                 to="/edms"
                 class="nav-item nav-link"
-                v-if="userRole !== 'Admin' && userRole !== 'superAdmin'"
                 ) Новые
             router-link(
                 to="/edms/addNew"
                 class="nav-item nav-link"
-                v-if="userRole !== 'Admin' && userRole !== 'superAdmin'"
                 ) Добавить
             router-link(
                 to="/edms/myDocuments"
                 class="nav-item nav-link"
-                v-if="userRole !== 'Admin' && userRole !== 'superAdmin'"
                 ) Мои документы
             router-link(
                 to="/edms/archive"
                 class="nav-item nav-link"
-                v-if="userRole !== 'Admin' && userRole !== 'superAdmin'"
                 ) Архив
+            b-button(size="sm" class="my-2 my-sm-0" type="button" @click="logOut") Выйти
+        b-navbar-nav(
+            class="ml-auto"
+            v-if="show === 'adminBar'")
             router-link(
                 to="/edms/admin"
                 class="nav-item nav-link"
-                v-if="userRole === 'Admin'"
                 ) Панель администрирования админа
+            b-button(size="sm" class="my-2 my-sm-0" type="button" @click="logOut") Выйти
+        b-navbar-nav(
+            class="ml-auto"
+            v-if="show === 'superadminBar'")
             router-link(
                 to="/edms/superAdmin"
                 class="nav-item nav-link"
-                v-if="userRole === 'superAdmin'"
                 ) Панель администрирования суперадмина
             b-button(size="sm" class="my-2 my-sm-0" type="button" @click="logOut") Выйти
+        b-navbar-nav(
+            class="ml-auto"
+            v-if="show === 'indexBar'")
+            router-link(
+                to="/auth"
+                class="nav-item nav-link"
+                ) Авторизоваться
+            router-link(
+                to="/registration"
+                class="nav-item nav-link"
+                ) Зарегистрироваться
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
 export default {
+    data() {
+        return {
+            // get id of current document
+			route: this.$router.currentRoute.fullPath,
+        }
+    },
     computed: {
         ...mapGetters('usersStore', ['currentUser']),
-        userRole() {
-            return this.currentUser.role;
+        show() {
+            const route = this.$route.fullPath;
+            const role = this.currentUser.role;
+
+            if (route === '/' || route === '/auth' || route === '/registration') {
+                return 'indexBar';
+            }
+            if (role === 'Admin') return 'adminBar';
+            if (role === 'superAdmin') return 'superadminBar';
+            return 'userBar';
         }
     },
     methods: {
@@ -52,5 +81,8 @@ export default {
                 .then(() =>  this.$router.push('/'));
         }
     },
+    created() {
+        console.log(this.route);
+    }
 }
 </script>

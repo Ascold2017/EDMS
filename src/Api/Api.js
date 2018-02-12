@@ -4,7 +4,7 @@ import documentsApi from './documentsApi';
 import groupsApi from './groupsApi';
 
 const config = {
-    token: localStorage.getItem('token'),
+    token: sessionStorage.getItem('token'),
 };
 
 export const Api = {
@@ -25,5 +25,10 @@ export const Api = {
         return axios.post('http://localhost:3000/api/mail', body, config)
             .then(response => response.data)
             .catch(e => e.response);
+    },
+    signUp(data) {
+        return axios.post('http://localhost:3000/api/signUp', data)
+            .then(response => response.data)
+            .catch(e => { throw new Error(e.response.data.error); });
     },
 };

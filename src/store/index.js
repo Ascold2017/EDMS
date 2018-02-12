@@ -56,5 +56,10 @@ export const store = new Vuex.Store({
                 })
                 .catch(error => { console.error(error); throw new Error(error); });
         },
+        signUp(context, data) {
+            return Api.signUp(data)
+                .then(response => response)
+                .catch(e => { throw new Error(e); });
+        },
     },
 });
