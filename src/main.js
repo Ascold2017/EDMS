@@ -5,8 +5,9 @@ import router from './router';
 import BootstrapVue from 'bootstrap-vue';
 import { sync } from 'vuex-router-sync';
 sync(store, router);
+
 Vue.use(BootstrapVue);
-store.dispatch('usersStore/getCurrentUser').then(() => {
+store.dispatch('initApp').then(() => {
     new Vue({
         el: '#app',
         store,
@@ -14,4 +15,3 @@ store.dispatch('usersStore/getCurrentUser').then(() => {
         render: h => h(App),
     });
 });
-

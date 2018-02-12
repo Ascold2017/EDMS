@@ -1,5 +1,5 @@
 <template lang="pug">
-.container
+b-container
     b-list-group
         router-link(
             v-for="preview in sortingData"
@@ -55,7 +55,11 @@ export default {
     }
   },
   created() {
-    this.getPreviews();
+    this.getPreviews()
+    .catch((err) => {
+      console.log(err);
+          this.$router.push('/');
+      });;
   }
 };
 </script>

@@ -33,7 +33,7 @@ b-navbar(toggleable="md" type="dark" variant="info")
                 class="nav-item nav-link"
                 v-if="userRole === 'superAdmin'"
                 ) Панель администрирования суперадмина
-            b-button(size="sm" class="my-2 my-sm-0" type="button" @click="logout") Выйти
+            b-button(size="sm" class="my-2 my-sm-0" type="button" @click="logOut") Выйти
 </template>
 
 <script>
@@ -47,6 +47,10 @@ export default {
     },
     methods: {
         ...mapActions('usersStore', ['logout', 'getCurrentUser']),
+        logOut() {
+            this.logout()
+                .then(() =>  this.$router.push('/'));
+        }
     },
 }
 </script>

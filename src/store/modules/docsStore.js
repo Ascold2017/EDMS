@@ -17,9 +17,9 @@ const docsStore = {
     mutations: {},
     actions: {
         getPreviews(context) {
-            Api.documentsApi.getPreviewsJSON()
+            return Api.documentsApi.getPreviewsJSON()
                 .then(response => { console.log('response: ', response); context.state.documents = response; })
-                .catch(e => { console.error(e); return []; });
+                .catch(e => { console.error(e); throw new Error(e); });
         },
         getDocumentById(context, id) {
             return Api.documentsApi.getDocumentByIdJSON(id)

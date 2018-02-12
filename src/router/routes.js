@@ -1,5 +1,5 @@
 const routes = [
-    { path: '/', component: require('../components/mainPage') },
+    { path: '/', component: require('../components/indexPage') },
     { path: '/edms', component: require('../components/mainPage') },
     { path: '/edms/addNew', component: require('../components/addNewDocPage') },
     { path: '/edms/myDocuments', component: require('../components/myDocumentsPage') },

@@ -8,13 +8,14 @@ b-container
 			b-card
 				p.text Автор публикации {{ documents.author}}
 				time.text Дата первой публикации {{ documents.date }}
-				p.text(v-if="documents.versions.length > 1") Текущая версия документа {{ documents.versions[0].version }}
-				time.text(v-if="documents.versions.length > 1") Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
+				p.text(v-if="documents.versions.lenght > 1") Текущая версия документа {{ documents.versions[0].version }}
+				time.text(v-if="documents.versions.lenght > 1") Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
 	b-row
 		b-col
 			b-tabs(class="mb-3")
 				b-tab(
 					v-for="document in documents.versions"
+					:key="document._id"
 					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
 					p.text Описание: {{ document.description }}
 					b-embed(

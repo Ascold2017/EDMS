@@ -9,6 +9,7 @@ b-container
 			b-tabs(class="mb-3")
 				b-tab(
 					v-for="document in documents.versions"
+					:key="document._id"
 					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
 					time.text Дата публикации {{ document.date }}
 					p.details__description Описание: {{ document.description }}

@@ -38,8 +38,19 @@ const usersStore = {
                     .catch(e => reject(e));
             });
         },
-        logout() {
-            Api.logout();
+        logout(context) {
+            context.state.user = {};
+            return Api.logout().then(response => {
+                localStorage.removeItem('token');
+            });
+        },
+        logIn(context, data) {
+            return Api.logIn(data)
+                .then(response => {
+                    localStorage.setItem('token', response.token);
+                    return response.message;
+                })
+                .catch(error => { console.error(error); throw new Error(error); });
         },
         sendMail(context, data) {
             return Api.sendMail(data).then(response => response);
