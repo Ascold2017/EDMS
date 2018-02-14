@@ -1,46 +1,44 @@
 <template lang="pug">
-    div.reader
-        .reader__container(v-show="loaded" id="pdfReader")
+    div.reader#pdfjs
+        pdf(
+            v-for="i in numPages"
+            :key="i"
+            :src="loadingTask"
+            :page="i"
+            style="display: block;")
 </template>
 
 <script>
-//import pdf from 'vue-pdf';
-const PDFObject = require('pdfobject/pdfobject.min.js');
+
+import pdf from 'vue-pdf';
 export default {
     props: {
         src: String
     },
     data() {
         return {
-            loaded: true,
+            numPages: undefined,
         }
     },
-    
-    methods: {
-        printDoc() {
-            // this.$refs.PdfComponent.print();
-        },
-        chLoaded() {
-            // this.loaded = true;
+    computed: {
+        loadingTask() {
+            return pdf.createLoadingTask(this.src);
         }
     },
     mounted() {
-        PDFObject.embed(this.src, document.getElementById('pdfReader'));
+        this.loadingTask
+        .then(pdf => {
+            this.numPages = pdf.numPages;
+        });
+    },
+    components: {
+        pdf
     }
 }
 </script>
 <style lang="sass" scoped>
 .reader
-    &__container
-        height: 500px
-        overflow-y: scroll
-        overflow-x: hidden
-    &__empty
-        height: 100%
-        width: 100%
-        display: flex
-        justify-content: center
-        align-items: center
-        background-color: #cccccc
-        color: #222222
+    max-height: 500px
+    overflow-y: scroll
+    overflow-x: hidden
 </style>
