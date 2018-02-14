@@ -1,26 +1,34 @@
 <template lang="pug">
 b-container
     b-list-group
-        router-link(
-            v-for="preview in sortingData"
-            :key="preview._id"
-            :to="'/edms/' + preview._id"
-            class="list-group-item preview-item list-group-item-action"
-            )
-            .preview-item__icon(:class="iconStatus(preview.globalStatus)")
-                i(class="fa fa-file-text-o" aria-hidden="true")
-            h2.preview-item__title {{ preview.title }}
-            time.preview-item__date {{ preview.date }}
-            span.preview-item__author {{ preview.author }}
-            span.preview-item__state Текущий маршрут: {{ preview.state }} / {{ preview.total }}
+      b-alert(variant="primary" show v-if="!loaded") Загрузка...
+      b-alert(variant="danger" show v-if="loaded && !sortingData.length") Новых документов к рассмотрению нет
+      router-link(
+        v-for="preview in sortingData"
+        :key="preview._id"
+        :to="'/edms/' + preview._id"
+        class="list-group-item preview-item list-group-item-action"
+        )
+        .preview-item__icon(:class="iconStatus(preview.globalStatus)")
+            i(class="fa fa-file-text-o" aria-hidden="true")
+        h2.preview-item__title {{ preview.title }}
+        time.preview-item__date {{ preview.date }}
+        span.preview-item__author {{ preview.author }}
+        span.preview-item__state Текущий маршрут: {{ preview.state }} / {{ preview.total }}
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
 export default {
+  data() {
+    return {
+      loaded: false,
+    }
+  },
   computed: {
     ...mapGetters("docsStore", ["documents"]),
     ...mapGetters("usersStore", ["currentUser"]),
     sortingData() {
+      if (!this.documents.length) return [];
       const toDate = date => {
         const day = date.substring(0, 2);
         const month = date.substring(3, 5);
@@ -56,6 +64,10 @@ export default {
   },
   created() {
     this.getPreviews()
+    .then(() => {
+      console.log(this.documents);
+      this.loaded = true;
+    })
     .catch((err) => {
       console.log(err);
           this.$router.push('/');

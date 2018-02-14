@@ -1,6 +1,8 @@
 <template lang="pug">
     b-container
         b-list-group
+            b-alert(variant="primary" show v-if="!loaded") Загрузка...
+            b-alert(variant="danger" show v-if="loaded && !sortingData.length") У вас нет опубликованных документов!
             router-link(
                 v-for="preview in sortingData"
                 :key="preview._id"
@@ -16,6 +18,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 export default {
+    data() {
+      return {
+        loaded: false,
+      }
+    },
     computed: {
         ...mapGetters('docsStore', ['documents']),
         sortingData() {
@@ -38,7 +45,11 @@ export default {
         },
     },
     created() {
-        this.getOurDocuments();
+        this.getOurDocuments()
+        .then(() => {
+            console.log(this.documents);
+            this.loaded = true;
+        });;
     }
 }
 </script>

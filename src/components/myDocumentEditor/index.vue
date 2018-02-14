@@ -31,12 +31,10 @@ b-container
                             accept=".pdf"
                             ref="fileInput"
                             required)
-
-                    b-embed(
-                        type="embed"
-                        :src="previewDoc"
+                    pdf-reader(
+						:src="previewDoc"
                         v-if="previewDoc"
-                    )
+						)
                     .empty-pdf(v-else)
                         | Загрузите файл документа
 

@@ -13,12 +13,9 @@ b-container
 					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
 					time.text Дата публикации {{ document.date }}
 					p.details__description Описание: {{ document.description }}
-					b-embed(
-						type="embed"
-						aspect="16by9"
+					pdfReader(
 						:src="document.file"
-						allowfullscreen
-						)
+						v-if="document.file")
 				
 	b-row
 		b-col(sm="12")
@@ -67,6 +64,9 @@ export default {
 			console.log(e);
 			this.$router.push('404');
 		});
+	},
+	components: {
+		pdfReader: require('../_common/pdf-reader'),
 	}
 }
 </script>

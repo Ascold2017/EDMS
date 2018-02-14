@@ -32,12 +32,9 @@ b-container
                                     accept=".pdf"
                                     ref="fileInput"
                                     required)
-
-                            b-embed(
-                                type="embed"
+                            pdfReader(
                                 :src="previewDoc"
-                                v-if="previewDoc"
-                            )
+                                v-if="previewDoc")
                             .empty-pdf(v-else)
                                 | Загрузите файл документа
 
@@ -61,7 +58,7 @@ b-container
                         b-card
                             authors-list(:selectedUsers="selectedUsers" @updateSelectedUser="updateSelectedUser")
 
-                b-button(type="submit" class="mt-3") Опубликовать
+                b-button(type="submit" class="mt-3" ref="submit") Опубликовать
 
         b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
 </template>
@@ -114,6 +111,7 @@ export default {
                 this.showAlert('Укажите описание!');
                 return;
             } 
+            this.$refs.submit.disabled = true;
             const formData = new FormData();
             formData.append('title', this.docName);
             formData.append('date', this.date);
@@ -133,6 +131,7 @@ export default {
                     this.$refs.fileInput.reset();
                     this.selectedUsers = [];
                     this.previewDoc = '';
+                    this.$refs.submit.disabled = false;
                 })
                 .catch(e => {
                     this.showAlert('Произошла ошибка!');
@@ -151,6 +150,7 @@ export default {
         authorsList: require('./innerComponents/authorsList.vue'),
         appTimer: require('./innerComponents/timer.vue'),
         presetRoutes: require('./innerComponents/presetRoutes'),
+        pdfReader: require('../_common/pdf-reader'),
     }
 }
 </script>
