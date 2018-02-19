@@ -50,6 +50,7 @@ b-container
 							placeholder="Оставьте комментарий"
 							:rows="3"
 							:max-rows="6"
+							required
 							)
 					b-button(type="submit") Отправить
 	b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
@@ -78,7 +79,7 @@ export default {
 	methods: {
 		...mapActions("docsStore", ["getDocumentById", "postVote"]),
 		submitDoc(e) {
-			if (this.selected) {
+			if (this.selected && this.comment) {
 				// post our vote to server
 				this.postVote({
 					id: this.id,
@@ -87,7 +88,9 @@ export default {
 					author: this.currentUser
 				})
 					.then(response => {
-						this.showAlert("Ваш голос успешно добавлен!");
+						let msg = '';
+						this.selected === 'resolve' ? msg = 'Вы подписали документ' : msg = 'Вы отказали в подписи';
+						this.showAlert(msg);
 						e.target.reset();
 						this.getDocumentById(this.id);
 					})

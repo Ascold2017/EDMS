@@ -1,5 +1,7 @@
 <template lang="pug">
-b-container
+div
+  h2.title Документы к подписанию
+  b-container
     b-list-group
       b-alert(variant="primary" show v-if="!loaded") Загрузка...
       b-alert(variant="danger" show v-if="loaded && !sortingData.length") Новых документов к рассмотрению нет
@@ -12,8 +14,8 @@ b-container
         .preview-item__icon(:class="iconStatus(preview.globalStatus)")
             i(class="fa fa-file-text-o" aria-hidden="true")
         h2.preview-item__title {{ preview.title }}
-        time.preview-item__date {{ preview.date }}
-        span.preview-item__author {{ preview.author }}
+        time.preview-item__date Дата публикации: {{ preview.date }}
+        span.preview-item__author Автор публикации: {{ preview.author }}
         span.preview-item__state Текущий маршрут: {{ preview.state }} / {{ preview.total }}
 </template>
 <script>
