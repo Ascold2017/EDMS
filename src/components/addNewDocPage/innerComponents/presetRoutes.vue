@@ -33,8 +33,9 @@ export default {
             presetName: '',
         };
     },
+    computed: mapGetters('usersStore', ['currentUser']),
     methods: {
-        ...mapActions('docsStore', ['createPreset']),
+        ...mapActions('docsStore', ['createPreset', 'getPresets']),
         showEditor() {
             this.$refs.routesEditor.show();
         },
@@ -45,6 +46,7 @@ export default {
             const newPreset = {
                 title: this.presetName,
                 routes: this.selectedUsers,
+                group: this.currentUser.groupInvite,
             }
             this.createPreset(newPreset)
             .then(response => {

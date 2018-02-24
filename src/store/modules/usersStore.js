@@ -46,7 +46,7 @@ const usersStore = {
             });
         },
         sendMail(context, data) {
-            return Api.sendMail(data).then(response => response);
+            return Api.sendMail(data, store.getters['headerToken']).then(response => response);
         },
     },
 };

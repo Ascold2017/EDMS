@@ -19,20 +19,20 @@ b-form(@submit.prevent="registration")
             placeholder="Ваш пароль"
             )
     b-form-group(
-        label="Введите инвайт-код группы"
-        )
-        b-form-input(
-            v-model="userData.groupInvite"
-            type="password"
-            placeholder="Ваш инвайт-код"
-            )
-    b-form-group(
-        label="Введите инвайт-код пользователя"
+        label="Введите личный код доступа"
         )
         b-form-input(
             v-model="userData.userInvite"
             type="password"
-            placeholder="Ваш инвайт-код"
+            placeholder="Ваш код доступа"
+            )
+    b-form-group(
+        label="Введите код доступа группы"
+        )
+        b-form-input(
+            v-model="userData.groupInvite"
+            type="password"
+            placeholder="код доступа группы"
             )
     b-form-group(
         label="Введите ваш email"

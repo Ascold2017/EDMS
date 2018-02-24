@@ -23,7 +23,11 @@ router.beforeResolve((to, from, next) => {
     if (!userToken) {
         console.log('to index');
         access = true;
-        next('/auth');
+        if (to.path === '/auth' || to.path === '/registration') {
+            next();
+        } else {
+            next('/auth');
+        }
     } else {
         const userRole = store.state.usersStore.user.role;
         switch (userRole) {
