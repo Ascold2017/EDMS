@@ -6,7 +6,7 @@
 					h1.title {{ documents.title }}
 			b-col(sm="12" class="mb-3")
 				b-card
-					time.text Дата первой публикации {{ documents.date }}
+					time.text Дата первой публикации {{ toDateString(+documents.date) }}
 					p.text(v-if="documents.versions.lenght > 1") Текущая версия документа {{ documents.versions[0].version }}
 					time.text(v-if="documents.versions.lenght > 1") Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
 
@@ -25,17 +25,30 @@
 							)
 		b-row
 			b-col(sm="12" lg="6")
-				b-list-group(style="max-height: 300px; overflow-y: scroll;")
-					b-list-group-item(
-						v-for="author in documents.routes"
-						:key="author._id"
-						:variant="statusVariant(author.status)"
-						)
-						p.subtitle.subtitle_small {{ author.author }}
-						p.subtitle.subtitle_small {{ author.role }}
-						b-card(v-if="author.comment" class="mt-1")
-							p.text Комментарий подписанта:
-							p.text {{ author.comment }}
+				b-tabs
+					b-tab(title="Подписавшие" v-if="signedAuthors.length")
+						b-list-group(style="max-height: 300px; overflow-y: scroll;")
+							b-list-group-item(
+								v-for="author in signedAuthors"
+								:key="author._id"
+								variant="success"
+								)
+								p.subtitle.subtitle_small {{ author.author }}
+								p.subtitle.subtitle_small {{ author.role }}
+								p.subtitle.subtitle_small Время подписи: {{ toDateString(+author.dateSigning) }}
+								b-card(v-if="author.comment" class="mt-1")
+									p.text Комментарий подписанта:
+									p.text {{ author.comment }}
+					b-tab(title="В очереди на подпись" v-if="waitingAuthors.length")
+						b-list-group(style="max-height: 300px; overflow-y: scroll;")
+							b-list-group-item(
+								v-for="author in waitingAuthors"
+								:key="author._id"
+								variant="primary"
+								)
+								p.subtitle.subtitle_small {{ author.author }}
+								p.subtitle.subtitle_small {{ author.role }}
+		
 			b-col(sm="12" lg="6")
 				b-alert(
 					variant="success"
@@ -55,9 +68,8 @@
 						variant="danger"
 						show
 						) Документ отказан в подписи. Вы можете его доработать или закрыть.
-					b-card.mb-3
-						p.subtitle.subtitle_small Вам отказал(а) в подписи {{ rejectReason.name }}:
-						p.subtitle.subtitle_small Причина отказа: <br> {{ rejectReason.reason }}
+						b-card.mb-3
+							p.subtitle.subtitle_small {{ documents.versions[0].rejectReason }}
 					b-button(
 						id="toArchive"
 						@click="closeDocument"
@@ -75,6 +87,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import toDateString from '../modulesJs/toDateString';
 export default {
   data() {
     return {
@@ -83,17 +96,19 @@ export default {
   },
   computed: {
     ...mapGetters("docsStore", ["documents"]),
-		rejectReason() {
-			const rejectAuthor = this.documents.routes.find(route => route.status === 'reject');
-			if (!rejectAuthor) return { name: '', reason: ''};
-			return { name: rejectAuthor.author, reason: rejectAuthor.comment ? rejectAuthor.comment : 'Причина не указана' };
-		},
 		closerViewer() {
 			return this.documents.routes.find(route => route.status === 'waiting').author;
+		},
+		signedAuthors() {
+			return this.documents.routes.filter(route => route.status === 'resolve');
+		},
+		waitingAuthors() {
+			return this.documents.routes.filter(route => route.status === 'waiting');
 		}
   },
   methods: {
-    ...mapActions("docsStore", ["getMyDocumentById", 'closeDocumentById']),
+		...mapActions("docsStore", ["getMyDocumentById", 'closeDocumentById']),
+		toDateString,
     statusVariant(state) {
       switch (state) {
         case "resolve":

@@ -7,71 +7,84 @@ b-container
 		b-col(sm="12" class="mb-3")
 			b-card
 				p.text Автор публикации {{ documents.author}}
-				time.text Дата первой публикации {{ documents.date }}
-				p.text(v-if="documents.versions.length > 1") Текущая версия документа {{ documents.versions[0].version }}
-				time.text(v-if="documents.versions.length > 1") Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
+				time.text Дата первой публикации {{ toDateString(+documents.date) }}
+				div(v-if="documents.versions.length > 1")
+					p.text Текущая версия документа {{ documents.versions[0].version }}
+					time.text Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
 	b-row
 		b-col
 			b-tabs(class="mb-3")
 				b-tab(
-					v-for="document in documents.versions"
+					title="Последняя версия документа"
+					style="padding: 20px 0 0")
+					p.text Описание: {{ documents.versions[0].description }}
+					pdf-reader(
+						:src="documents.versions[0].file"
+						)
+					b-row
+						b-col(sm="12" lg="6")
+							b-tabs(v-if="!rejected")
+								b-tab(title="Подписавшие" v-if="signedAuthors.length")
+									b-list-group(style="max-height: 300px; overflow-y: scroll;")
+										b-list-group-item(
+											v-for="author in signedAuthors"
+											:key="author._id"
+											variant="success"
+											)
+											p.subtitle.subtitle_small {{ author.author }}
+											p.subtitle.subtitle_small {{ author.role }}
+											p.subtitle.subtitle_small Время подписи: {{ toDateString(+author.dateSigning) }}
+											b-card(v-if="author.comment" class="mt-1")
+												p.text Комментарий подписанта:
+												p.text {{ author.comment }}
+								b-tab(title="В очереди на подпись")
+									b-list-group(style="max-height: 300px; overflow-y: scroll;")
+										b-list-group-item(
+											v-for="author in waitingAuthors"
+											:key="author._id"
+											variant="primary"
+											)
+											p.subtitle.subtitle_small {{ author.author }}
+											p.subtitle.subtitle_small {{ author.role }}
+											b-card(v-if="author.comment" class="mt-1")
+												p.text Комментарий подписанта:
+												p.text {{ author.comment }}
+							b-alert( show variant="danger" v-else) Документ отказан в подписи Вами
+						b-col(sm="12" lg="6")
+							b-form(@submit.prevent="submitDoc")
+								b-card
+									b-form-group(label="Выберите действие")
+										b-form-radio-group(
+											v-model="selected"
+											name="radioSubComponent"
+											:options="options"
+											)
+									b-form-group(label="Ваш комментарий")
+										b-form-textarea(
+											v-model="comment"
+											placeholder="Оставьте комментарий"
+											:rows="3"
+											:max-rows="6"
+											required
+											)
+									b-button(type="submit") Отправить
+				b-tab(
+					v-if="documents.versions.length && documents.versions.length > 1"
+					v-for="document in documents.versions.filter((doc, i) => i !== 0)"
 					:key="document._id"
-					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
+					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0"
+					)
+					p.text {{ document.rejectReason }}
 					p.text Описание: {{ document.description }}
-
 					pdf-reader(
 						:src="document.file"
 						)
-	b-row
-		b-col(sm="12" lg="6")
-			b-tabs
-				b-tab(title="Подписавшие" v-if="signedAuthors.length")
-					b-list-group(style="max-height: 300px; overflow-y: scroll;")
-						b-list-group-item(
-							v-for="author in signedAuthors"
-							:key="author._id"
-							variant="success"
-							)
-							p.subtitle.subtitle_small {{ author.author }}
-							p.subtitle.subtitle_small {{ author.role }}
-							b-card(v-if="author.comment" class="mt-1")
-								p.text Комментарий подписанта:
-								p.text {{ author.comment }}
-				b-tab(title="В очереди на подпись")
-					b-list-group(style="max-height: 300px; overflow-y: scroll;")
-						b-list-group-item(
-							v-for="author in waitingAuthors"
-							:key="author._id"
-							variant="primary"
-							)
-							p.subtitle.subtitle_small {{ author.author }}
-							p.subtitle.subtitle_small {{ author.role }}
-							b-card(v-if="author.comment" class="mt-1")
-								p.text Комментарий подписанта:
-								p.text {{ author.comment }}
 
-		b-col(sm="12" lg="6")
-			b-form(@submit.prevent="submitDoc")
-				b-card
-					b-form-group(label="Выберите действие")
-						b-form-radio-group(
-							v-model="selected"
-							name="radioSubComponent"
-							:options="options"
-							)
-					b-form-group(label="Ваш комментарий")
-						b-form-textarea(
-							v-model="comment"
-							placeholder="Оставьте комментарий"
-							:rows="3"
-							:max-rows="6"
-							required
-							)
-					b-button(type="submit") Отправить
 	b-modal(ref="alertModal" hide-footer) {{ infoAlert }}
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
+import toDateString from '../modulesJs/toDateString';
 export default {
 	data() {
 		return {
@@ -85,6 +98,7 @@ export default {
 			],
 			comment: "",
 			infoAlert: "",
+			rejected: false,
 		};
 	},
 	computed: {
@@ -99,6 +113,7 @@ export default {
 	},
 	methods: {
 		...mapActions("docsStore", ["getDocumentById", "postVote"]),
+		toDateString,
 		submitDoc(e) {
 			if (this.selected && this.comment) {
 				// post our vote to server
@@ -110,14 +125,13 @@ export default {
 				})
 					.then(response => {
 						let msg = '';
-						this.selected === 'resolve' ? msg = 'Вы подписали документ' : msg = 'Вы отказали в подписи';
-						this.showAlert(msg);
+						this.selected === 'reject' ? this.rejected = true : null;
+						this.showAlert(response.message);
 						e.target.reset();
 						this.getDocumentById(this.id);
 					})
 					.catch(e => {
-						console.log(e);
-						this.showAlert(`Произошла ошибка: ${e}`);
+						this.showAlert(`Произошла ошибка: ${e.message}`);
 					});
 			}
 		},

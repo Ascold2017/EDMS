@@ -114,7 +114,7 @@ export default {
             this.$refs.submit.disabled = true;
             const formData = new FormData();
             formData.append('title', this.docName);
-            formData.append('date', this.date);
+            formData.append('date', Date.now());
             formData.append('author', this.currentUser.author);
             formData.append('author_id', this.currentUser._id);
             formData.append('total', this.selectedUsers.length);
@@ -125,8 +125,8 @@ export default {
             formData.append('description', this.docDescription);
 
             this.addNewDocument(formData)
-                .then(() => {
-                    this.showAlert('Документ успешно опубликован!');
+                .then(response => {
+                    this.showAlert(response.message);
                     e.target.reset();
                     this.$refs.fileInput.reset();
                     this.selectedUsers = [];
@@ -134,7 +134,8 @@ export default {
                     this.$refs.submit.disabled = false;
                 })
                 .catch(e => {
-                    this.showAlert('Произошла ошибка!');
+                    console.log(e);
+                    this.showAlert(e.message);
                 });
         },
         showAlert(title) {

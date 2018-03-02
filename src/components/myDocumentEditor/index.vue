@@ -87,7 +87,7 @@ export default {
             this.file = file;
             this.previewDoc = `${URL.createObjectURL(file)}`;
         },
-        addNewVersion() {
+        addNewVersion(e) {
             const formData = new FormData();
             formData.append('id', this.documents._id);
             formData.append('date', this.date);
@@ -96,13 +96,13 @@ export default {
             formData.append('description', this.docDescription);
 
             this.addNewDocumentVersion(formData)
-                .then(() => {
-                    this.showAlert('Документ успешно опубликован!');
+                .then(response => {
+                    this.showAlert(response.message);
                     e.target.reset();
                     this.$refs.fileInput.reset();
                 })
                 .catch(e => {
-                    this.showAlert('Произошла ошибка!');
+                    this.showAlert(e.message);
                 });
         },
         showAlert(title) {
@@ -119,6 +119,7 @@ export default {
     },
     components: {
         appTimer: require('../addNewDocPage/innerComponents/timer.vue'),
+        pdfReader: require('../_common/pdf-reader'),
     }
 }
 </script>

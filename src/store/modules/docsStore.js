@@ -20,7 +20,7 @@ const docsStore = {
     actions: {
         getPreviews(context) {
             return Api.documentsApi.getPreviewsJSON(store.getters['headerToken'])
-                .then(response => { console.log('response: ', response); context.state.documents = response; })
+                .then(response => { context.state.documents = response; })
                 .catch(e => { console.error(e); throw new Error(e); });
         },
         getDocumentById(context, id) {
@@ -35,22 +35,18 @@ const docsStore = {
         },
         postVote(context, data) {
             return Api.documentsApi.postVote(data, store.getters['headerToken'])
-                .then(response => response.data)
-                .catch(e => { console.error(e); throw new Error(e); });
+                .then(response => response)
+                .catch(e => { throw new Error(e.message); });
         },
         addNewDocument(context, document) {
-            return new Promise((resolve, reject) => {
-                Api.documentsApi.postNewDocument(document, store.getters['headerToken'])
-                    .then(() => resolve())
-                    .catch(e => reject(e));
-            }).catch(e => { console.error(e); return e; });
+            return Api.documentsApi.postNewDocument(document, store.getters['headerToken'])
+                .then(response => response)
+                .catch(e => { throw new Error(e.message); });
         },
         addNewDocumentVersion(context, data) {
-            return new Promise((resolve, reject) => {
-                Api.documentsApi.postNewVersion(data, store.getters['headerToken'])
-                    .then(() => resolve())
-                    .catch(e => reject(e));
-            }).catch(e => { console.error(e); return e; });
+            return Api.documentsApi.postNewVersion(data, store.getters['headerToken'])
+                .then(response => response)
+                .catch(e => { throw new Error(e.message); });
         },
         getPresets(context) {
             Api.documentsApi.getPresets(store.getters['headerToken'])
