@@ -12,11 +12,12 @@
                 .preview-item__icon(:class="preview.globalStatus")
                     i(class="fa fa-file-text-o" aria-hidden="true")
                 h2.preview-item__title {{ preview.title }}
-                time.preview-item__date {{ preview.date }}
+                time.preview-item__date {{ toDateString(+preview.date) }}
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import toDateString from '../modulesJs/toDateString';
 export default {
     data() {
       return {
@@ -26,11 +27,14 @@ export default {
     computed: {
         ...mapGetters('docsStore', ['documents']),
         sortingData() {
-            return this.documents;
+            if (!this.documents.length) return [];
+            return this.documents.sort(
+                (prev, next) => prev.date <= next.date);
         },
     },
     methods: {
         ...mapActions('docsStore', ['getArchiveDocuments']),
+        toDateString,
     },
     created() {
         this.getArchiveDocuments()

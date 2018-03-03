@@ -90,7 +90,7 @@ export default {
         addNewVersion(e) {
             const formData = new FormData();
             formData.append('id', this.documents._id);
-            formData.append('date', this.date);
+            formData.append('date', Date.now());
             formData.append('file', this.file);
             formData.append('version', this.docVersion);
             formData.append('description', this.docDescription);

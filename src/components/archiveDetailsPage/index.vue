@@ -6,14 +6,17 @@ b-container
 				h1.title {{ documents.title }}
 	b-row
 		b-col
+			b-alert(show v-if="documents.globalStatus==='resolved'" variant="success") Документ успешно принят
+			b-alert(show v-else variant="warning") Документ отказан в подписи и помещен в архив
 			b-tabs(class="mb-3")
 				b-tab(
 					v-for="document in documents.versions"
 					:key="document._id"
 					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
-					time.text Дата публикации {{ document.date }}
+					time.text Дата публикации {{ toDateString(+document.date) }}
 					p.details__description Описание: {{ document.description }}
-					pdfReader(
+					p(v-if="document.rejectReason").details__description {{ document.rejectReason }}
+					pdf-reader(
 						:src="document.file"
 						v-if="document.file")
 				
@@ -27,6 +30,7 @@ b-container
 					)
 					p.subtitle.subtitle_small {{ author.author }}
 					p.subtitle.subtitle_small {{ author.role }}
+					p.subtitle.subtitle_small Время подписи: {{ toDateString(+author.dateSigning) }}
 					b-card(v-if="author.comment" class="mt-1")
 						p.text Комментарий подписанта:
 						p.text {{ author.comment }}
@@ -34,6 +38,7 @@ b-container
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import toDateString from '../modulesJs/toDateString';
 export default {
 	data() {
 		return {
@@ -45,6 +50,7 @@ export default {
 	},
 	methods: {
 		...mapActions("docsStore", ["getDocumentById"]),
+		toDateString,
 		statusVariant(state) {
 			switch (state) {
 				case "resolve":

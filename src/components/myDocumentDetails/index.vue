@@ -14,11 +14,19 @@
 			b-col
 				b-tabs(class="mb-3")
 					b-tab(
-						v-for="document in documents.versions"
+						title="Последняя версия документа"
+						style="padding: 20px 0 0")
+						p.text Описание: {{ documents.versions[0].description }}
+						pdf-reader(
+							:src="documents.versions[0].file"
+							)
+					b-tab(
+						v-if="documents.versions.length && documents.versions.length > 1"
+						v-for="document in documents.versions.filter((doc, i) => i !== 0)"
 						:key="document._id"
-						:title="'Версия документа: ' + document.version"
-						style="padding: 20px 0 0"
+						:title="'Версия документа: ' + document.version" style="padding: 20px 0 0"
 						)
+						p.text {{ document.rejectReason }}
 						p.text Описание: {{ document.description }}
 						pdf-reader(
 							:src="document.file"
