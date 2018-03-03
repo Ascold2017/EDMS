@@ -2,11 +2,13 @@ import axios from 'axios';
 import usersApi from './usersApi';
 import documentsApi from './documentsApi';
 import groupsApi from './groupsApi';
+import statApi from './statApi';
 
 export const Api = {
     usersApi,
     documentsApi,
     groupsApi,
+    statApi,
     logIn(data) {
         return axios.post('http://localhost:3000/api/signIn', data)
             .then(response => response.data)

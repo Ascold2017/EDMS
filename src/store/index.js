@@ -6,6 +6,7 @@ Vue.use(Vuex);
 import usersStore from './modules/usersStore';
 import docsStore from './modules/docsStore';
 import groupsStore from './modules/groupsStore';
+import statStore from './modules/statStore';
 import { Api } from '../Api/Api';
 
 export const store = new Vuex.Store({
@@ -25,6 +26,7 @@ export const store = new Vuex.Store({
         usersStore,
         docsStore,
         groupsStore,
+        statStore,
     },
     actions: {
         initApp(context) {
