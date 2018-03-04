@@ -30,7 +30,7 @@ b-container
 					)
 					p.subtitle.subtitle_small {{ author.author }}
 					p.subtitle.subtitle_small {{ author.role }}
-					p.subtitle.subtitle_small Время подписи: {{ toDateString(+author.dateSigning) }}
+					p.subtitle.subtitle_small(v-if="author.dateSigning") Время подписи: {{ toDateString(+author.dateSigning) }}
 					b-card(v-if="author.comment" class="mt-1")
 						p.text Комментарий подписанта:
 						p.text {{ author.comment }}
@@ -49,7 +49,7 @@ export default {
 		...mapGetters("docsStore", ["documents"]),
 	},
 	methods: {
-		...mapActions("docsStore", ["getDocumentById"]),
+		...mapActions("docsStore", ["getArchiveDocumentById"]),
 		toDateString,
 		statusVariant(state) {
 			switch (state) {
@@ -65,7 +65,7 @@ export default {
 		},
 	},
 	created() {
-		this.getDocumentById(this.id)
+		this.getArchiveDocumentById(this.id)
 		.catch(e => {
 			console.log(e);
 			this.$router.push('404');

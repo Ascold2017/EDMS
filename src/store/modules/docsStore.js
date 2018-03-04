@@ -68,6 +68,11 @@ const docsStore = {
                 .then(response => { context.state.documents = response; return; })
                 .catch(e => { console.log(e); throw new Error(e); });
         },
+        getArchiveDocumentById(context, id) {
+            return Api.documentsApi.getArchiveDocument(id, store.getters['headerToken'])
+                .then(response => { context.state.documents = response; return; })
+                .catch(e => { console.log(e); throw new Error(e); });
+        },
         closeDocumentById(context, id) {
             return Api.documentsApi.closeDocumentById(id, store.getters['headerToken'])
                 .catch(e => { throw new Error(e); });

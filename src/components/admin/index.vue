@@ -47,26 +47,29 @@
                                     h4 {{ сurrUser.author ? сurrUser.author : 'Не зарегистрирован' }}
                                     small Роль: {{ сurrUser.role }}
                 b-tab(title="Статистика группы")
-                    h3.title.mt-3 Статистика
-                    b-form-group(label="Выбрать параметр статистики")
-                        b-form-select(:options="statOptions" v-model="choosedStat")
-                    b-form-group(label="Выбрать промежуток" v-if="choosedStat === 'docsStat'")
-                        date-range(
-                            class="calendar"
-                            :first-day-of-week="1"
-                            v-model="date"
-                            lang="ru")
-                        b-form-group(label="Статистика документооборота" v-if="loadedStat")
-                            b-form-group(label="Создано документов за период: ")
-                                | {{ docsCreated}}
-                            b-form-group(label="Подписано документов за период: ")
-                                | {{ docsSigned }}
-                            b-form-group(label="Подписано документов за период: ")
-                                | {{ docsRejected }}
-
-                    b-button(type="button" @click="submitStat" v-if="choosedStat") Получить статистику
-
-
+                    b-form-group(label="Выбрать промежуток среза статистики").mt-3
+                        b-button(type="button" @click="showCalendar = !showCalendar") Открыть календарь
+                    h4 Статистика за {{ title }}
+                    p Создано документов за период: {{ docsCreated}}
+                    p Подписано документов за период: {{ docsSigned }}
+                    p Отказано документов за период: {{ docsRejected }}
+                    p Среднее время между созданием и финальным подписанием документ: {{ docsTimingResolve }}
+                    p Среднее время одной подписи: {{ docsTimingSign }}
+                    h4 Статистика по ролям:
+                    b-table(
+                        striped
+                        bordered
+                        hover
+                        :fields="usersStat.fields"
+                        :items="usersStat.items"
+                        )
+            b-modal(v-model='showCalendar' title="Выбрать промежуток среза статистики" hide-footer )
+                date-range(
+                    class="calendar"
+                    :first-day-of-week="1"
+                    v-model="date"
+                    lang="ru")
+                b-button(type="button" @click="submitStat") Получить статистику
             b-modal(ref="modalSend" :title="modalTitle" hide-footer)
                 b-form(@submit.prevent="sendInvite")
 
@@ -91,8 +94,9 @@
 
 <script>
 import randomizer from "../modulesJs/randomizer";
-import {DateRange} from 'vue-date-range';
-import { mapGetters, mapActions } from "vuex";
+import toDateString from '../modulesJs/toDateString';
+import { DateRange } from 'vue-date-range';
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
     data() {
         return {
@@ -111,20 +115,23 @@ export default {
                 startDate: null,
                 endDate: null,
             },
-            statOptions: [
-                {value: '', text: 'Не выбрано'},
-                {value: 'docsStat', text: 'Статистика документооборота'},
-                {value: 'timeStat', text: 'Временная статистика'},
-                {value: 'usersStart', text: 'Статистика ролей'}
-                ],
-            choosedStat: '',
             loadedStat: false,
+            showCalendar: false,
+            title: 'все время',
         };
     },
     computed: {
         ...mapGetters("groupsStore", ["groups"]),
         ...mapGetters('usersStore',['currentUser']),
-        ...mapGetters('statStore', ['docsCreated', 'docsSigned', 'docsRejected']),
+        ...mapGetters('statStore',
+            [
+                'docsCreated',
+                'docsSigned',
+                'docsRejected',
+                'docsTimingSign',
+                'docsTimingResolve',
+                'usersStat',
+            ]),
         users() {
             return this.groups[0].users;
         },
@@ -136,6 +143,8 @@ export default {
         ...mapActions("groupsStore", ["createNewUser", "getCurrentGroup"]),
         ...mapActions("usersStore", ["sendMail"]),
         ...mapActions('statStore', ['getDocsStat']),
+        ...mapMutations('statStore', ['setRange']),
+        toDateString,
         generateInvite() {
             return randomizer(5);
         },
@@ -174,17 +183,22 @@ export default {
             });
         },
         submitStat() {
-            this.getDocsStat({ start: Date.parse(this.date.startDate._d), end: Date.parse(this.date.endDate._d)})
-            .then(response => {
-                this.loadedStat = true;
-            });
+            const start = Date.parse(this.date.startDate._d);
+            const end = Date.parse(this.date.endDate._d);
+            this.title = `период с ${this.toDateString(start)} по ${this.toDateString(end)}`
+            this.setRange({ start, end });
+            this.showCalendar = false;
         }
     },
     created() {
         this.getCurrentGroup();
+        this.getDocsStat()
+            .then(response => {
+                this.loadedStat = true;
+            });;
     },
     components: {
-        DateRange,
+        DateRange
     }
 };
 </script>

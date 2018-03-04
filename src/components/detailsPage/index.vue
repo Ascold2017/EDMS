@@ -10,7 +10,7 @@ b-container
 				time.text Дата первой публикации {{ toDateString(+documents.date) }}
 				div(v-if="documents.versions.length > 1")
 					p.text Текущая версия документа {{ documents.versions[0].version }}
-					time.text Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
+					time.text Дата публикации версии {{ documents.versions[0].version }}: {{ toDateString(+documents.versions[0].date) }}
 	b-row
 		b-col
 			b-tabs(class="mb-3")
