@@ -45,8 +45,8 @@
                                 b-list-group-item(v-for="сurrUser in users" :key="сurrUser._id")
                                     b-btn(v-if="сurrUser.role !== 'Admin'" @click="openSendModal(сurrUser)").mb-1 Отправить доступ
                                     h4 {{ сurrUser.author ? сurrUser.author : 'Не зарегистрирован' }}
-                                    small Роль: {{ сurrUser.role }}
-                                    small(v-if="currUser.dateRegistration") Зарегистрирован: {{ toDateString(+currUser.dateRegistration) }}
+                                    p Роль: {{ сurrUser.role }}
+                                    p(v-if="сurrUser.dateRegistration") Зарегистрирован: {{ toDateString(+сurrUser.dateRegistration) }}
                 b-tab(title="Статистика группы")
                     b-form-group(label="Выбрать промежуток среза статистики").mt-3
                         b-button(type="button" @click="showCalendar = !showCalendar") Открыть календарь
