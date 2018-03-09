@@ -8,32 +8,10 @@ b-container
 		b-col
 			b-alert(show v-if="document.globalStatus==='resolved'" variant="success") Документ успешно принят
 			b-alert(show v-else variant="warning") Документ отказан в подписи и помещен в архив
-			b-tabs(class="mb-3")
-				b-tab(
-					v-for="version in document.versions"
-					:key="version._id"
-					:title="'Версия документа: ' + version.version" style="padding: 20px 0 0")
-					time.text Дата публикации {{ toDateString(+version.date) }}
-					p.details__description Описание: {{ version.description }}
-					p(v-if="version.rejectReason").details__description {{ version.rejectReason }}
-					pdf-reader(
-						:src="version.file"
-						v-if="version.file")
-				
+			doc-tabs
 	b-row
 		b-col(sm="12")
-			b-list-group(style="max-height: 300px; overflow-y: scroll;")
-				b-list-group-item(
-					v-for="author in document.routes"
-					:key="author._id"
-					:variant="statusVariant(author.status)"
-					)
-					p.subtitle.subtitle_small {{ author.author }}
-					p.subtitle.subtitle_small {{ author.role }}
-					p.subtitle.subtitle_small(v-if="author.dateSigning") Время подписи: {{ toDateString(+author.dateSigning) }}
-					b-card(v-if="author.comment" class="mt-1")
-						p.text Комментарий подписанта:
-						p.text {{ author.comment }}
+			signers-list(:rejected="false")
 </template>
 
 <script>
@@ -51,18 +29,6 @@ export default {
     methods: {
         ...mapActions('docsStore', ['getArchiveDocumentById']),
         toDateString,
-        statusVariant(state) {
-            switch (state) {
-            case 'resolve':
-                return 'success';
-            case 'reject':
-                return 'danger';
-            case 'waiting':
-                return 'primary';
-            default:
-                return 'warning';
-            }
-        },
     },
     created() {
         this.getArchiveDocumentById(this.id)
@@ -71,7 +37,8 @@ export default {
         });
     },
     components: {
-        pdfReader: require('../_common/pdf-reader'),
+        docTabs: require('../_common/docTabs'),
+        signersList: require('../_common/signersList'),
     },
 };
 </script>

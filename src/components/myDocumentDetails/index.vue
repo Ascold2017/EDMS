@@ -9,54 +9,13 @@
 					time.text Дата первой публикации {{ toDateString(+document.date) }}
 					p.text(v-if='document.versions.lenght > 1') Текущая версия документа {{ document.versions[0].version }}
 					time.text(v-if='document.versions.lenght > 1') Дата публикации версии {{ document.versions[0].version }}: {{ document.versions[0].date }}
-
 		b-row
 			b-col
-				b-tabs(class='mb-3')
-					b-tab(
-						title='Последняя версия документа'
-						style='padding: 20px 0 0')
-						p.text Описание: {{ document.versions[0].description }}
-						pdf-reader(
-							:src='document.versions[0].file'
-							)
-					b-tab(
-						v-if='document.versions.length && document.versions.length > 1'
-						v-for='version in document.versions.filter((doc, i) => i !== 0)'
-						:key='version._id'
-						:title='"Версия документа: " + version.version' style='padding: 20px 0 0'
-						)
-						p.text {{ version.rejectReason }}
-						p.text Описание: {{ version.description }}
-						pdf-reader(
-							:src='version.file'
-							)
+				doc-tabs
 		b-row
-			b-col(sm='12' lg='6')
-				b-tabs
-					b-tab(title='Подписавшие' v-if='signedAuthors.length')
-						b-list-group(style='max-height: 300px; overflow-y: scroll;')
-							b-list-group-item(
-								v-for='author in signedAuthors'
-								:key='author._id'
-								variant='success'
-								)
-								p.subtitle.subtitle_small {{ author.author }}
-								p.subtitle.subtitle_small {{ author.role }}
-								p.subtitle.subtitle_small Время подписи: {{ toDateString(+author.dateSigning) }}
-								b-card(v-if='author.comment' class='mt-1')
-									p.text Комментарий подписанта:
-									p.text {{ author.comment }}
-					b-tab(title='В очереди на подпись' v-if='waitingAuthors.length')
-						b-list-group(style='max-height: 300px; overflow-y: scroll;')
-							b-list-group-item(
-								v-for='author in waitingAuthors'
-								:key='author._id'
-								variant='primary'
-								)
-								p.subtitle.subtitle_small {{ author.author }}
-								p.subtitle.subtitle_small {{ author.role }}
-		
+			b-col
+				signers-list(:rejected="false")
+			// document info
 			b-col(sm='12' lg='6')
 				b-alert(
 					variant='success'
@@ -107,12 +66,6 @@ export default {
     closerViewer() {
       return this.document.routes.find(route => route.status === 'waiting').author;
     },
-    signedAuthors() {
-      return this.document.routes.filter(route => route.status === 'resolve');
-    },
-    waitingAuthors() {
-      return this.document.routes.filter(route => route.status === 'waiting');
-    }
   },
   methods: {
     ...mapActions('docsStore', ['getMyDocumentById', 'closeDocumentById']),
@@ -140,7 +93,8 @@ export default {
     });
   },
   components: {
-    pdfReader: require('../_common/pdf-reader')
+		docTabs: require('../_common/docTabs'),
+		signersList: require('../_common/signersList')
   }
 };
 </script>
