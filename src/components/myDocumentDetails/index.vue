@@ -70,18 +70,6 @@ export default {
   methods: {
     ...mapActions('docsStore', ['getMyDocumentById', 'closeDocumentById']),
     toDateString,
-    statusVariant(state) {
-      switch (state) {
-        case 'resolve':
-          return 'success';
-        case 'reject':
-          return 'danger';
-        case 'waiting':
-          return 'primary';
-        default:
-          return 'warning';
-      }
-    },
     closeDocument() {
       this.closeDocumentById(this.id);
     }
