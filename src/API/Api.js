@@ -12,12 +12,12 @@ export const Api = {
   logIn (data) {
     return axios.post('/api/signIn', data)
       .then(response => response.data)
-      .catch(e => { console.error(e.response.error); throw new Error(e.response.data.error) })
+      .catch(e => { throw new Error(e.response.data.error) })
   },
   logout () {
     return axios.post('/api/logout')
       .then(response => response.data)
-      .catch(e => { console.error(e); throw new Error(e) })
+      .catch(e => { throw new Error(e) })
   },
   sendMail (body, token) {
     return axios.post('/api/mail', body, token)
