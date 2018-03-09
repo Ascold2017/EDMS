@@ -134,7 +134,6 @@ export default {
           this.$refs.submit.disabled = false;
         })
         .catch(e => {
-          console.log(e);
           this.showAlert(e.message);
         });
     },

@@ -3,12 +3,12 @@
 		b-row
 			b-col(sm='12' class='mb-3')
 				b-card
-					h1.title {{ documents.title }}
+					h1.title {{ document.title }}
 			b-col(sm='12' class='mb-3')
 				b-card
-					time.text Дата первой публикации {{ toDateString(+documents.date) }}
-					p.text(v-if='documents.versions.lenght > 1') Текущая версия документа {{ documents.versions[0].version }}
-					time.text(v-if='documents.versions.lenght > 1') Дата публикации версии {{ documents.versions[0].version }}: {{ documents.versions[0].date }}
+					time.text Дата первой публикации {{ toDateString(+document.date) }}
+					p.text(v-if='document.versions.lenght > 1') Текущая версия документа {{ document.versions[0].version }}
+					time.text(v-if='document.versions.lenght > 1') Дата публикации версии {{ document.versions[0].version }}: {{ document.versions[0].date }}
 
 		b-row
 			b-col
@@ -16,20 +16,20 @@
 					b-tab(
 						title='Последняя версия документа'
 						style='padding: 20px 0 0')
-						p.text Описание: {{ documents.versions[0].description }}
+						p.text Описание: {{ document.versions[0].description }}
 						pdf-reader(
-							:src='documents.versions[0].file'
+							:src='document.versions[0].file'
 							)
 					b-tab(
-						v-if='documents.versions.length && documents.versions.length > 1'
-						v-for='document in documents.versions.filter((doc, i) => i !== 0)'
-						:key='document._id'
-						:title='"Версия документа: " + document.version' style='padding: 20px 0 0'
+						v-if='document.versions.length && document.versions.length > 1'
+						v-for='version in document.versions.filter((doc, i) => i !== 0)'
+						:key='version._id'
+						:title='"Версия документа: " + version.version' style='padding: 20px 0 0'
 						)
-						p.text {{ document.rejectReason }}
-						p.text Описание: {{ document.description }}
+						p.text {{ version.rejectReason }}
+						p.text Описание: {{ version.description }}
 						pdf-reader(
-							:src='document.file'
+							:src='version.file'
 							)
 		b-row
 			b-col(sm='12' lg='6')
@@ -60,24 +60,24 @@
 			b-col(sm='12' lg='6')
 				b-alert(
 					variant='success'
-					v-if='documents.globalStatus === "resolved"'
+					v-if='document.globalStatus === "resolved"'
 					class='mb-0'
 					show
 					) Документ успешно подписан, его можно найти в 
-					router-link(:to='"/edms/archive/" + documents._id') Архиве
+					router-link(:to='"/edms/archive/" + document._id') Архиве
 				b-alert(
 					variant='primary'
-					v-if='documents.globalStatus === "waiting"'
+					v-if='document.globalStatus === "waiting"'
 					class='mb-0'
 					show
 					) Документ на стадии рассмотрения. Сейчас его рассматривает: {{ closerViewer }}
-				div(v-if='documents.globalStatus === "rejected"')
+				div(v-if='document.globalStatus === "rejected"')
 					b-alert(
 						variant='danger'
 						show
 						) Документ отказан в подписи. Вы можете его доработать или закрыть.
 						b-card.mb-3
-							p.subtitle.subtitle_small {{ documents.versions[0].rejectReason }}
+							p.subtitle.subtitle_small {{ document.versions[0].rejectReason }}
 					b-button(
 						id='toArchive'
 						@click='closeDocument'
@@ -103,15 +103,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('docsStore', ['documents']),
+    ...mapGetters('docsStore', ['document']),
     closerViewer() {
-      return this.documents.routes.find(route => route.status === 'waiting').author;
+      return this.document.routes.find(route => route.status === 'waiting').author;
     },
     signedAuthors() {
-      return this.documents.routes.filter(route => route.status === 'resolve');
+      return this.document.routes.filter(route => route.status === 'resolve');
     },
     waitingAuthors() {
-      return this.documents.routes.filter(route => route.status === 'waiting');
+      return this.document.routes.filter(route => route.status === 'waiting');
     }
   },
   methods: {
@@ -130,13 +130,12 @@ export default {
       }
     },
     closeDocument() {
-      console.log('close!', this.id);
       this.closeDocumentById(this.id);
     }
   },
   created() {
-    this.getMyDocumentById(this.id).catch(e => {
-      console.log(e);
+		this.getMyDocumentById(this.id)
+		.catch(e => {
       this.$router.push('404');
     });
   },

@@ -13,12 +13,6 @@ import AppFooter from './components/_common/footer';
 import { mapActions, mapGetters } from 'vuex';
 export default {
     name: 'app',
-    computed: {
-
-    },
-    methods: {
-        ...mapActions('usersStore', ['getCurrentUser']),
-    },
     components: {
         AppHeader,
         AppFooter,

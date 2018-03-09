@@ -1,4 +1,4 @@
-import { Api } from './../../Api/Api'
+import { Api } from './../../API-dev/Api'
 import { store } from '../index'
 
 const usersStore = {
@@ -12,7 +12,6 @@ const usersStore = {
       return state.data
     },
     currentUser (state) {
-      console.log(state.user)
       return state.user
     }
   },
@@ -29,12 +28,10 @@ const usersStore = {
           context.state.data = response
         })
         .catch(e => {
-          console.log(e)
           return []
         })
     },
     getCurrentUser (context) {
-      console.log(store.state.token)
       return new Promise((resolve, reject) => {
         Api.usersApi
           .getCurrentUser(store.getters['headerToken'])
@@ -46,7 +43,8 @@ const usersStore = {
       })
     },
     sendMail (context, data) {
-      return Api.sendMail(data, store.getters['headerToken']).then(response => response)
+      return Api.sendMail(data, store.getters['headerToken'])
+        .then(response => response)
     }
   }
 }

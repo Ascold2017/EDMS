@@ -3,28 +3,28 @@ b-container
 	b-row
 		b-col
 			b-card.mb-3
-				h1.title {{ documents.title }}
+				h1.title {{ document.title }}
 	b-row
 		b-col
-			b-alert(show v-if="documents.globalStatus==='resolved'" variant="success") Документ успешно принят
+			b-alert(show v-if="document.globalStatus==='resolved'" variant="success") Документ успешно принят
 			b-alert(show v-else variant="warning") Документ отказан в подписи и помещен в архив
 			b-tabs(class="mb-3")
 				b-tab(
-					v-for="document in documents.versions"
-					:key="document._id"
-					:title="'Версия документа: ' + document.version" style="padding: 20px 0 0")
-					time.text Дата публикации {{ toDateString(+document.date) }}
-					p.details__description Описание: {{ document.description }}
-					p(v-if="document.rejectReason").details__description {{ document.rejectReason }}
+					v-for="version in document.versions"
+					:key="version._id"
+					:title="'Версия документа: ' + version.version" style="padding: 20px 0 0")
+					time.text Дата публикации {{ toDateString(+version.date) }}
+					p.details__description Описание: {{ version.description }}
+					p(v-if="version.rejectReason").details__description {{ version.rejectReason }}
 					pdf-reader(
-						:src="document.file"
-						v-if="document.file")
+						:src="version.file"
+						v-if="version.file")
 				
 	b-row
 		b-col(sm="12")
 			b-list-group(style="max-height: 300px; overflow-y: scroll;")
 				b-list-group-item(
-					v-for="author in documents.routes"
+					v-for="author in document.routes"
 					:key="author._id"
 					:variant="statusVariant(author.status)"
 					)
@@ -46,7 +46,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('docsStore', ['documents']),
+        ...mapGetters('docsStore', ['document']),
     },
     methods: {
         ...mapActions('docsStore', ['getArchiveDocumentById']),
@@ -66,10 +66,9 @@ export default {
     },
     created() {
         this.getArchiveDocumentById(this.id)
-            .catch(e => {
-                console.log(e);
-                this.$router.push('404');
-            });
+        .catch(e => {
+            this.$router.push('404');
+        });
     },
     components: {
         pdfReader: require('../_common/pdf-reader'),

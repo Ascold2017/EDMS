@@ -8,18 +8,18 @@ const router = new VueRouter({
   routes,
   mode: 'history'
 })
+
 // before enter to route - check user access
 let access = false
 router.beforeResolve((to, from, next) => {
   // prevently - get user from store
   const userToken = store.state.token
-  console.log(userToken)
+
   if (access) {
     access = false
     next()
   }
   if (!userToken) {
-    console.log('to index')
     access = true
     if (to.path === '/auth' || to.path === '/registration') {
       next()
@@ -30,19 +30,16 @@ router.beforeResolve((to, from, next) => {
     const userRole = store.state.usersStore.user.role
     switch (userRole) {
       case 'Admin': {
-        console.log('to Admin')
         access = true
         next('/edms/admin')
         break
       }
       case 'superAdmin': {
-        console.log('superAdmin')
         access = true
         next('/edms/superAdmin')
         break
       }
       default: {
-        console.log('default user')
         access = true
         if (to.path !== '/edms/admin' && to.path !== '/edms/superAdmin') {
           next()

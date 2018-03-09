@@ -1,6 +1,7 @@
-import { Api } from './../../Api/Api'
+import { Api } from './../../API-dev/Api'
 import { store } from '../index'
 import msToTime from '../../components/modulesJs/msToTime'
+
 const statStore = {
   namespaced: true,
   state: {
@@ -103,7 +104,7 @@ const statStore = {
     getDocsStat (context) {
       return Api.statApi.getDocsStat(store.getters['headerToken'])
         .then(response => { context.state.docs = response })
-        .catch(e => console.error(e.message))
+        .catch(e => { throw new Error(e.message) })
     }
   }
 }

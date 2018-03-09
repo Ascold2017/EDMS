@@ -3,7 +3,7 @@ b-container
     b-row
         b-col(sm="12" class="mb-6")
             b-card
-                h1.title {{ documents.title }}
+                h1.title {{ document.title }}
                 app-timer(@dateUpdate="dateUpd")
                 
     b-row
@@ -68,7 +68,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('docsStore', ['documents']),
+        ...mapGetters('docsStore', ['document']),
     },
     methods: {
         ...mapActions('docsStore', ['addNewDocumentVersion', 'getMyDocumentById']),
@@ -89,7 +89,7 @@ export default {
         },
         addNewVersion(e) {
             const formData = new FormData();
-            formData.append('id', this.documents._id);
+            formData.append('id', this.document._id);
             formData.append('date', Date.now());
             formData.append('file', this.file);
             formData.append('version', this.docVersion);
@@ -113,7 +113,6 @@ export default {
     created() {
         this.getMyDocumentById(this.id)
             .catch(e => {
-                console.log(e);
                 this.$router.push('404');
             });
     },

@@ -38,7 +38,6 @@ export default {
     },
     watch: {
         selectedUsers(changingList) {
-            console.log(changingList);
             changingList.map(item => {
                 // update canSee
                 changingList.indexOf(item) === 0 ? item.canSee = 'yes' : item.canSee = 'no';

@@ -1,4 +1,4 @@
-import { Api } from './../../Api/Api'
+import { Api } from './../../API-dev/Api'
 import usersStore from './usersStore'
 import { store } from '../index'
 
@@ -19,27 +19,26 @@ const groupsStore = {
     },
     getCurrentGroup (context) {
       const groupInvite = usersStore.state.user.groupInvite
-      console.log('get user in getCurrentGroup', groupInvite)
       if (groupInvite) {
         return Api.groupsApi.getGroupByToken(usersStore.state.user.groupInvite, store.getters['headerToken'])
           .then(response => { context.state.data = response; return })
-          .catch(e => { console.log(e); throw new Error(e) })
+          .catch(e => { throw new Error(e) })
       }
     },
     createNewGroup (context, group) {
       return Api.groupsApi.createNewGroup(group, store.getters['headerToken'])
         .then(response => response.data)
-        .catch(e => { console.log(e); throw new Error(e) })
+        .catch(e => { throw new Error(e) })
     },
     createNewAdmin (context, admin) {
       return Api.groupsApi.createNewAdmin(admin, store.getters['headerToken'])
         .then(response => response.data)
-        .catch(e => { console.log(e); throw new Error(e) })
+        .catch(e => { throw new Error(e) })
     },
     createNewUser (context, user) {
       return Api.usersApi.createNewUser(user, store.getters['headerToken'])
         .then(response => response.data)
-        .catch(e => { console.log(e); throw new Error(e) })
+        .catch(e => { throw new Error(e) })
     }
   }
 }

@@ -7,7 +7,7 @@ import usersStore from './modules/usersStore'
 import docsStore from './modules/docsStore'
 import groupsStore from './modules/groupsStore'
 import statStore from './modules/statStore'
-import { Api } from '../Api/Api'
+import { Api } from '../API-dev/Api'
 
 export const store = new Vuex.Store({
   state: {
@@ -29,6 +29,7 @@ export const store = new Vuex.Store({
     statStore
   },
   actions: {
+    // before init - get user token and get user info from server
     initApp (context) {
       return new Promise(resolve => {
         const token = sessionStorage.getItem('token')
@@ -41,22 +42,24 @@ export const store = new Vuex.Store({
         }
       })
     },
+    // when logout - remove token an user info
     logout (context) {
-      return Api.logout().then(response => {
-        store.state.usersStore.user = {}
-        context.state.token = ''
-        sessionStorage.removeItem('token')
-      })
+      return Api.logout()
+        .then(response => {
+          store.state.usersStore.user = {}
+          context.state.token = ''
+          sessionStorage.removeItem('token')
+        })
     },
+    // when log in - set token and create in sessionStorage browser
     logIn (context, data) {
       return Api.logIn(data)
         .then(response => {
-          console.log(' get token : ', response.token)
           context.state.token = response.token
           sessionStorage.setItem('token', response.token)
           return response.message
         })
-        .catch(error => { console.error(error); throw new Error(error) })
+        .catch(error => { throw new Error(error) })
     },
     signUp (context, data) {
       return Api.signUp(data)
