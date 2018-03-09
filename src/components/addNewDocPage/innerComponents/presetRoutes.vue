@@ -1,21 +1,21 @@
 <template lang="pug">
     b-card
         b-form-group(
-            label="Создать новый маршрут Подписантов"
+            label="Создать новый список виз"
             )
             b-btn(type="button" @click="showEditor") Открыть редактор
 
         b-modal(ref="routesEditor" title="Создать новый Маршрут" hide-footer)
             b-form(@submit.prevent.stop="createNewPreset")
                 b-form-group(
-                    label="Задайте название Маршрута"
+                    label="Задайте название Списка"
                     )
                     b-form-input(
                         id="presetname"
                         type="text"
                         v-model="presetName"
                         required
-                        placeholder="Введите название маршрута")
+                        placeholder="Введите название списка")
                 choose-authors(
                     @updateSelectedUsers="updatePresetRoute"
                     :selectedUsers="selectedUsers"
@@ -55,7 +55,6 @@ export default {
                 this.$refs.routesEditor.hide();
                 this.getPresets();
             })
-            console.log(newPreset);
         }
     },
     components: {

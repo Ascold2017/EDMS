@@ -1,21 +1,21 @@
 <template lang="pug">
     b-card.mt-3
         b-form-group(
-            label="Выстроить маршрут подписантов:"
+            label="Выстроить список виз:"
             label-for="authors")
             b-form-input(
                 type="text"
                 v-model="authorNameOrRole"
                 placeholder="Начните поиск по ФИО или Роли")
         b-form-group(
-            label="Или выберите готовый маршрут Подписантов:"
+            label="Или выберите готовый список:"
             )
             b-form-select(
                 v-model="selectedPreset"
                 :options="presetsOptions"
                 )
         b-form-group(
-            label="Список доступных Подписантов"
+            label="Список доступных ролей"
             label-for="authors")
             b-list-group(id="authors").authors-list
                 b-list-group-item(
