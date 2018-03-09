@@ -84,83 +84,82 @@ b-container
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
-import toDateString from '../modulesJs/toDateString';
+import toDateString from "../modulesJs/toDateString";
 export default {
-	data() {
-		return {
-			// get id of current document
-			id: this.$router.currentRoute.params.id,
-			// current status of doc
-			selected: "",
-			options: [
-				{ value: "resolve", text: "Подписать документ" },
-				{ value: "reject", text: "Отказать в подписи" }
-			],
-			comment: "",
-			infoAlert: "",
-			rejected: false,
-		};
-	},
-	computed: {
-		...mapGetters("docsStore", ["documents"]),
-		...mapGetters("usersStore", ["currentUser"]),
-		signedAuthors() {
-			return this.documents.routes.filter(route => route.status === 'resolve');
-		},
-		waitingAuthors() {
-			return this.documents.routes.filter(route => route.status === 'waiting');
-		}
-	},
-	methods: {
-		...mapActions("docsStore", ["getDocumentById", "postVote"]),
-		toDateString,
-		submitDoc(e) {
-			if (this.selected && this.comment) {
-				// post our vote to server
-				this.postVote({
-					id: this.id,
-					vote: this.selected,
-					comment: this.comment,
-					author: this.currentUser
-				})
-					.then(response => {
-						let msg = '';
-						this.selected === 'reject' ? this.rejected = true : null;
-						this.showAlert(response.message);
-						e.target.reset();
-						this.getDocumentById(this.id);
-					})
-					.catch(e => {
-						this.showAlert(`Произошла ошибка: ${e.message}`);
-					});
-			}
-		},
-		statusVariant(state) {
-			switch (state) {
-				case "resolve":
-					return "success";
-				case "reject":
-					return "danger";
-				case "waiting":
-					return "primary";
-				default:
-					return "warning";
-			}
-		},
-		showAlert(title) {
-			this.infoAlert = title;
-			this.$refs.alertModal.show();
-		},
-	},
-	created() {
-		this.getDocumentById(this.id)
-		.catch(e => {
-			console.log(e);
-			this.$router.push('404');
-		});
-	},
-	components: {
-		pdfReader: require('../_common/pdf-reader'),
-	},
+  data() {
+    return {
+      // get id of current document
+      id: this.$router.currentRoute.params.id,
+      // current status of doc
+      selected: "",
+      options: [
+        { value: "resolve", text: "Подписать документ" },
+        { value: "reject", text: "Отказать в подписи" }
+      ],
+      comment: "",
+      infoAlert: "",
+      rejected: false
+    };
+  },
+  computed: {
+    ...mapGetters("docsStore", ["documents"]),
+    ...mapGetters("usersStore", ["currentUser"]),
+    signedAuthors() {
+      return this.documents.routes.filter(route => route.status === "resolve");
+    },
+    waitingAuthors() {
+      return this.documents.routes.filter(route => route.status === "waiting");
+    }
+  },
+  methods: {
+    ...mapActions("docsStore", ["getDocumentById", "postVote"]),
+    toDateString,
+    submitDoc(e) {
+      if (this.selected && this.comment) {
+        // post our vote to server
+        this.postVote({
+          id: this.id,
+          vote: this.selected,
+          comment: this.comment,
+          author: this.currentUser
+        })
+          .then(response => {
+            const msg = "";
+            this.selected === "reject" ? (this.rejected = true) : null;
+            this.showAlert(response.message);
+            e.target.reset();
+            this.getDocumentById(this.id);
+          })
+          .catch(e => {
+            this.showAlert(`Произошла ошибка: ${e.message}`);
+          });
+      }
+    },
+    statusVariant(state) {
+      switch (state) {
+        case "resolve":
+          return "success";
+        case "reject":
+          return "danger";
+        case "waiting":
+          return "primary";
+        default:
+          return "warning";
+      }
+    },
+    showAlert(title) {
+      this.infoAlert = title;
+      this.$refs.alertModal.show();
+    }
+  },
+  created() {
+    this.getDocumentById(this.id).catch(e => {
+      console.log(e);
+      this.$router.push("404");
+    });
+  },
+  components: {
+    pdfReader: require("../_common/pdf-reader")
+  }
 };
 </script>

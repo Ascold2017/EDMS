@@ -1,47 +1,47 @@
-import { Api } from './../../Api/Api';
-import usersStore from './usersStore';
-import { store } from '../index';
+import { Api } from './../../Api/Api'
+import usersStore from './usersStore'
+import { store } from '../index'
 
 const groupsStore = {
-    namespaced: true,
-    state: {
-        data: [],
+  namespaced: true,
+  state: {
+    data: []
+  },
+  getters: {
+    groups (state) {
+      return state.data
+    }
+  },
+  actions: {
+    getAllGroups (context) {
+      return Api.groupsApi.getAllGroups(store.getters['headerToken'])
+        .then(response => { context.state.data = response })
     },
-    getters: {
-        groups(state) {
-            return state.data;
-        },
+    getCurrentGroup (context) {
+      const groupInvite = usersStore.state.user.groupInvite
+      console.log('get user in getCurrentGroup', groupInvite)
+      if (groupInvite) {
+        return Api.groupsApi.getGroupByToken(usersStore.state.user.groupInvite, store.getters['headerToken'])
+          .then(response => { context.state.data = response; return })
+          .catch(e => { console.log(e); throw new Error(e) })
+      }
     },
-    actions: {
-        getAllGroups(context) {
-            return Api.groupsApi.getAllGroups(store.getters['headerToken'])
-                .then(response => { context.state.data = response; });
-        },
-        getCurrentGroup(context) {
-            const groupInvite = usersStore.state.user.groupInvite;
-            console.log('get user in getCurrentGroup', groupInvite);
-            if (groupInvite) {
-                return Api.groupsApi.getGroupByToken(usersStore.state.user.groupInvite, store.getters['headerToken'])
-                    .then(response => { context.state.data = response; return; })
-                    .catch(e => { console.log(e); throw new Error(e); });
-            }
-        },
-        createNewGroup(context, group) {
-            return Api.groupsApi.createNewGroup(group, store.getters['headerToken'])
-                .then(response => response.data)
-                .catch(e => { console.log(e); throw new Error(e); });
-        },
-        createNewAdmin(context, admin) {
-            return Api.groupsApi.createNewAdmin(admin, store.getters['headerToken'])
-                .then(response => response.data)
-                .catch(e => { console.log(e); throw new Error(e); });
-        },
-        createNewUser(context, user) {
-            return Api.usersApi.createNewUser(user, store.getters['headerToken'])
-                .then(response => response.data)
-                .catch(e => { console.log(e); throw new Error(e); });
-        },
+    createNewGroup (context, group) {
+      return Api.groupsApi.createNewGroup(group, store.getters['headerToken'])
+        .then(response => response.data)
+        .catch(e => { console.log(e); throw new Error(e) })
     },
-};
+    createNewAdmin (context, admin) {
+      return Api.groupsApi.createNewAdmin(admin, store.getters['headerToken'])
+        .then(response => response.data)
+        .catch(e => { console.log(e); throw new Error(e) })
+    },
+    createNewUser (context, user) {
+      return Api.usersApi.createNewUser(user, store.getters['headerToken'])
+        .then(response => response.data)
+        .catch(e => { console.log(e); throw new Error(e) })
+    }
+  }
+}
 
-export default groupsStore;
+export default groupsStore

@@ -68,24 +68,24 @@ export default {
             },
             success: false,
             error: '',
-        }
+        };
     },
     methods: {
         ...mapActions(['signUp']),
         registration(e) {
             this.signUp({ ...this.userData })
-            .then(response => {
-                this.success = true;
-                this.error = '';
-                setTimeout(() => {
-                    this.$router.push('/');
-                }, 1000);
-            })
-            .catch(err => {
-                this.success = false;
-                this.error = err.message;
-            })
-        }
-    }
-}
+                .then(response => {
+                    this.success = true;
+                    this.error = '';
+                    setTimeout(() => {
+                        this.$router.push('/');
+                    }, 1000);
+                })
+                .catch(err => {
+                    this.success = false;
+                    this.error = err.message;
+                });
+        },
+    },
+};
 </script>

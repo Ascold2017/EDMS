@@ -20,9 +20,9 @@ import { mapGetters, mapActions } from 'vuex';
 import toDateString from '../modulesJs/toDateString';
 export default {
     data() {
-      return {
-        loaded: false,
-      }
+        return {
+            loaded: false,
+        };
     },
     computed: {
         ...mapGetters('docsStore', ['documents']),
@@ -36,10 +36,10 @@ export default {
     },
     created() {
         this.getOurDocuments()
-        .then(() => {
-            console.log(this.documents);
-            this.loaded = true;
-        });;
-    }
-}
+            .then(() => {
+                console.log(this.documents);
+                this.loaded = true;
+            }); ;
+    },
+};
 </script>

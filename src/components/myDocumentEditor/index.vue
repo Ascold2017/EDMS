@@ -68,7 +68,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters("docsStore", ["documents"]),
+        ...mapGetters('docsStore', ['documents']),
     },
     methods: {
         ...mapActions('docsStore', ['addNewDocumentVersion', 'getMyDocumentById']),
@@ -108,18 +108,18 @@ export default {
         showAlert(title) {
             this.infoAlert = title;
             this.$refs.alertModal.show();
-        }
+        },
     },
     created() {
-       this.getMyDocumentById(this.id)
-       .catch(e => {
-            console.log(e);
-            this.$router.push("404");
-        });
+        this.getMyDocumentById(this.id)
+            .catch(e => {
+                console.log(e);
+                this.$router.push('404');
+            });
     },
     components: {
         appTimer: require('../addNewDocPage/innerComponents/timer.vue'),
         pdfReader: require('../_common/pdf-reader'),
-    }
-}
+    },
+};
 </script>

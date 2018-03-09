@@ -40,39 +40,39 @@ b-container
 import { mapGetters, mapActions } from 'vuex';
 import toDateString from '../modulesJs/toDateString';
 export default {
-	data() {
-		return {
-			id: this.$router.currentRoute.params.id,
-		};
-	},
-	computed: {
-		...mapGetters("docsStore", ["documents"]),
-	},
-	methods: {
-		...mapActions("docsStore", ["getArchiveDocumentById"]),
-		toDateString,
-		statusVariant(state) {
-			switch (state) {
-				case "resolve":
-					return "success";
-				case "reject":
-					return "danger";
-				case "waiting":
-					return "primary";
-				default:
-					return "warning";
-			}
-		},
-	},
-	created() {
-		this.getArchiveDocumentById(this.id)
-		.catch(e => {
-			console.log(e);
-			this.$router.push('404');
-		});
-	},
-	components: {
-		pdfReader: require('../_common/pdf-reader'),
-	}
-}
+    data() {
+        return {
+            id: this.$router.currentRoute.params.id,
+        };
+    },
+    computed: {
+        ...mapGetters('docsStore', ['documents']),
+    },
+    methods: {
+        ...mapActions('docsStore', ['getArchiveDocumentById']),
+        toDateString,
+        statusVariant(state) {
+            switch (state) {
+            case 'resolve':
+                return 'success';
+            case 'reject':
+                return 'danger';
+            case 'waiting':
+                return 'primary';
+            default:
+                return 'warning';
+            }
+        },
+    },
+    created() {
+        this.getArchiveDocumentById(this.id)
+            .catch(e => {
+                console.log(e);
+                this.$router.push('404');
+            });
+    },
+    components: {
+        pdfReader: require('../_common/pdf-reader'),
+    },
+};
 </script>

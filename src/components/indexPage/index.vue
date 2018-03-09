@@ -17,23 +17,23 @@ b-container
 <script>
 export default {
     methods: {
-        
+
     },
     computed: {
         show() {
             const route = this.$route.fullPath;
-            switch(route) {
-                case '/auth':
-                    return 'signIn';
-                case '/registration':
-                    return 'signUp';
-                default: return 'signIn';
+            switch (route) {
+            case '/auth':
+                return 'signIn';
+            case '/registration':
+                return 'signUp';
+            default: return 'signIn';
             }
-        }
+        },
     },
     components: {
         signIn: require('./innerComponents/signIn.vue'),
         signUp: require('./innerComponents/signUp.vue'),
     },
-}
+};
 </script>

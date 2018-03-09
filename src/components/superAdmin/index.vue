@@ -139,38 +139,38 @@ export default {
                 email: '',
             },
             modalTitle: 'Отправить доступы админу',
-        }
+        };
     },
     computed: {
         ...mapGetters('groupsStore', ['groups']),
         groupsOptions() {
-            let resultOptions = [{value: '', text: 'Не выбрано'}];
+            const resultOptions = [{ value: '', text: 'Не выбрано' }];
             this.groups.map(group => {
                 resultOptions.push({ value: group._id, text: group.name });
             });
 
             return resultOptions;
-        }
+        },
     },
     methods: {
         ...mapActions('groupsStore', ['getAllGroups', 'createNewGroup', 'createNewAdmin']),
         ...mapActions('usersStore', ['sendMail']),
-        generateInvite(){
+        generateInvite() {
             return randomizer(5);
         },
         createGroup(e) {
             this.createNewGroup(this.group)
-            .then(response => {
-                e.target.reset();
-                this.getAllGroups();
-            });
+                .then(response => {
+                    e.target.reset();
+                    this.getAllGroups();
+                });
         },
         createAdmin(e) {
             this.createNewAdmin({ invite: this.admin.invite, group: this.selectedGroup, role: 'Admin' })
-            .then(response => {
-                e.target.reset();
-                this.getAllGroups();
-            });
+                .then(response => {
+                    e.target.reset();
+                    this.getAllGroups();
+                });
         },
         openSendModal(user, group) {
             this.userForMail = { ...user, subject: `Доступ "Админ" для группы ${group.name}` };
@@ -183,25 +183,24 @@ export default {
             const modal = this.$refs.modalSend;
             this.modalTitle = 'Письмо отправляется...';
             this.sendMail(this.userForMail)
-            .then(response => {
-                if (response.result) {
-                    this.modalTitle = 'Письмо успешно отправлено!';
-                    setTimeout(() => {
-                        e.target.reset();
-                        modal.hide();
-                        this.modalTitle = 'Отправить доступы админу';
-                    }, 1500);
-                    
-                } else {
+                .then(response => {
+                    if (response.result) {
+                        this.modalTitle = 'Письмо успешно отправлено!';
+                        setTimeout(() => {
+                            e.target.reset();
+                            modal.hide();
+                            this.modalTitle = 'Отправить доступы админу';
+                        }, 1500);
+                    } else {
                         this.modalTitle = 'Произошла ошибка при отправке!';
-                }
-            });
+                    }
+                });
         },
     },
     created() {
         this.getAllGroups();
-    }
-}
+    },
+};
 </script>
 <style lang="sass" scoped>
 .admin

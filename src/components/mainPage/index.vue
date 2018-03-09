@@ -20,43 +20,43 @@ div
         span.preview-item__incoming Время открытия визы: {{ incomingDate(preview) }}
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from 'vuex';
 import toDateString from '../modulesJs/toDateString';
 export default {
-  data() {
-    return {
-      loaded: false,
-    }
-  },
-  computed: {
-    ...mapGetters("docsStore", ["documents"]),
-    ...mapGetters("usersStore", ["currentUser"]),
-    sortingData() {
-      if (!this.documents.length) return [];
-      return this.documents.sort(
-        (prev, next) => prev.date <= next.date
-      );
+    data() {
+        return {
+            loaded: false,
+        };
     },
-  },
-  methods: {
-    ...mapActions("docsStore", ["getPreviews"]),
-    ...mapActions("usersStore", ["getCurrentUser"]),
-    toDateString,
-    incomingDate(document) {
-      const user = document.routes.find(route => route.author === this.currentUser.author);
-      return this.toDateString(+user.dateIncoming);
-    }
-  },
-  created() {
-    this.getPreviews()
-    .then(() => {
-      console.log(this.documents);
-      this.loaded = true;
-    })
-    .catch((err) => {
-      console.log(err);
-          this.$router.push('/');
-      });;
-  }
+    computed: {
+        ...mapGetters('docsStore', ['documents']),
+        ...mapGetters('usersStore', ['currentUser']),
+        sortingData() {
+            if (!this.documents.length) return [];
+            return this.documents.sort(
+                (prev, next) => prev.date <= next.date
+            );
+        },
+    },
+    methods: {
+        ...mapActions('docsStore', ['getPreviews']),
+        ...mapActions('usersStore', ['getCurrentUser']),
+        toDateString,
+        incomingDate(document) {
+            const user = document.routes.find(route => route.author === this.currentUser.author);
+            return this.toDateString(+user.dateIncoming);
+        },
+    },
+    created() {
+        this.getPreviews()
+            .then(() => {
+                console.log(this.documents);
+                this.loaded = true;
+            })
+            .catch((err) => {
+                console.log(err);
+                this.$router.push('/');
+            }); ;
+    },
 };
 </script>

@@ -94,22 +94,22 @@
 </template>
 
 <script>
-import randomizer from "../modulesJs/randomizer";
+import randomizer from '../modulesJs/randomizer';
 import toDateString from '../modulesJs/toDateString';
 import { DateRange } from 'vue-date-range';
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 export default {
     data() {
         return {
             user: {
-                role: "",
-                invite: "",
-                login: ""
+                role: '',
+                invite: '',
+                login: '',
             },
             userForMail: {
-                token: "",
-                login: "",
-                email: ""
+                token: '',
+                login: '',
+                email: '',
             },
             modalTitle: 'Отправить доступы пользователю',
             date: {
@@ -122,8 +122,8 @@ export default {
         };
     },
     computed: {
-        ...mapGetters("groupsStore", ["groups"]),
-        ...mapGetters('usersStore',['currentUser']),
+        ...mapGetters('groupsStore', ['groups']),
+        ...mapGetters('usersStore', ['currentUser']),
         ...mapGetters('statStore',
             [
                 'docsCreated',
@@ -141,8 +141,8 @@ export default {
         },
     },
     methods: {
-        ...mapActions("groupsStore", ["createNewUser", "getCurrentGroup"]),
-        ...mapActions("usersStore", ["sendMail"]),
+        ...mapActions('groupsStore', ['createNewUser', 'getCurrentGroup']),
+        ...mapActions('usersStore', ['sendMail']),
         ...mapActions('statStore', ['getDocsStat']),
         ...mapMutations('statStore', ['setRange']),
         toDateString,
@@ -150,57 +150,56 @@ export default {
             return randomizer(5);
         },
         createUser(e) {
-        this.createNewUser({ ...this.user, group: this.group._id })
-            .then(response => {
-                e.target.reset();
-                this.getCurrentGroup(this.group.groupInvite);
-            })
-            .catch(e => console.log(e));
+            this.createNewUser({ ...this.user, group: this.group._id })
+                .then(response => {
+                    e.target.reset();
+                    this.getCurrentGroup(this.group.groupInvite);
+                })
+                .catch(e => console.log(e));
         },
         openSendModal(user) {
             this.userForMail = {
                 ...user,
                 groupInvite: this.group.groupInvite,
-                subject: `Доступ "${user.role}" в группу ${this.group.name}`
-                };
+                subject: `Доступ "${user.role}" в группу ${this.group.name}`,
+            };
             this.$refs.modalSend.show();
         },
         sendInvite(e) {
             const modal = this.$refs.modalSend;
             this.modalTitle = 'Письмо отправляется...';
             this.sendMail(this.userForMail)
-            .then(response => {
-                if (response.result) {
-                    this.modalTitle = 'Письмо успешно отправлено!';
-                    setTimeout(() => {
-                        e.target.reset();
-                        modal.hide();
-                        this.modalTitle = 'Отправить доступы пользователю';
-                    }, 1500);
-                    
-                } else {
-                    this.modalTitle = 'Произошла ошибка при отправке!';
-                }
-            });
+                .then(response => {
+                    if (response.result) {
+                        this.modalTitle = 'Письмо успешно отправлено!';
+                        setTimeout(() => {
+                            e.target.reset();
+                            modal.hide();
+                            this.modalTitle = 'Отправить доступы пользователю';
+                        }, 1500);
+                    } else {
+                        this.modalTitle = 'Произошла ошибка при отправке!';
+                    }
+                });
         },
         submitStat() {
             const start = Date.parse(this.date.startDate._d);
             const end = Date.parse(this.date.endDate._d);
-            this.title = `период с ${this.toDateString(start)} по ${this.toDateString(end)}`
+            this.title = `период с ${this.toDateString(start)} по ${this.toDateString(end)}`;
             this.setRange({ start, end });
             this.showCalendar = false;
-        }
+        },
     },
     created() {
         this.getCurrentGroup();
         this.getDocsStat()
             .then(response => {
                 this.loadedStat = true;
-            });;
+            }); ;
     },
     components: {
-        DateRange
-    }
+        DateRange,
+    },
 };
 </script>
 <style lang="sass" scoped>

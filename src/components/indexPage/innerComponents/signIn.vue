@@ -30,7 +30,7 @@ export default {
             userPassword: '',
             success: false,
             error: '',
-        }
+        };
     },
     methods: {
         ...mapActions('usersStore', ['getCurrentUser']),
@@ -40,18 +40,18 @@ export default {
                 userLogin: this.userLogin,
                 userPassword: this.userPassword,
             })
-            .then(response => {
-                this.success = true;
-                this.error = '';
-                this.getCurrentUser()
-                .then(() => {
-                    this.$router.push('edms');
+                .then(response => {
+                    this.success = true;
+                    this.error = '';
+                    this.getCurrentUser()
+                        .then(() => {
+                            this.$router.push('edms');
+                        });
+                }).catch(err => {
+                    this.success = false;
+                    this.error = err.message;
                 });
-            }).catch(err => {
-                this.success = false;
-                this.error = err.message;
-            })
-        }
-    }
-}
+        },
+    },
+};
 </script>
