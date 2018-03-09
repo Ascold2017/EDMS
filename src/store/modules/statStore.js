@@ -1,5 +1,4 @@
 import { Api } from './../../Api/Api';
-import usersStore from './usersStore';
 import { store } from '../index';
 import msToTime from '../../components/modulesJs/msToTime';
 const statStore = {
