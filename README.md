@@ -1,8 +1,8 @@
 # EDMS
 
-> Diploma project EDMS of student 542 group Pogosyan Mihail
-> Faculty of computer engeneery, programming and cybersecurity
-> ONAFT
+> Diploma project EDMS of student 542 group Pogosyan Mihail<br>
+> Faculty of computer engeneery, programming and cybersecurity<br>
+> ONAFT<br>
 > 2018
 
 ## Build Setup
