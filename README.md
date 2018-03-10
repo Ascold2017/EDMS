@@ -1,6 +1,9 @@
-# test
+# EDMS
 
-> A Vue.js project
+> Diploma project EDMS of student 542 group Pogosyan Mihail
+> Faculty of computer engeneery, programming and cybersecurity
+> ONAFT
+> 2018
 
 ## Build Setup
 
