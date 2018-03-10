@@ -1,0 +1,25 @@
+.details
+    display: grid
+    grid-template-columns: 1fr 300px
+    grid-template-areas: "title date" "reader reader" "authors form" "comment comment" "empty button"
+    grid-gap: 40px
+    padding: 40px 0
+    &__title
+        grid-area: title
+    &__date
+        grid-area: date
+    .embed-responsive
+        grid-area: reader
+    &__link
+        grid-area: link
+    &__form
+        grid-area: form
+    &__comment
+        grid-area: comment
+    &__submit
+        grid-area: button
+    &__authors
+        grid-area: authors
+        max-height: 300px
+        overflow-x: hidden
+        overflow-y: scroll
