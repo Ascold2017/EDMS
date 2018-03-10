@@ -1,6 +1,9 @@
-# ascold-admin
+# EDMS
 
-> EDMS by Ascold (Mihail Nikitenko)
+> Diploma project EDMS of student 542 group Pogosyan Mihail<br>
+> Faculty of computer engeneery, programming and cybersecurity<br>
+> ONAFT<br>
+> 2018
 
 ## Build Setup
 
@@ -13,6 +16,18 @@ npm run dev
 
 # build for production with minification
 npm run build
+
+# build for production and view the bundle analyzer report
+npm run build --report
+
+# run unit tests
+npm run unit
+
+# run e2e tests
+npm run e2e
+
+# run all tests
+npm test
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

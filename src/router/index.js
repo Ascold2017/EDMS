@@ -1,9 +1,54 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import routes from './routes';
-Vue.use(VueRouter);
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import routes from './routes'
+import { store } from '../store'
+Vue.use(VueRouter)
 
-export default new VueRouter({
-    routes,
-    mode: 'history',
-});
+const router = new VueRouter({
+  routes,
+  mode: 'history'
+})
+
+// before enter to route - check user access
+let access = false
+router.beforeResolve((to, from, next) => {
+  // prevently - get user from store
+  const userToken = store.state.token
+
+  if (access) {
+    access = false
+    next()
+  }
+  if (!userToken) {
+    access = true
+    if (to.path === '/auth' || to.path === '/registration') {
+      next()
+    } else {
+      next('/auth')
+    }
+  } else {
+    const userRole = store.state.usersStore.user.role
+    switch (userRole) {
+      case 'Admin': {
+        access = true
+        next('/edms/admin')
+        break
+      }
+      case 'superAdmin': {
+        access = true
+        next('/edms/superAdmin')
+        break
+      }
+      default: {
+        access = true
+        if (to.path !== '/edms/admin' && to.path !== '/edms/superAdmin') {
+          next()
+        } else {
+          next('/edms')
+        }
+      }
+    }
+  }
+})
+
+export default router

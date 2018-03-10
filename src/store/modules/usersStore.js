@@ -1,59 +1,51 @@
-import { Api } from './../Api';
+import { Api } from './../../API-dev/Api'
+import { store } from '../index'
+
 const usersStore = {
-    namespaced: true,
-    state: {
-        data: [],
-        token: '',
-        user: {},
+  namespaced: true,
+  state: {
+    data: [],
+    user: {}
+  },
+  getters: {
+    users (state) {
+      return state.data
     },
-    getters: {
-        token(state) {
-            console.log(state.token);
-            return state.token;
-        },
-        users(state) {
-            return state.data;
-        },
-        currentUser(state) {
-            console.log(state.user);
-            return state.user;
-        },
+    currentUser (state) {
+      return state.user
+    }
+  },
+  mutations: {
+    setUser (state, user) {
+      state.user = user
+    }
+  },
+  actions: {
+    getAllUsersFromGroup (context) {
+      Api.usersApi
+        .getAllUsersFromGroup(store.getters['headerToken'])
+        .then(response => {
+          context.state.data = response
+        })
+        .catch(e => {
+          return []
+        })
     },
-    mutations: {},
-    actions: {
-        getAllUsers(context) {
-            Api.getAllUsers()
-                .then(response => {
-                    context.state.data = response;
-                })
-                .catch(e => console.log(e));
-        },
-        getCurrentUser(context) {
-            return new Promise((resolve, reject) => {
-                /*
-                context.state.user = {
-                    author: 'Аскольд Аскольдович Аскольдов',
-                    login: 'someLogin',
-                    role: 'Студент',
-                    token: 'secretToken',
-                    __v: 0,
-                    _id: '5a6889013f42e641ae930e4f',
-                };
-                context.state.token = 'secretToken';
-                */
-                Api.getCurrentUser()
-                    .then(response => {
-                        context.state.user = response;
-                        context.state.token = response.token;
-                        console.log('state token: ', context.state.token);
-                        resolve();
-                    })
-                    .catch(e => reject(e));
-            });
-        },
-        logout() {
-            Api.logout();
-        },
+    getCurrentUser (context) {
+      return new Promise((resolve, reject) => {
+        Api.usersApi
+          .getCurrentUser(store.getters['headerToken'])
+          .then(response => {
+            context.commit('setUser', response)
+            resolve()
+          })
+          .catch(e => reject(e))
+      })
     },
-};
-export default usersStore;
+    sendMail (context, data) {
+      return Api.sendMail(data, store.getters['headerToken'])
+        .then(response => response)
+    }
+  }
+}
+export default usersStore

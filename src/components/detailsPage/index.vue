@@ -1,100 +1,107 @@
-<template lang="pug">
-.content
-    .details
-        h1.details__title {{ data.title }}
-        time.details__date Дата публикации {{ data.date }}
-        p.details__author Автор публикации {{ data.author}}
-        b-embed(
-            type="embed"
-            aspect="16by9"
-            :src="data.document"
-            allowfullscreen
-            )
-        b-list-group.details__authors
-            b-list-group-item(
-                v-for="author in data.routes"
-                :key="author._id"
-                :variant="statusVariant(author.status)"
+<template lang='pug'>
+.bg-simple
+  b-container
+    b-row
+      b-col(sm='12' class='mb-3')
+        b-card
+          h1.title {{ document.title }}
+      b-col(sm='12' class='mb-3')
+        b-card
+          p.text Автор публикации {{ document.author}}
+          time.text Дата первой публикации {{ toDateString(+document.date) }}
+          div(v-if='document.versions.length > 1')
+            p.text Текущая версия документа {{ document.versions[0].version }}
+            time.text Дата публикации версии {{ document.versions[0].version }}: {{ toDateString(+document.versions[0].date) }}
+    b-row
+      b-col
+        doc-tabs
+    b-row
+      b-col(sm='12' lg='6')
+        signers-list(:rejected='rejected')
+      b-col(sm='12' lg='6')
+        // sign form
+        b-form(@submit.prevent='submitDoc')
+          b-card
+            b-form-group(label='Выберите действие')
+              b-form-radio-group(
+                v-model='selected'
+                name='radioSubComponent'
+                :options='options'
                 )
-                p.subtitle {{ author.author }}
-                p.subtitle {{ author.role }}
-        b-form-group(label="Выберите действие").details__form
-            b-form-radio-group(
-                v-model="selected"
-                name="radioSubComponent"
-                stacked
-                :options="options"
+            b-form-group(label='Ваш комментарий')
+              b-form-textarea(
+                v-model='comment'
+                placeholder='Оставьте комментарий'
+                :rows='3'
+                :max-rows='6'
+                required
                 )
-        b-form-group(
-            label="Ваш комментарий"
-            description="Укажите причину вашего отказа"
-            v-if="selected === 'reject'"
-            ).details__comment
-            b-form-textarea(
-                v-model="comment"
-                placeholder="Оставьте комментарий"
-                :rows="3"
-                :max-rows="6"
-                )
-        b-button(@click="submitDoc").details__submit Отправить
+            b-button(type='submit') Отправить
+
+  b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from 'vuex'
+import toDateString from '../modulesJs/toDateString'
 export default {
-  data() {
+  data () {
     return {
       // get id of current document
       id: this.$router.currentRoute.params.id,
       // current status of doc
-      selected: "",
+      selected: '',
       options: [
-        { value: "resolve", text: "Согласен" },
-        { value: "reject", text: "НЕ согласен" }
+        { value: 'resolve', text: 'Подписать документ' },
+        { value: 'reject', text: 'Отказать в подписи' }
       ],
-      comment: ""
-    };
+      comment: '',
+      infoAlert: '',
+      rejected: false
+    }
   },
   computed: {
-    ...mapGetters("docsStore", ["data"]),
-    ...mapGetters("usersStore", ["token", "currentUser"]),
+    ...mapGetters('docsStore', ['document']),
+    ...mapGetters('usersStore', ['currentUser'])
   },
   methods: {
-    ...mapActions("docsStore", ["getDocumentById", "postVote"]),
-    submitDoc() {
-      if (this.selected) {
+    ...mapActions('docsStore', ['getDocumentById', 'postVote']),
+    toDateString,
+    submitDoc (e) {
+      if (this.selected && this.comment) {
         // post our vote to server
         this.postVote({
           id: this.id,
           vote: this.selected,
           comment: this.comment,
-          token: this.token,
           author: this.currentUser
         })
-          .then(response => { console.log(response); this.getDocumentById(this.id); })
-          .catch(e => console.log(e));
+          .then(response => {
+            if (this.selected === 'reject') {
+              this.rejected = true
+            }
+            this.showAlert(response.message)
+            e.target.reset()
+            this.getDocumentById(this.id)
+          })
+          .catch(e => {
+            this.showAlert(`Произошла ошибка: ${e.message}`)
+          })
       }
     },
-    statusVariant(state) {
-      switch (state) {
-        case "resolve":
-          return "success";
-        case "reject":
-          return "danger";
-        case "waiting":
-          return "primary";
-        default:
-          return "warning";
-      }
+    showAlert (title) {
+      this.infoAlert = title
+      this.$refs.alertModal.show()
     }
   },
-  created() {
+  created () {
     this.getDocumentById(this.id)
-      .catch(() => {
-          console.log('redirect');
-          // this.$router.go('/');
-        });
+      .catch(e => {
+        this.$router.push('404')
+      })
+  },
+  components: {
+    docTabs: require('../_common/docTabs'),
+    signersList: require('../_common/signersList')
   }
-};
+}
 </script>
-<style lang="sass" src="./style.sass" scoped></style>
-

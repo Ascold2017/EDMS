@@ -1,24 +1,19 @@
-<template lang="pug">
+<template lang='pug'>
     #app
         app-header
-        .container
-            router-view
+        router-view
+        app-footer
 </template>
 
 <script>
-import AppHeader from './components/_common/header';
-import { mapActions } from 'vuex';
+import AppHeader from './components/_common/header'
+import AppFooter from './components/_common/footer'
+
 export default {
-    name: 'app',
-    methods: {
-        ...mapActions('usersStore', ['getCurrentUser']),
-    },
-    created() {
-        console.log('get user');
-        this.getCurrentUser();
-    },
-    components: {
-        AppHeader,
-    }
-};
+  name: 'app',
+  components: {
+    AppHeader,
+    AppFooter
+  }
+}
 </script>
