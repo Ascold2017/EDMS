@@ -1,8 +1,8 @@
 <template lang='pug'>
-    #app
-        app-header
-        router-view
-        app-footer
+  #app
+    app-header
+    router-view
+    app-footer
 </template>
 
 <script>
