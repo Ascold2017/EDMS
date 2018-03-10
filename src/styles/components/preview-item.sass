@@ -1,0 +1,28 @@
+.preview-item
+    display: grid
+    grid-template-rows: 2fr 2fr 1fr
+    grid-template-columns: 100px 1fr 200px
+    grid-template-areas: "icon title date" "icon author date" "incoming incoming status"
+    &__icon
+        grid-area: icon
+        display: flex
+        align-items: center
+        justify-content: center
+        font-size: 48px
+        color: #000
+        &.waiting
+            color: #ccc
+        &.resolved
+            color: green
+        &.rejected
+            color: firebrick
+    &__title
+        grid-area: title
+    &__date
+        grid-area: date
+    &__author
+        grid-area: author
+    &__status
+        grid-area: status
+    &__incoming
+        grid-area: incoming
