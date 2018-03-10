@@ -3,7 +3,7 @@
         b-tab(
             title='Последняя версия документа'
             style='padding: 20px 0 0')
-            p.text Описание: {{ document.versions[0].description }}
+            p.text.ml-3 Описание: {{ document.versions[0].description }}
             pdf-reader(
                 :src='document.versions[0].file'
                 )
@@ -13,8 +13,8 @@
             :key='version._id'
             :title='"Версия документа: " + version.version' style='padding: 20px 0 0'
             )
-            p.text {{ version.rejectReason }}
-            p.text Описание: {{ version.description }}
+            p.text.ml-3 {{ version.rejectReason }}
+            p.text.ml-3 Описание: {{ version.description }}
             pdf-reader(
                 :src='version.file'
                 )

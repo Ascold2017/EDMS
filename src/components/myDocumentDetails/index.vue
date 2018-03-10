@@ -1,4 +1,5 @@
 <template lang='pug'>
+.bg-simple
   b-container
     b-row
       b-col(sm='12' class='mb-3')

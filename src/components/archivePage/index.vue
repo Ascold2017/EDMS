@@ -1,4 +1,5 @@
 <template lang='pug'>
+  .bg-simple
     b-container
         b-list-group
             b-alert(variant='primary' show v-if='!loaded') Загрузка...
@@ -6,7 +7,7 @@
             router-link(
                 v-for='preview in sortingData'
                 :key='preview._id'
-                :to=''/edms/archive/' + preview._id'
+                :to='"/edms/archive/" + preview._id'
                 class='list-group-item preview-item list-group-item-action'
                 )
                 .preview-item__icon(:class='preview.globalStatus')

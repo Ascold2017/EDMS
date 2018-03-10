@@ -1,8 +1,7 @@
 <template lang='pug'>
     #app
         app-header
-        b-container
-            router-view
+        router-view
         app-footer
 </template>
 

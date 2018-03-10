@@ -1,65 +1,66 @@
 <template lang='pug'>
-b-container
-  b-row
+.bg-simple
+  b-container
+    b-row
+        b-col
+            b-card(class='mb-3')
+                h1.title Добавить новый документ
+                app-timer(@dateUpdate='dateUpd')
+    b-row
       b-col
-          b-card(class='mb-3')
-              h1.title Добавить новый документ
-              app-timer(@dateUpdate='dateUpd')
-  b-row
-    b-col
-      b-form(@submit.prevent.stop='addNewDoc' enctype='multipart/form-data')
-        b-row
-          b-col(md='12' lg='6')
-            b-card
-              b-form-group(
-                label='Название документа:'
-                label-for='docname'
-                description='Добавьте название документа')
-                b-form-input(
-                  id='docname'
-                  type='text'
-                  v-model='docName'
-                  required
-                  placeholder='Введите название документа')
-              b-form-group(
-                label='Файл:'
-                label-for='file'
-                description='Добавьте файл документа')
-                b-form-file(
-                    id='file'
-                    @change='getFile($event)'
-                    choose-label='Выберите файл'
-                    accept='.pdf'
-                    ref='fileInput'
-                    required)
-              pdfReader(
-                :src='previewDoc'
-                v-if='previewDoc')
-              .empty-pdf(v-else)
-                | Загрузите файл документа
+        b-form(@submit.prevent.stop='addNewDoc' enctype='multipart/form-data')
+          b-row
+            b-col(md='12' lg='6')
+              b-card
+                b-form-group(
+                  label='Название документа:'
+                  label-for='docname'
+                  description='Добавьте название документа')
+                  b-form-input(
+                    id='docname'
+                    type='text'
+                    v-model='docName'
+                    required
+                    placeholder='Введите название документа')
+                b-form-group(
+                  label='Файл:'
+                  label-for='file'
+                  description='Добавьте файл документа')
+                  b-form-file(
+                      id='file'
+                      @change='getFile($event)'
+                      choose-label='Выберите файл'
+                      accept='.pdf'
+                      ref='fileInput'
+                      required)
+                pdfReader(
+                  :src='previewDoc'
+                  v-if='previewDoc')
+                .empty-pdf(v-else)
+                  | Загрузите файл документа
 
-              b-form-group(
-                label='Введите краткое описание документа'
-                class='mt-3'
-                )
-                b-form-textarea(
-                  v-model='docDescription'
-                  placeholder='Описание..'
-                  :rows='3'
-                  :max-rows='6'
+                b-form-group(
+                  label='Введите краткое описание документа'
+                  class='mt-3'
                   )
-          b-col(md='12' lg='6')
-            preset-routes(@choosePreset='updateSelectedUser')
-            choose-authors(:selectedUsers='selectedUsers' @updateSelectedUsers='updateSelectedUser')
+                  b-form-textarea(
+                    v-model='docDescription'
+                    placeholder='Описание..'
+                    :rows='3'
+                    :max-rows='6'
+                    )
+            b-col(md='12' lg='6')
+              preset-routes(@choosePreset='updateSelectedUser')
+              choose-authors(:selectedUsers='selectedUsers' @updateSelectedUsers='updateSelectedUser')
 
-        b-row(class='mt-3')
-          b-col
-            b-card
-              authors-list(:selectedUsers='selectedUsers' @updateSelectedUser='updateSelectedUser')
+          b-row(class='mt-3')
+            b-col
+              b-card
+                authors-list(:selectedUsers='selectedUsers' @updateSelectedUser='updateSelectedUser')
 
-      b-button(type='submit' class='mt-3' ref='submit') Опубликовать
+        b-button(type='submit' class='mt-3' ref='submit') Опубликовать
 
-  b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
+    b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'

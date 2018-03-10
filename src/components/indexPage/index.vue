@@ -1,17 +1,18 @@
 <template lang="pug">
-b-container
-  b-row(align-h="center" align-v="center")
-    b-col(sm="10" md="8" lg="4")
-      b-card(
-        title="Войти"
-        v-if="show === 'signIn'"
-        )
-        sign-in
-      b-card(
-        title="Зарегистрироваться"
-        v-if="show === 'signUp'"
-        )
-        sign-up
+.bg-simple
+  b-container
+    b-row(align-h="center" align-v="center")
+      b-col(sm="10" md="8" lg="4")
+        b-card(
+          title="Войти"
+          v-if="show === 'signIn'"
+          )
+          sign-in
+        b-card(
+          title="Зарегистрироваться"
+          v-if="show === 'signUp'"
+          )
+          sign-up
 </template>
 
 <script>

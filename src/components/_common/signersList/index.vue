@@ -1,7 +1,7 @@
 <template lang='pug'>
     b-tabs(v-if='!rejected')
         b-tab(title='Подписавшие' v-if='signedAuthors.length')
-            b-list-group(style='max-height: 300px overflow-y: scroll')
+            b-list-group.signers-list
                 b-list-group-item(
                     v-for='author in signedAuthors'
                     :key='author._id'
@@ -14,7 +14,7 @@
                         p.text Комментарий подписанта:
                         p.text {{ author.comment }}
         b-tab(title='В очереди на подпись' v-if='waitingAuthors.length')
-            b-list-group(style='max-height: 300px overflow-y: scroll')
+            b-list-group.signers-list
                 b-list-group-item(
                     v-for='author in waitingAuthors'
                     :key='author._id'
@@ -49,3 +49,8 @@ export default {
   }
 }
 </script>
+<style lang="sass" scoped>
+.signers-list
+  max-height: 300px
+  overflow-y: scroll
+</style>

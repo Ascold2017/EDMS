@@ -1,17 +1,18 @@
 <template lang="pug">
-b-container
-  b-row
-    b-col
-      b-card.mb-3
-        h1.title {{ document.title }}
-  b-row
-    b-col
-      b-alert(show v-if='document.globalStatus==="resolved"' variant="success") Документ успешно принят
-      b-alert(show v-else variant="warning") Документ отказан в подписи и помещен в архив
-      doc-tabs
-  b-row
-    b-col(sm="12")
-      signers-list(:rejected="false")
+.bg-simple
+  b-container
+    b-row
+      b-col
+        b-card.mb-3
+          h1.title {{ document.title }}
+    b-row
+      b-col
+        b-alert(show v-if='document.globalStatus==="resolved"' variant="success") Документ успешно принят
+        b-alert(show v-else variant="warning") Документ отказан в подписи и помещен в архив
+        doc-tabs
+    b-row
+      b-col(sm="12")
+        signers-list(:rejected="false")
 </template>
 
 <script>

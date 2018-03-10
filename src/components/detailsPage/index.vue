@@ -1,41 +1,42 @@
 <template lang='pug'>
-b-container
-  b-row
-    b-col(sm='12' class='mb-3')
-      b-card
-        h1.title {{ document.title }}
-    b-col(sm='12' class='mb-3')
-      b-card
-        p.text Автор публикации {{ document.author}}
-        time.text Дата первой публикации {{ toDateString(+document.date) }}
-        div(v-if='document.versions.length > 1')
-          p.text Текущая версия документа {{ document.versions[0].version }}
-          time.text Дата публикации версии {{ document.versions[0].version }}: {{ toDateString(+document.versions[0].date) }}
-  b-row
-    b-col
-      doc-tabs
-  b-row
-    b-col(sm='12' lg='6')
-      signers-list(:rejected='rejected')
-    b-col(sm='12' lg='6')
-      // sign form
-      b-form(@submit.prevent='submitDoc')
+.bg-simple
+  b-container
+    b-row
+      b-col(sm='12' class='mb-3')
         b-card
-          b-form-group(label='Выберите действие')
-            b-form-radio-group(
-              v-model='selected'
-              name='radioSubComponent'
-              :options='options'
-              )
-          b-form-group(label='Ваш комментарий')
-            b-form-textarea(
-              v-model='comment'
-              placeholder='Оставьте комментарий'
-              :rows='3'
-              :max-rows='6'
-              required
-              )
-          b-button(type='submit') Отправить
+          h1.title {{ document.title }}
+      b-col(sm='12' class='mb-3')
+        b-card
+          p.text Автор публикации {{ document.author}}
+          time.text Дата первой публикации {{ toDateString(+document.date) }}
+          div(v-if='document.versions.length > 1')
+            p.text Текущая версия документа {{ document.versions[0].version }}
+            time.text Дата публикации версии {{ document.versions[0].version }}: {{ toDateString(+document.versions[0].date) }}
+    b-row
+      b-col
+        doc-tabs
+    b-row
+      b-col(sm='12' lg='6')
+        signers-list(:rejected='rejected')
+      b-col(sm='12' lg='6')
+        // sign form
+        b-form(@submit.prevent='submitDoc')
+          b-card
+            b-form-group(label='Выберите действие')
+              b-form-radio-group(
+                v-model='selected'
+                name='radioSubComponent'
+                :options='options'
+                )
+            b-form-group(label='Ваш комментарий')
+              b-form-textarea(
+                v-model='comment'
+                placeholder='Оставьте комментарий'
+                :rows='3'
+                :max-rows='6'
+                required
+                )
+            b-button(type='submit') Отправить
 
   b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>
