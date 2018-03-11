@@ -5,13 +5,16 @@ import docsStore from './modules/docsStore'
 import groupsStore from './modules/groupsStore'
 import statStore from './modules/statStore'
 import { Api } from '../API-dev/Api'
+const openpgp = require('openpgp')
+// import fs from 'fs'
 
 Vue.use(Vuex)
 //  Import modules
 
 export const store = new Vuex.Store({
   state: {
-    token: ''
+    token: '',
+    privateKey: ''
   },
   getters: {
     headerToken (state) {
@@ -20,6 +23,9 @@ export const store = new Vuex.Store({
           token: state.token
         }
       }
+    },
+    privateKey (state) {
+      return state.privateKey
     }
   },
   modules: {
@@ -28,13 +34,33 @@ export const store = new Vuex.Store({
     groupsStore,
     statStore
   },
+  mutations: {
+    setToken (state, token) {
+      sessionStorage.setItem('token', token)
+      state.token = token
+    },
+    clearToken (state) {
+      sessionStorage.removeItem('token')
+      state.token = ''
+    },
+    setKey (state, privateKey) {
+      sessionStorage.setItem('privateKey', privateKey)
+      state.privateKey = privateKey
+    },
+    clearKey (state) {
+      sessionStorage.removeItem('privateKey')
+      state.privateKey = ''
+    }
+  },
   actions: {
     // before init - get user token and get user info from server
     initApp (context) {
       return new Promise(resolve => {
         const token = sessionStorage.getItem('token')
+        const privateKey = sessionStorage.getItem('privateKey')
         if (token) {
-          context.state.token = token
+          context.commit('setToken', token)
+          context.commit('setKey', privateKey)
           store.dispatch('usersStore/getCurrentUser')
             .then(() => resolve())
         } else {
@@ -47,24 +73,49 @@ export const store = new Vuex.Store({
       return Api.logout()
         .then(response => {
           store.state.usersStore.user = {}
-          context.state.token = ''
-          sessionStorage.removeItem('token')
+          context.commit('clearToken')
+          context.commit('clearKey')
         })
     },
     // when log in - set token and create in sessionStorage browser
-    logIn (context, data) {
-      return Api.logIn(data)
-        .then(response => {
-          context.state.token = response.token
-          sessionStorage.setItem('token', response.token)
-          return response.message
-        })
-        .catch(error => { throw new Error(error) })
+    logIn (context, { userLogin, passphrase, privateKeyFile }) {
+      return new Promise((resolve, reject) => {
+        const fr = new FileReader()
+        fr.readAsText(privateKeyFile, 'utf-8')
+        fr.onload = (privKey) => {
+          context.dispatch('decryptPrivateKey', { privateKey: privKey.target.result, passphrase })
+            .then(() => context.dispatch('createCertificate'))
+            .then(certificate => {
+              return Api.logIn({userLogin, certificate: certificate.data})
+                .catch(e => { throw new Error(e.message) })
+            })
+            .then(response => {
+              context.commit('setToken', response.token)
+              resolve(response.message)
+            })
+            .catch(err => reject(err))
+        }
+      })
     },
-    signUp (context, data) {
-      return Api.signUp(data)
-        .then(response => response)
-        .catch(e => { throw new Error(e) })
+    decryptPrivateKey (context, { privateKey, passphrase }) {
+      return new Promise((resolve, reject) => {
+        const privKeyObj = openpgp.key.readArmored(privateKey).keys[0]
+        if (privKeyObj.decrypt(passphrase)) {
+          context.commit('setKey', [privKeyObj])
+          resolve()
+        } else {
+          context.commit('clearKey')
+          reject(new Error('Неверная парольная фраза!'))
+        }
+      })
+    },
+    createCertificate (context) {
+      const data = Date.now().toString()
+      return openpgp.sign({
+        data: data, // input as String (or Uint8Array)
+        privateKeys: context.state.privateKey, // for signing
+        date: Date.now()
+      })
     }
   }
 })

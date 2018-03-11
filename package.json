@@ -15,7 +15,8 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0",
     "bootstrap-vue": "^2.0.0-rc.2",
-    "openpgp": "^3.0.0",
+    "fs": "0.0.1-security",
+    "openpgp": "^2.6.2",
     "vue": "^2.5.2",
     "vue-date-range": "^3.0.0",
     "vue-hotel-datepicker": "^2.2.0",
@@ -103,7 +104,7 @@
     "webpack-merge": "^4.1.0"
   },
   "engines": {
-    "node": ">= 6.0.0",
+    "node": ">= 8.0.0",
     "npm": ">= 3.0.0"
   },
   "browserslist": [
@@ -120,7 +121,6 @@
     "transform": {
       ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest",
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
-    },
-    "mapCoverage": true
+    }
   }
 }

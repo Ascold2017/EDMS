@@ -1,6 +1,8 @@
 <template lang='pug'>
 b-navbar(toggleable='md' type='dark' variant='info')
-    div.acc-title {{ currentUser.author }}
+    b-navbar-brand( to='/edms' v-if='show === "indexBar"')
+        img(src='~assets/img/logo.png').logo
+    div(v-if='show === "indexBar"').acc-title {{ currentUser.author }}
     b-collapse(is-nav id='nav_collapse')
         b-navbar-nav(
             class='ml-auto'
@@ -38,17 +40,7 @@ b-navbar(toggleable='md' type='dark' variant='info')
                 class='nav-item nav-link'
                 ) Панель администрирования суперадмина
             b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Выйти
-        b-navbar-nav(
-            class='ml-auto'
-            v-if='show === "indexBar"')
-            router-link(
-                to='/auth'
-                class='nav-item nav-link'
-                ) Авторизоваться
-            router-link(
-                to='/registration'
-                class='nav-item nav-link'
-                ) Зарегистрироваться
+    b-navbar-toggle(target='nav_collapse' v-if='show !== "indexBar"')
 </template>
 
 <script>
@@ -82,3 +74,9 @@ export default {
   }
 }
 </script>
+<style lang="sass" scoped>
+.logo
+    display: block
+    height: 35px
+    width: auto
+</style>
