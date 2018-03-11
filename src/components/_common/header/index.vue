@@ -1,8 +1,8 @@
 <template lang='pug'>
 b-navbar(toggleable='md' type='dark' variant='info')
-    b-navbar-brand( to='/edms' v-if='show === "indexBar"')
+    b-navbar-brand( to='/edms')
         img(src='~assets/img/logo.png').logo
-    div(v-if='show === "indexBar"').acc-title {{ currentUser.author }}
+    div(v-if='show !== "indexBar"').acc-title {{ currentUser.author }}
     b-collapse(is-nav id='nav_collapse')
         b-navbar-nav(
             class='ml-auto'

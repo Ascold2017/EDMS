@@ -62,6 +62,7 @@ export const store = new Vuex.Store({
           context.commit('setToken', token)
           context.commit('setKey', privateKey)
           store.dispatch('usersStore/getCurrentUser')
+            .then(() => store.dispatch('groupsStore/getCurrentGroup'))
             .then(() => resolve())
         } else {
           resolve()
@@ -96,6 +97,14 @@ export const store = new Vuex.Store({
             .catch(err => reject(err))
         }
       })
+    },
+    logInAdmin (context, data) {
+      return Api.logInAdmin(data)
+        .then(response => {
+          context.commit('setToken', response.token)
+          return response.message
+        })
+        .catch(err => { throw new Error(err.message) })
     },
     decryptPrivateKey (context, { privateKey, passphrase }) {
       return new Promise((resolve, reject) => {

@@ -67,7 +67,11 @@ const statStore = {
       const docs = state.docs
         .filter(doc => doc.date >= state.dateRange.start && doc.date <= state.dateRange.end)
       let stat = []
-      const users = store.getters['groupsStore/groups'][0].users.filter(user => user.role !== 'Admin')
+      const group = store.getters['groupsStore/groups'][0]
+      let users = null
+      if (group) {
+        users = group.users.filter(user => user.role !== 'Admin')
+      }
       if (users) {
         stat = {
           fields: [
