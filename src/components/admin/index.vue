@@ -129,10 +129,10 @@ export default {
     }
   },
   created () {
-    this.getCurrentGroup()
-    this.getDocsStat().then(response => {
-      this.loadedStat = true
-    })
+    this.getDocsStat()
+      .then(response => {
+        this.loadedStat = true
+      })
   },
   components: {
     DateRange

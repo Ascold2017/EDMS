@@ -13,7 +13,7 @@ const groupsApi = {
   },
   createNewGroup (group, config) {
     return axios.post('http://localhost:3000/api/createNewGroup', group, config)
-      .catch(e => { console.log(e); throw new Error(e) })
+      .catch(e => { throw new Error(e.response.data.message) })
   },
   createNewAdmin (admin, config) {
     return axios.post('http://localhost:3000/api/createNewUser', admin, config)
