@@ -19,12 +19,9 @@ const groupsStore = {
         .then(response => { context.state.data = response })
     },
     getCurrentGroup (context) {
-      const groupInvite = usersStore.state.user.groupInvite
-      if (groupInvite) {
-        return Api.groupsApi.getGroupByToken(usersStore.state.user.groupInvite, store.getters['headerToken'])
-          .then(response => { context.state.data = response; return null })
-          .catch(e => { throw new Error(e) })
-      }
+      return Api.groupsApi.getGroupByToken(usersStore.state.user.groupInvite, store.getters['headerToken'])
+        .then(response => { context.state.data = response; return null })
+        .catch(e => { throw new Error(e) })
     },
     createNewGroup (context, { groupName, adminEmail }) {
       const newGroupData = {
@@ -40,9 +37,30 @@ const groupsStore = {
         .catch(e => { throw new Error(e.message) })
     },
     createNewAdmin (context, admin) {
-      return Api.groupsApi.createNewAdmin(admin, store.getters['headerToken'])
-        .then(response => response.data)
-        .catch(e => { throw new Error(e) })
+      const newAdmin = {
+        adminEmail: admin.email,
+        adminLogin: randomizer(5),
+        adminPassword: randomizer(6),
+        adminInvite: randomizer(5),
+        groupId: admin.groupId
+      }
+      return Api.groupsApi.createNewAdmin(newAdmin, store.getters['headerToken'])
+        .then(response => { context.dispatch('getAllGroups'); return response.data })
+        .catch(e => { throw new Error(e.message) })
+    },
+    removeAdmin (context, { adminId, groupId }) {
+      return Api.groupsApi.removeAdmin({ adminId, groupId }, store.getters['headerToken'])
+        .then(response => { context.dispatch('getAllGroups'); return response.data })
+        .catch(e => { throw new Error(e.message) })
+    },
+    sendInviteAdmin (context, admin) {
+      const adminInfo = {
+        ...admin,
+        password: randomizer(6)
+      }
+      return Api.groupsApi.sendInviteAdmin(adminInfo, store.getters['headerToken'])
+        .then(response => { context.dispatch('getAllGroups'); return response.data })
+        .catch(e => { throw new Error(e.message) })
     },
     createNewUser (context, user) {
       return Api.usersApi.createNewUser(user, store.getters['headerToken'])

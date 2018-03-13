@@ -19,22 +19,6 @@
             required)
         b-button(type='submit' variant='primary') Создать группу
 
-    b-col
-      h2.subtitle.mb-2 Список групп
-      b-alert(v-if='!groups.length' variant='warning' show) Групп пока нет...
-      b-list-group(v-else).users-list
-        b-list-group-item(v-for='group in groups' :key='group._id')
-          h3 {{ group.name }}
-          h4 Пользователи: {{ group.users.length }}
-          b-list-group
-            b-alert(v-if='!group.users.length' variant='warning' show) Пользователей пока нет
-            b-list-group-item(
-              v-for='user in group.users'
-              :key='user._id'
-              v-else)
-              b-btn(v-if='user.role === "Admin" && !user.author' @click='openSendModal(user, group)') Отправить доступ
-              h4 {{ user.author ? user.author : 'Не зарегистрирован' }}
-              small Роль: {{ user.role ? user.role : 'Не зарегистрирован' }}
     b-modal(
       ref='alertModal'
       title='Внимание!'
@@ -52,7 +36,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -60,9 +44,6 @@ export default {
       adminEmail: '',
       info: ''
     }
-  },
-  computed: {
-    ...mapGetters('groupsStore', ['groups'])
   },
   methods: {
     ...mapActions('groupsStore', ['createNewGroup']),
@@ -73,7 +54,7 @@ export default {
       this.createNewGroup({ groupName: this.groupName, adminEmail: this.adminEmail })
         .then(response => {
           this.$refs.createGroupForm.reset()
-          this.$emit('alert', 'Группа успешно создана!')
+          this.$emit('alert', response.message)
         })
         .catch(e => this.$emit('alert', e.message))
     }

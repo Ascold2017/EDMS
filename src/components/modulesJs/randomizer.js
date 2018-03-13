@@ -31,10 +31,10 @@ const randomizer = len => {
     const ch = Math.random(1, 2)
     let ch2
     if (ch < 0.5) {
-      ch2 = Math.ceil(Math.random(1, ints.length - 1) * 10)
+      ch2 = Math.ceil(Math.random(0, ints.length - 1) * 9)
       out += ints[ch2]
     } else {
-      ch2 = Math.ceil(Math.random(1, chars.length - 1) * 10)
+      ch2 = Math.ceil(Math.random(0, chars.length - 1) * 9)
       out += chars[ch2]
     }
   }

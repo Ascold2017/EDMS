@@ -7,18 +7,9 @@
             label='Выберите группу:'
             description='Группа, для которой создать администратора')
             b-form-select(
-              v-model='selectedGroup'
+              v-model='admin.groupId'
               :options='groupsOptions'
               class='mb-3')
-          b-form-group(
-            label='Сгенерировать логин админа:'
-            description='Логин сгенерируется автоматически')
-            b-form-input(
-              type='text'
-              v-model='admin.login'
-              required
-              placeholder='Логин администратора')
-            b-button(type='button' @click='admin.login = generateInvite()' class='mt-3') Сгенерировать
           b-form-group(
             label='e-mail администратора группы'
             description='Внимание! На этот адрес будут высланы данные авторизации!')
@@ -38,11 +29,9 @@ export default {
   data () {
     return {
       admin: {
-        invite: '',
-        login: '',
-        email: ''
-      },
-      selectedGroup: ''
+        email: '',
+        groupId: ''
+      }
     }
   },
   methods: {
@@ -51,10 +40,10 @@ export default {
       return randomizer(5)
     },
     createAdmin () {
-      this.createAdmin({ ...this.admin })
+      this.createNewAdmin({ ...this.admin })
         .then(response => {
           this.$refs.createAdminForm.reset()
-          this.$emit('alert', response)
+          this.$emit('alert', response.message)
         })
         .catch(e => {
           this.$emit('alert', e.message)
