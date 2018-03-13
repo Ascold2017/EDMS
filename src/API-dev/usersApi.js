@@ -15,6 +15,10 @@ const usersApi = {
   createNewUser (user, config) {
     return axios.post('http://localhost:3000/api/createNewUser', user, config)
       .catch(e => { console.log(e); throw new Error(e) })
+  },
+  createKeys ({ cert, userId }, config) {
+    return axios.post('http://localhost:3000/api/createNewKeys', { cert, userId }, config)
+      .catch(e => { console.log(e); throw new Error(e) })
   }
 }
 export default usersApi

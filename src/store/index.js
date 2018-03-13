@@ -74,6 +74,7 @@ export const store = new Vuex.Store({
       return Api.logout()
         .then(response => {
           store.state.usersStore.user = {}
+          store.state.groupsStore.data = []
           context.commit('clearToken')
           context.commit('clearKey')
         })
