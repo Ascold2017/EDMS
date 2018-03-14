@@ -64,7 +64,10 @@ const groupsStore = {
     },
     createNewUser (context, user) {
       return Api.usersApi.createNewUser(user, store.getters['headerToken'])
-        .then(response => response.data)
+        .then(response => {
+          context.dispatch('getCurrentGroup')
+          return response.data
+        })
         .catch(e => { throw new Error(e) })
     }
   }

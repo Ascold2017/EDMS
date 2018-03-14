@@ -4,15 +4,11 @@ b-tabs
     b-form(@submit.prevent='signIn').mt-3
       b-alert(varinat='success' v-if='success' show) Вы успешно авторизовались!
       b-alert(variant='danger' v-if='error' show) {{ error }}
-      b-form-group(
-        label='Введите логин'
-        )
+      b-form-group(label='Ваш логин EDMS')
         b-form-input(
           v-model='userLogin'
-          type='text'
-          placeholder='Ваш логин'
-          required
-          )
+          placeholder='Логин'
+          required)
       b-form-group(label='Загрузите приватный ключ')
         b-form-file(
           required
@@ -41,7 +37,7 @@ b-tabs
       b-form-group(label='Введите пароль')
         b-form-input(
           v-model='userPassword'
-          type='text'
+          type='password'
           placeholder='Ваш пароль'
           required
           )
@@ -66,17 +62,14 @@ export default {
     ...mapActions(['logIn', 'logInAdmin']),
     signIn (e) {
       this.logIn({
-        userLogin: this.userLogin,
+        login: this.userLogin,
         passphrase: this.passphrase,
         privateKeyFile: this.privateKeyFile
       })
         .then(() => {
           this.success = true
           this.error = ''
-          this.getCurrentUser()
-            .then(() => {
-              this.$router.push('edms')
-            })
+          this.$router.push('edms')
         })
         .catch(err => {
           this.success = false

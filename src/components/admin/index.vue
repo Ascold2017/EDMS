@@ -89,7 +89,6 @@ export default {
           e.target.reset()
           this.info = response.message
           this.$refs.infoModal.show()
-          this.getCurrentGroup(this.group.groupInvite)
         })
         .catch(e => {
           this.info = e.message

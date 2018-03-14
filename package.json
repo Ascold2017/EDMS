@@ -16,7 +16,7 @@
     "bootstrap": "^4.0.0",
     "bootstrap-vue": "^2.0.0-rc.2",
     "fs": "0.0.1-security",
-    "openpgp": "^2.6.2",
+    "openpgp": "^3.0.0",
     "vue": "^2.5.2",
     "vue-date-range": "^3.0.0",
     "vue-hotel-datepicker": "^2.2.0",

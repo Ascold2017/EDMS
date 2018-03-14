@@ -80,21 +80,24 @@ export const store = new Vuex.Store({
         })
     },
     // when log in - set token and create in sessionStorage browser
-    logIn (context, { userLogin, passphrase, privateKeyFile }) {
+    logIn (context, { login, passphrase, privateKeyFile }) {
       return new Promise((resolve, reject) => {
         const fr = new FileReader()
         fr.readAsText(privateKeyFile, 'utf-8')
         fr.onload = (privKey) => {
+          let message = ''
           context.dispatch('decryptPrivateKey', { privateKey: privKey.target.result, passphrase })
-            .then(() => context.dispatch('createCertificate'))
+            .then(() => context.dispatch('createAuthCertificate'))
             .then(certificate => {
-              return Api.logIn({userLogin, certificate: certificate.data})
+              return Api.logIn({userLogin: login, certificate: certificate.data})
                 .catch(e => { throw new Error(e.message) })
             })
             .then(response => {
+              message = response.message
               context.commit('setToken', response.token)
-              resolve(response.message)
+              return store.dispatch('usersStore/getCurrentUser')
             })
+            .then(response => resolve(message))
             .catch(err => reject(err))
         }
       })
@@ -117,6 +120,9 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         const privKeyObj = openpgp.key.readArmored(privateKey).keys[0]
         if (privKeyObj.decrypt(passphrase)) {
+          privKeyObj
+            .getPrimaryUser()
+            .then(obj => console.log(obj.user.userId.userid))
           context.commit('setKey', [privKeyObj])
           resolve()
         } else {
@@ -125,7 +131,7 @@ export const store = new Vuex.Store({
         }
       })
     },
-    createCertificate (context) {
+    createAuthCertificate (context) {
       const data = Date.now().toString()
       return openpgp.sign({
         data: data, // input as String (or Uint8Array)
