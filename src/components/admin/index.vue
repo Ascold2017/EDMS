@@ -7,29 +7,37 @@
           b-row
             b-col
               b-form(@submit.prevent='createUser' class='mb-3 mt-3')
-                b-form-group(label='Введите название роли пользователя')
+
+                b-form-group(label='ФИО владельца')
+                  b-form-input(
+                    type='text'
+                    v-model='user.name'
+                    placeholder='Фамилия Имя Отчество'
+                    required)
+
+                b-form-group(label='Название роли пользователя')
                   b-form-input(
                     type='text'
                     v-model='user.role'
                     required
                     placeholder='Роль')
-                b-form-group(
-                  label='Загрузить публичный ключ пользователя:'
-                  description='Данные сертификата отобразятся после загрузки')
-                  b-form-file(
-                    accept='.key'
-                    v-model='user.publicKey'
-                    required
-                    placeholder='Публичный ключ')
+
+                b-form-group(label='Срок действия сертификата, суток')
+                  b-form-input(
+                    type='number'
+                    v-model='user.cerTime'
+                    placeholder='0 - неограничено'
+                    required)
 
                 b-form-group(
                   label='Введите email пользователя'
-                  description='На него отправится уведомление')
+                  description='На него отправится уведомление и ключи подписи!')
                   b-form-input(
                     type='email'
                     v-model='user.email'
                     required
                     placeholder='example@mail.ua')
+
                 b-button(type='submit') Создать
             b-col.mt-3
                 h2.subtitle Пользователи группы {{ group.name }}
@@ -39,36 +47,15 @@
                     p Роль: {{ сurrUser.role }}
                     p(v-if='сurrUser.dateRegistration') Зарегистрирован: {{ toDateString(+сurrUser.dateRegistration) }}
         b-tab(title='Статистика группы')
-          b-form-group(label='Выбрать промежуток среза статистики').mt-3
-              b-button(type='button' @click='showCalendar = !showCalendar') Открыть календарь
-          h4 Статистика за {{ title }}
-          p Создано документов за период: {{ docsCreated}}
-          p Подписано документов за период: {{ docsSigned }}
-          p Отказано документов за период: {{ docsRejected }}
-          p Среднее время между созданием и финальным подписанием документ: {{ docsTimingResolve }}
-          p Среднее время одной подписи: {{ docsTimingSign }}
-          h4 Статистика по ролям:
-          b-table(
-            striped
-            bordered
-            hover
-            :fields='usersStat.fields'
-            :items='usersStat.items'
-            )
-    b-modal(v-model='showCalendar' title='Выбрать промежуток среза статистики' hide-footer )
-      date-range(
-          class='calendar'
-          :first-day-of-week='1'
-          v-model='date'
-          lang='ru')
-      b-button(type='button' @click='submitStat') Получить статистику
+          users-stat()
 
+    b-modal(ref='infoModal' title='Сообщение')
+      | {{ info }}
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import toDateString from '../modulesJs/toDateString'
-import { DateRange } from 'vue-date-range'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -76,28 +63,15 @@ export default {
         role: '',
         email: '',
         login: '',
-        publicKey: null
+        name: '',
+        certTime: 0
       },
-      date: {
-        startDate: null,
-        endDate: null
-      },
-      loadedStat: false,
-      showCalendar: false,
-      title: 'все время'
+      info: ''
     }
   },
   computed: {
     ...mapGetters('groupsStore', ['groups']),
     ...mapGetters('usersStore', ['currentUser']),
-    ...mapGetters('statStore', [
-      'docsCreated',
-      'docsSigned',
-      'docsRejected',
-      'docsTimingSign',
-      'docsTimingResolve',
-      'usersStat'
-    ]),
     users () {
       return this.groups[0].users
     },
@@ -107,45 +81,28 @@ export default {
   },
   methods: {
     ...mapActions('groupsStore', ['createNewUser', 'getCurrentGroup']),
-    ...mapActions('statStore', ['getDocsStat']),
-    ...mapMutations('statStore', ['setRange']),
+    ...mapActions('usersStore', ['createKeys']),
     toDateString,
     createUser (e) {
       this.createNewUser({ ...this.user, group: this.group._id })
         .then(response => {
           e.target.reset()
+          this.info = response.message
+          this.$refs.infoModal.show()
           this.getCurrentGroup(this.group.groupInvite)
         })
-        .catch(e => console.log(e))
-    },
-    submitStat () {
-      const start = Date.parse(this.date.startDate._d)
-      const end = Date.parse(this.date.endDate._d)
-      this.title = `период с ${this.toDateString(start)} по ${this.toDateString(
-        end
-      )}`
-      this.setRange({ start, end })
-      this.showCalendar = false
+        .catch(e => {
+          this.info = e.message
+          this.$refs.infoModal.show()
+        })
     }
   },
-  created () {
-    this.getDocsStat()
-      .then(response => {
-        this.loadedStat = true
-      })
-  },
   components: {
-    DateRange
+    usersStat: require('./usersStat')
   }
 }
 </script>
 <style lang='sass' scoped>
 .admin
-    padding: 40px 0
-.users-list
-    max-height: 445px
-    overflow-y: scroll
-    overflow-x: hidden
-ol
-    list-style: inside
+  padding: 40px 0
 </style>

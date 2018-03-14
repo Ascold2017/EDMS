@@ -103,7 +103,13 @@ export const store = new Vuex.Store({
       return Api.logInAdmin(data)
         .then(response => {
           context.commit('setToken', response.token)
-          return response.message
+          return store.dispatch('usersStore/getCurrentUser')
+            .then(() => {
+              return store.dispatch('groupsStore/getCurrentGroup')
+                .then(() => {
+                  return response.message
+                })
+            })
         })
         .catch(err => { throw new Error(err.message) })
     },

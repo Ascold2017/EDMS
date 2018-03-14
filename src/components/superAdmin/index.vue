@@ -7,8 +7,6 @@
             create-group(@alert="openInfo").mt-3
           b-tab(title='Создать нового администратора')
             create-admin(@alert="openInfo").mt-3
-          b-tab(title='Создать ключи')
-            create-keys(@alert="openInfo").mt-3
           b-tab(title='Группы')
             groups-list(@alert="openInfo").mt-3
       b-modal(ref='infoModal' title='Сообщение')
@@ -35,7 +33,6 @@ export default {
   components: {
     createGroup: require('./innerComponents/createGroup'),
     createAdmin: require('./innerComponents/createAdmin'),
-    createKeys: require('./innerComponents/createKeys'),
     groupsList: require('./innerComponents/groupsList')
   }
 }

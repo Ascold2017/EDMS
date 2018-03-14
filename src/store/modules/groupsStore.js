@@ -1,5 +1,4 @@
 import { Api } from './../../API-dev/Api'
-import usersStore from './usersStore'
 import { store } from '../index'
 import randomizer from '../../components/modulesJs/randomizer'
 
@@ -16,10 +15,11 @@ const groupsStore = {
   actions: {
     getAllGroups (context) {
       return Api.groupsApi.getAllGroups(store.getters['headerToken'])
-        .then(response => { context.state.data = response })
+        .then(response => { context.state.data = response; return null })
     },
     getCurrentGroup (context) {
-      return Api.groupsApi.getGroupByToken(usersStore.state.user.groupInvite, store.getters['headerToken'])
+      console.log(store.getters['usersStore/currentUser'].groupInvite)
+      return Api.groupsApi.getGroupByToken(store.getters['usersStore/currentUser'].groupInvite, store.getters['headerToken'])
         .then(response => { context.state.data = response; return null })
         .catch(e => { throw new Error(e) })
     },
