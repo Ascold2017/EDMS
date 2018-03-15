@@ -1,5 +1,6 @@
 import { Api } from './../../API-dev/Api'
 import { store } from '../index'
+const openpgp = require('openpgp')
 
 const docsStore = {
   namespaced: true,
@@ -36,10 +37,62 @@ const docsStore = {
         .then(response => { context.state.document = response; return null })
         .catch(e => { throw new Error(e) })
     },
-    postVote (context, data) {
-      return Api.documentsApi.postVote(data, store.getters['headerToken'])
-        .then(response => response)
-        .catch(e => { throw new Error(e.message) })
+    postVote (context, { id, vote, comment, author }) {
+      if (vote === 'resolve') {
+        const privKey = store.getters['privateKey']
+        let fileContent = ''
+        // load file
+        return Api.documentsApi
+          .getFileContent(context.state.document.versions[0].file,
+            { ...store.getters['headerToken'], responseType: 'blob' })
+          .then(blob => {
+            // read file content
+            return new Promise((resolve, reject) => {
+              const fr = new FileReader()
+              fr.onload = function (e) {
+                fileContent = new Uint8Array(e.target.result)
+                console.log(fileContent)
+                resolve(fileContent)
+              }
+              fr.readAsArrayBuffer(blob)
+            })
+          })
+          .then(fileContent => {
+            // sign file with private key and create detached signature
+            const signOptions = {
+              data: fileContent,
+              privateKeys: privKey,
+              detached: true
+            }
+            return openpgp.sign(signOptions)
+          })
+          .then(signed => {
+            // and send detached signature and other information
+            return Api.documentsApi
+              .postVote({
+                id,
+                vote,
+                comment,
+                author,
+                signature: signed.signature,
+                file: fileContent
+              }, store.getters['headerToken'])
+              .then(response => response)
+          })
+          .catch(e => { throw new Error(e.message || e) })
+      } else {
+        // if author reject sign
+        return Api.documentsApi
+          .postVote({
+            id,
+            vote,
+            comment,
+            author,
+            signature: null
+          }, store.getters['headerToken'])
+          .then(response => response)
+          .catch(e => { throw new Error(e.message) })
+      }
     },
     addNewDocument (context, document) {
       return Api.documentsApi.postNewDocument(document, store.getters['headerToken'])

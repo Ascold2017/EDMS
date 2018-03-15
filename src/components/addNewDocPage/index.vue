@@ -58,7 +58,7 @@
               b-card
                 authors-list(:selectedUsers='selectedUsers' @updateSelectedUser='updateSelectedUser')
 
-        b-button(type='submit' class='mt-3' ref='submit') Опубликовать
+          b-button(type='submit' class='mt-3' ref='submit') Опубликовать
 
     b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>

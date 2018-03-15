@@ -61,7 +61,8 @@ export default {
   },
   computed: {
     ...mapGetters('docsStore', ['document']),
-    ...mapGetters('usersStore', ['currentUser'])
+    ...mapGetters('usersStore', ['currentUser']),
+    ...mapGetters(['privateKey'])
   },
   methods: {
     ...mapActions('docsStore', ['getDocumentById', 'postVote']),
@@ -95,7 +96,7 @@ export default {
   },
   created () {
     this.getDocumentById(this.id)
-      .catch(e => {
+      .catch(() => {
         this.$router.push('404')
       })
   },

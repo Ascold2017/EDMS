@@ -2,7 +2,6 @@ import axios from 'axios'
 
 const usersApi = {
   getCurrentUser (config) {
-    console.log(config)
     return axios.get('http://localhost:3000/api/getCurrentUser', config)
       .then(response => response.data)
       .catch(e => { console.error(e); throw new Error(e) })

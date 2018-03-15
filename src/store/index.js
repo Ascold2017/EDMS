@@ -14,7 +14,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     token: '',
-    privateKey: ''
+    privateKey: {}
   },
   getters: {
     headerToken (state) {
@@ -44,7 +44,8 @@ export const store = new Vuex.Store({
       state.token = ''
     },
     setKey (state, privateKey) {
-      sessionStorage.setItem('privateKey', privateKey)
+      sessionStorage.setItem('privateKey', JSON.stringify(privateKey))
+      console.log(privateKey, typeof privateKey)
       state.privateKey = privateKey
     },
     clearKey (state) {
@@ -57,7 +58,8 @@ export const store = new Vuex.Store({
     initApp (context) {
       return new Promise(resolve => {
         const token = sessionStorage.getItem('token')
-        const privateKey = sessionStorage.getItem('privateKey')
+        const privateKey = JSON.parse(sessionStorage.getItem('privateKey'))
+        console.log('InitApp privKey:', privateKey)
         if (token) {
           context.commit('setToken', token)
           context.commit('setKey', privateKey)
@@ -120,10 +122,8 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         const privKeyObj = openpgp.key.readArmored(privateKey).keys[0]
         if (privKeyObj.decrypt(passphrase)) {
-          privKeyObj
-            .getPrimaryUser()
-            .then(obj => console.log(obj.user.userId.userid))
-          context.commit('setKey', [privKeyObj])
+          console.log('Privkey obj', privKeyObj)
+          context.commit('setKey', privKeyObj)
           resolve()
         } else {
           context.commit('clearKey')
