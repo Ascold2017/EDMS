@@ -4,7 +4,7 @@ import usersStore from './modules/usersStore'
 import docsStore from './modules/docsStore'
 import groupsStore from './modules/groupsStore'
 import statStore from './modules/statStore'
-import { Api } from '../API-dev/Api'
+import { Api } from '../API/Api'
 const openpgp = require('openpgp')
 // import fs from 'fs'
 
