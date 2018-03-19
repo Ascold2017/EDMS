@@ -1,6 +1,5 @@
 import { Api } from './../../API-dev/Api'
 import { store } from '../index'
-import randomizer from '../../components/modulesJs/randomizer'
 
 const groupsStore = {
   namespaced: true,
@@ -26,10 +25,6 @@ const groupsStore = {
     createNewGroup (context, { groupName, adminEmail }) {
       const newGroupData = {
         name: groupName,
-        invite: randomizer(5),
-        adminInvite: randomizer(5),
-        adminLogin: randomizer(5),
-        adminPassword: randomizer(6),
         adminEmail
       }
       return Api.groupsApi.createNewGroup(newGroupData, store.getters['headerToken'])
@@ -39,9 +34,6 @@ const groupsStore = {
     createNewAdmin (context, admin) {
       const newAdmin = {
         adminEmail: admin.email,
-        adminLogin: randomizer(5),
-        adminPassword: randomizer(6),
-        adminInvite: randomizer(5),
         groupId: admin.groupId
       }
       return Api.groupsApi.createNewAdmin(newAdmin, store.getters['headerToken'])
@@ -55,8 +47,7 @@ const groupsStore = {
     },
     sendInviteAdmin (context, admin) {
       const adminInfo = {
-        ...admin,
-        password: randomizer(6)
+        ...admin
       }
       return Api.groupsApi.sendInviteAdmin(adminInfo, store.getters['headerToken'])
         .then(response => { context.dispatch('getAllGroups'); return response.data })
