@@ -6,7 +6,7 @@
         b-card
           h1.title {{ document.title }}
       b-col(sm='12' class='mb-3')
-        b-card
+        b-card(v-if='document.author && document.date && document.versions')
           time.text Дата первой публикации {{ toDateString(+document.date) }}
           p.text(v-if='document.versions.lenght > 1') Текущая версия документа {{ document.versions[0].version }}
           time.text(v-if='document.versions.lenght > 1') Дата публикации версии {{ document.versions[0].version }}: {{ document.versions[0].date }}
