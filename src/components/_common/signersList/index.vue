@@ -41,9 +41,11 @@ export default {
   computed: {
     ...mapGetters('docsStore', ['document']),
     signedAuthors () {
+      if (!this.document.routes) return []
       return this.document.routes.filter(route => route.status === 'resolve')
     },
     waitingAuthors () {
+      if (!this.document.routes) return []
       return this.document.routes.filter(route => route.status === 'waiting')
     }
   }

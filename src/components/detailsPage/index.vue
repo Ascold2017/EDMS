@@ -6,7 +6,7 @@
         b-card
           h1.title {{ document.title }}
       b-col(sm='12' class='mb-3')
-        b-card
+        b-card(v-if='document.author && document.date && document.versions')
           p.text Автор публикации {{ document.author}}
           time.text Дата первой публикации {{ toDateString(+document.date) }}
           div(v-if='document.versions.length > 1')
