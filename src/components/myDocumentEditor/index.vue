@@ -99,6 +99,7 @@ export default {
           this.showAlert(response.message)
           e.target.reset()
           this.$refs.fileInput.reset()
+          setTimeout(() => this.$router.push('edms'), 3000)
         })
         .catch(e => {
           this.showAlert(e.message)
