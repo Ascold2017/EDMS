@@ -44,9 +44,8 @@ export const store = new Vuex.Store({
       state.token = ''
     },
     setKey (state, privateKey) {
-      sessionStorage.setItem('privateKey', JSON.stringify(privateKey))
-      console.log(privateKey, typeof privateKey)
       state.privateKey = privateKey
+      // sessionStorage.setItem('privateKey', privateKey)
     },
     clearKey (state) {
       sessionStorage.removeItem('privateKey')
@@ -58,11 +57,9 @@ export const store = new Vuex.Store({
     initApp (context) {
       return new Promise(resolve => {
         const token = sessionStorage.getItem('token')
-        const privateKey = JSON.parse(sessionStorage.getItem('privateKey'))
-        console.log('InitApp privKey:', privateKey)
         if (token) {
           context.commit('setToken', token)
-          context.commit('setKey', privateKey)
+          // context.commit('setKey', JSON.parse(sessionStorage.getItem('privateKey')))
           store.dispatch('usersStore/getCurrentUser')
             .then(() => store.dispatch('groupsStore/getCurrentGroup'))
             .then(() => resolve())

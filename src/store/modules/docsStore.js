@@ -40,6 +40,7 @@ const docsStore = {
     postVote (context, { id, vote, comment, author }) {
       if (vote === 'resolve') {
         const privKey = store.getters['privateKey']
+        console.log('PrivateKey:', privKey)
         let fileContent = ''
         // load file
         return Api.documentsApi
