@@ -7,7 +7,8 @@ const docsStore = {
   state: {
     documents: [],
     presets: [],
-    document: {}
+    document: {},
+    checked: null
   },
   getters: {
     documents (state) {
@@ -18,6 +19,9 @@ const docsStore = {
     },
     presets (state) {
       return state.presets
+    },
+    checked (state) {
+      return state.checked
     }
   },
   mutations: {},
@@ -29,12 +33,22 @@ const docsStore = {
     },
     getDocumentById (context, id) {
       return Api.documentsApi.getDocumentByIdJSON(id, store.getters['headerToken'])
-        .then(response => { context.state.document = response; return null })
+        .then(response => {
+          context.state.document = response
+          context.dispatch('checkSigns')
+            .then(check => console.log('Check: ', check))
+          return null
+        })
         .catch(e => { throw new Error(e) })
     },
     getMyDocumentById (context, id) {
       return Api.documentsApi.getMyDocumentByIdJSON(id, store.getters['headerToken'])
-        .then(response => { context.state.document = response; return null })
+        .then(response => {
+          context.state.document = response
+          context.dispatch('checkSigns')
+            .then(check => console.log('Check: ', check))
+          return null
+        })
         .catch(e => { throw new Error(e) })
     },
     postVote (context, { id, vote, comment, author }) {
@@ -133,6 +147,12 @@ const docsStore = {
     closeDocumentById (context, id) {
       return Api.documentsApi.closeDocumentById(id, store.getters['headerToken'])
         .catch(e => { throw new Error(e) })
+    },
+    checkSigns (context) {
+      return Api.documentsApi
+        .checkSigns(context.state.document._id, store.getters['headerToken'])
+        .then(response => { context.state.checked = response.message })
+        .catch(e => { throw new Error(e.message) })
     }
   }
 }

@@ -66,6 +66,11 @@ const documensApi = {
     return axios.post('http://localhost:3000/api/closeDocument', { id }, config)
       .then(response => response.data)
       .catch(err => { throw new Error(err) })
+  },
+  checkSigns (id, config) {
+    return axios.get(`http://localhost:3000/api/checkSigns/${id}`, config)
+      .then(response => response.data)
+      .catch(err => { throw new Error(err) })
   }
 }
 

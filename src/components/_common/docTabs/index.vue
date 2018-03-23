@@ -4,6 +4,7 @@
             title='Последняя версия документа'
             style='padding: 20px 0 0')
             p.text.ml-3 Описание: {{ document.versions[0].description }}
+            p.text.ml-3 {{ checked }}
             pdf-reader(
                 :src='document.versions[0].file'
                 )
@@ -24,7 +25,7 @@
 import { mapGetters } from 'vuex'
 export default {
   computed: {
-    ...mapGetters('docsStore', ['document'])
+    ...mapGetters('docsStore', ['document', 'checked'])
   },
   components: {
     pdfReader: require('../pdf-reader')
