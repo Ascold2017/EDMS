@@ -36,7 +36,6 @@ const docsStore = {
         .then(response => {
           context.state.document = response
           context.dispatch('checkSigns')
-            .then(check => console.log('Check: ', check))
           return null
         })
         .catch(e => { throw new Error(e) })
@@ -46,7 +45,6 @@ const docsStore = {
         .then(response => {
           context.state.document = response
           context.dispatch('checkSigns')
-            .then(check => console.log('Check: ', check))
           return null
         })
         .catch(e => { throw new Error(e) })
@@ -136,12 +134,19 @@ const docsStore = {
     },
     getArchiveDocuments (context) {
       return Api.documentsApi.getArchiveDocuments(store.getters['headerToken'])
-        .then(response => { context.state.documents = response; return null })
+        .then(response => {
+          context.state.documents = response
+          return null
+        })
         .catch(e => { throw new Error(e) })
     },
     getArchiveDocumentById (context, id) {
       return Api.documentsApi.getArchiveDocument(id, store.getters['headerToken'])
-        .then(response => { context.state.document = response; return null })
+        .then(response => {
+          context.state.document = response
+          context.dispatch('checkSigns')
+          return null
+        })
         .catch(e => { throw new Error(e) })
     },
     closeDocumentById (context, id) {
