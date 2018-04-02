@@ -7,8 +7,8 @@
           h1.title {{ document.title }}
     b-row
       b-col
-        b-alert(show v-if='document.globalStatus==="resolved"' variant="success") Документ успешно принят
-        b-alert(show v-else variant="warning") Документ отказан в подписи и помещен в архив
+        b-alert(show v-if='document.globalStatus==="resolved"' variant="success") Документ успішно прийнят
+        b-alert(show v-else variant="warning") Документ відмовлен в підписі и відправлен до архіву
         doc-tabs
     b-row
       b-col(sm="12")

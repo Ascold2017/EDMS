@@ -7,11 +7,11 @@
           h1.title {{ document.title }}
       b-col(sm='12' class='mb-3')
         b-card(v-if='document.author && document.date && document.versions')
-          p.text Автор публикации {{ document.author}}
-          time.text Дата первой публикации {{ toDateString(+document.date) }}
+          p.text Автор публикації {{ document.author}}
+          time.text Дата першої публикації {{ toDateString(+document.date) }}
           div(v-if='document.versions.length > 1')
-            p.text Текущая версия документа {{ document.versions[0].version }}
-            time.text Дата публикации версии {{ document.versions[0].version }}: {{ toDateString(+document.versions[0].date) }}
+            p.text Поточна версія документа {{ document.versions[0].version }}
+            time.text Дата публикації версії {{ document.versions[0].version }}: {{ toDateString(+document.versions[0].date) }}
     b-row
       b-col
         doc-tabs
@@ -22,21 +22,21 @@
         // sign form
         b-form(@submit.prevent='submitDoc')
           b-card
-            b-form-group(label='Выберите действие')
+            b-form-group(label='Оберіть дію')
               b-form-radio-group(
                 v-model='selected'
                 name='radioSubComponent'
                 :options='options'
                 )
-            b-form-group(label='Ваш комментарий')
+            b-form-group(label='Ваш коментар')
               b-form-textarea(
                 v-model='comment'
-                placeholder='Оставьте комментарий'
+                placeholder='Залиште коментар'
                 :rows='3'
                 :max-rows='6'
                 required
                 )
-            b-button(type='submit') Отправить
+            b-button(type='submit') Відправити
 
   b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>
@@ -51,8 +51,8 @@ export default {
       // current status of doc
       selected: '',
       options: [
-        { value: 'resolve', text: 'Подписать документ' },
-        { value: 'reject', text: 'Отказать в подписи' }
+        { value: 'resolve', text: 'Підписати документ' },
+        { value: 'reject', text: 'Відмовити в підписі' }
       ],
       comment: '',
       infoAlert: '',

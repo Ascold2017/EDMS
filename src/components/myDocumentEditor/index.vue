@@ -11,44 +11,43 @@
         b-card.mt-3
           b-form(@submit.prevent.stop='addNewVersion' enctype='multipart/form-data')
             b-form-group(
-              label='Название версии:'
+              label='Назва версії:'
               label-for='version'
-              description='Добавьте версию документа')
+              description='Додайте версію документа')
               b-form-input(
-                  id='version'
-                  v-model='docVersion'
-                  placeholder='Название версии'
-                  required)
+                id='version'
+                v-model='docVersion'
+                placeholder='Назва версии'
+                required)
 
             b-form-group(
               label='Файл:'
               label-for='file'
-              description='Добавьте файл документа')
+              description='Додайте файл документа')
               b-form-file(
-                  id='file'
-                  @change='getFile($event)'
-                  choose-label='Выберите файл'
-                  accept='.pdf'
-                  ref='fileInput'
-                  required)
+                id='file'
+                @change='getFile($event)'
+                choose-label='Оберіть файл'
+                accept='.pdf'
+                ref='fileInput'
+                required)
             pdf-reader(
               :src='previewDoc'
-              v-if='previewDoc'
-              )
+              v-if='previewDoc')
             .empty-pdf(v-else)
-                | Загрузите файл документа
+                | Завантажте файл документа
 
             b-form-group(
-              label='Введите краткое описание версии'
+              label='Введіть короткий опис версії'
               class='mt-3'
               )
               b-form-textarea(
                 v-model='docDescription'
-                placeholder='Описание..'
+                placeholder='Описання..'
                 :rows='3'
                 :max-rows='6'
                 )
-            b-button(type='submit') Опубликовать
+            b-button(type='submit') Опублікувати
   b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>
 
@@ -78,8 +77,8 @@ export default {
       const file = event.target.files[0]
       if (!file) return
       // check size file
-      if (file.size / 1024 > 50000) {
-        this.showAlert('Загружаемый файл должен быть меньше 50 МБ!')
+      if (file.size / 1024 > 30000) {
+        this.showAlert('Завантажуваний файл повинен бути менше 30 МБ!')
         return
       }
       // save to send on server

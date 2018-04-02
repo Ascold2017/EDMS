@@ -62,7 +62,7 @@
                   :selectedUsers='selectedUsers'
                   @updateSelectedUser='updateSelectedUsers')
 
-          b-button(type='submit' class='mt-3' ref='submit') Опубликовать
+          b-button(type='submit' class='mt-3' ref='submit') Опублікувати
 
     b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>

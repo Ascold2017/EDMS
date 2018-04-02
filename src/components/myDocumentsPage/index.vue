@@ -2,18 +2,18 @@
   .bg-simple
     b-container
         b-list-group
-            b-alert(variant='primary' show v-if='!loaded') Загрузка...
-            b-alert(variant='danger' show v-if='loaded && !sortingData.length') У вас нет опубликованных документов!
+            b-alert(variant='primary' show v-if='!loaded') Завантажується...
+            b-alert(variant='danger' show v-if='loaded && !sortingData.length') У вас немає опублікованиї документів!
             router-link(
-                v-for='preview in sortingData'
-                :key='preview._id'
-                :to='"/edms/myDocuments/" + preview._id'
-                class='list-group-item preview-item list-group-item-action'
-                )
-                .preview-item__icon(:class='preview.globalStatus')
-                    i(class='fa fa-file-text-o' aria-hidden='true')
-                h2.preview-item__title {{ preview.title }}
-                time.preview-item__date {{ toDateString(+preview.date) }}
+              v-for='preview in sortingData'
+              :key='preview._id'
+              :to='"/edms/myDocuments/" + preview._id'
+              class='list-group-item preview-item list-group-item-action'
+              )
+              .preview-item__icon(:class='preview.globalStatus')
+                i(class='fa fa-file-text-o' aria-hidden='true')
+              h2.preview-item__title {{ preview.title }}
+              time.preview-item__date {{ toDateString(+preview.date) }}
 </template>
 
 <script>
