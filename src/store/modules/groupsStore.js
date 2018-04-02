@@ -17,7 +17,6 @@ const groupsStore = {
         .then(response => { context.state.data = response; return null })
     },
     getCurrentGroup (context) {
-      console.log(store.getters['usersStore/currentUser'].groupInvite)
       return Api.groupsApi.getGroupByToken(store.getters['usersStore/currentUser'].groupInvite, store.getters['headerToken'])
         .then(response => { context.state.data = response; return null })
         .catch(e => { throw new Error(e) })
@@ -46,10 +45,7 @@ const groupsStore = {
         .catch(e => { throw new Error(e.message) })
     },
     sendInviteAdmin (context, admin) {
-      const adminInfo = {
-        ...admin
-      }
-      return Api.groupsApi.sendInviteAdmin(adminInfo, store.getters['headerToken'])
+      return Api.groupsApi.sendInviteAdmin(admin, store.getters['headerToken'])
         .then(response => { context.dispatch('getAllGroups'); return response.data })
         .catch(e => { throw new Error(e.message) })
     },

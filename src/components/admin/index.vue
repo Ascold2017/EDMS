@@ -1,55 +1,55 @@
 <template lang='pug'>
   b-container
-    section.admin
-      h1.title Панель администратора {{ group.name }}
-      b-tabs.mt-3
-        b-tab(title='Создать роль в группе')
-          b-row
-            b-col
-              b-form(@submit.prevent='createUser' class='mb-3 mt-3')
+    h1.title Панель адміністратора {{ group.name }}
+    b-tabs.mt-3
+      b-tab(title='Створити роль в групі')
+        b-row
+          b-col
+            b-form(@submit.prevent='createUser' class='mb-3 mt-3')
 
-                b-form-group(label='ФИО владельца')
-                  b-form-input(
-                    type='text'
-                    v-model='user.name'
-                    placeholder='Фамилия Имя Отчество'
-                    required)
+              b-form-group(label='ПІБ власника')
+                b-form-input(
+                  type='text'
+                  v-model='user.name'
+                  placeholder='Фамілія, Иʼмя, По батькові'
+                  required)
 
-                b-form-group(label='Название роли пользователя')
-                  b-form-input(
-                    type='text'
-                    v-model='user.role'
-                    required
-                    placeholder='Роль')
+              b-form-group(label='Назва роли корстувача')
+                b-form-input(
+                  type='text'
+                  v-model='user.role'
+                  required
+                  placeholder='Роль')
 
-                b-form-group(label='Срок действия сертификата, суток')
-                  b-form-input(
-                    type='number'
-                    v-model='user.cerTime'
-                    placeholder='0 - неограничено'
-                    required)
+              b-form-group(label='Строк дії сертификата, діб')
+                b-form-input(
+                  type='number'
+                  v-model='user.cerTime'
+                  placeholder='0 - необмежено'
+                  required)
 
-                b-form-group(
-                  label='Введите email пользователя'
-                  description='На него отправится уведомление и ключи подписи!')
-                  b-form-input(
-                    type='email'
-                    v-model='user.email'
-                    required
-                    placeholder='example@mail.ua')
+              b-form-group(
+                label='Введіть Уmail корстувача'
+                description='Увага! На нього відправиться повідомлення та ключі цфрового підпису!')
+                b-form-input(
+                  type='email'
+                  v-model='user.email'
+                  required
+                  placeholder='example@mail.ua')
 
-                b-button(type='submit') Создать
-            b-col.mt-3
-                h2.subtitle Пользователи группы {{ group.name }}
-                b-list-group.users-list
-                  b-list-group-item(v-for='сurrUser in users' :key='сurrUser._id')
-                    h4 {{ сurrUser.author }}
-                    p Роль: {{ сurrUser.role }}
-                    p(v-if='сurrUser.dateRegistration') Зарегистрирован: {{ toDateString(+сurrUser.dateRegistration) }}
-        b-tab(title='Статистика группы')
-          users-stat()
+              b-button(type='submit') Створити
+          b-col.mt-3
+              h2.subtitle Пользователи группы {{ group.name }}
+              b-list-group.users-list
+                b-list-group-item(v-for='сurrUser in users' :key='сurrUser._id')
+                  h4 {{ сurrUser.author }}
+                  p.mb-0 Роль: {{ сurrUser.role }}
+                  p.mb-0 Зареєстрован: {{ toDateString(+сurrUser.dateRegistration) }}
 
-    b-modal(ref='infoModal' title='Сообщение')
+      b-tab(title='Статистика групи')
+        users-stat
+
+    b-modal(ref='infoModal' title='Повідомлення')
       | {{ info }}
 </template>
 

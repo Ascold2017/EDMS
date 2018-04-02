@@ -1,43 +1,116 @@
 <template lang='pug'>
   div
-    b-form-group(label='Выбрать промежуток среза статистики').mt-3
-      b-button(type='button' @click='showCalendar = !showCalendar') Открыть календарь
+    b-form-group(label='Обрати проміжок зрізу статистики').mt-3
+      vue-rangedate-picker(
+        i18n='EN'
+        :month='datepickerConfig.month'
+        :shortDays='datepickerConfig.shortDays'
+        :captions='datepickerConfig.captions'
+        :presetRanges='datepickerConfig.presetRanges'
+        @selected='submitStat')
+
     h4 Статистика за {{ title }}
-    p Создано документов за период: {{ docsCreated}}
-    p Подписано документов за период: {{ docsSigned }}
-    p Отказано документов за период: {{ docsRejected }}
-    p Среднее время между созданием и финальным подписанием документ: {{ docsTimingResolve }}
-    p Среднее время одной подписи: {{ docsTimingSign }}
-    h4 Статистика по ролям:
+    ol
+      li Створено усього документов за период: {{ docsCreated}}
+      li Підписано усього документов за период: {{ docsSigned }}
+      li Отказано документов за период: {{ docsRejected }}
+      li Середній час між створенням та фінальним підписанням документа: {{ docsTimingResolve }}
+      li Середній час одного підпису: {{ docsTimingSign }}
     b-table(
       striped
       bordered
       hover
       :fields='usersStat.fields'
-      :items='usersStat.items'
-      )
-    b-button(type='button' @click='submitStat') Получить статистику
-    b-modal(v-model='showCalendar' title='Выбрать промежуток среза статистики' hide-footer )
-      date-range(
-          class='calendar'
-          :first-day-of-week='1'
-          v-model='date'
-          lang='ru')
+      :items='usersStat.items')
+
 </template>
 
 <script>
-import { DateRange } from 'vue-date-range'
+import VueRangedatePicker from 'vue-rangedate-picker'
+import toDateString from '../modulesJs/toDateString'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 export default {
   data () {
     return {
-      date: {
-        startDate: null,
-        endDate: null
-      },
       loadedStat: false,
-      showCalendar: false,
-      title: 'все время'
+      title: 'весь час',
+      datepickerConfig: {
+        months: ['Cічень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень',
+          'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'],
+        shortDays: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
+        captions: {
+          'title': 'Оберить проміжок',
+          'ok_button': 'Обрати',
+          'today': 'За сьогодні'
+        },
+        presetRanges: {
+          today: () => {
+            const n = new Date()
+            const startToday = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 0, 0)
+            const endToday = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 23, 59)
+            return {
+              label: 'За сьогодні',
+              active: false,
+              dateRange: {
+                start: startToday,
+                end: endToday
+              }
+            }
+          },
+          thisMonth: () => {
+            const n = new Date()
+            const startToday = new Date(n.getFullYear(), n.getMonth() - 1, n.getDate())
+            const endToday = new Date(n.getFullYear(), n.getMonth(), n.getDate() - 1, 0, 0)
+            return {
+              label: 'За останній місяць',
+              active: false,
+              dateRange: {
+                start: startToday,
+                end: endToday
+              }
+            }
+          },
+          last7days: () => {
+            const n = new Date()
+            const startToday = new Date(n.getFullYear(), n.getMonth(), n.getDate() - 7, 0, 0)
+            const endToday = new Date(n.getFullYear(), n.getMonth(), n.getDate() - 1, 0, 0)
+            return {
+              label: 'За останні 7 діб',
+              active: false,
+              dateRange: {
+                start: startToday,
+                end: endToday
+              }
+            }
+          },
+          last30days: () => {
+            const n = new Date()
+            const startToday = new Date(n.getFullYear(), n.getMonth(), n.getDate() - 30, 0, 0)
+            const endToday = new Date(n.getFullYear(), n.getMonth(), n.getDate() - 1, 0, 0)
+            return {
+              label: 'За останні 30 діб',
+              active: false,
+              dateRange: {
+                start: startToday,
+                end: endToday
+              }
+            }
+          },
+          allTime: () => {
+            const n = new Date()
+            const startToday = new Date(0)
+            const endToday = new Date(n.getFullYear(), n.getMonth(), n.getDate())
+            return {
+              label: 'За весь час',
+              active: true,
+              dateRange: {
+                start: startToday,
+                end: endToday
+              }
+            }
+          }
+        }
+      }
     }
   },
   computed: {
@@ -53,14 +126,12 @@ export default {
   methods: {
     ...mapActions('statStore', ['getDocsStat']),
     ...mapMutations('statStore', ['setRange']),
-    submitStat () {
-      const start = Date.parse(this.date.startDate._d)
-      const end = Date.parse(this.date.endDate._d)
-      this.title = `период с ${this.toDateString(start)} по ${this.toDateString(
-        end
-      )}`
+    toDateString,
+    submitStat (dateObj) {
+      const start = new Date(dateObj.start).getTime()
+      const end = new Date(dateObj.end).getTime()
+      this.title = `період с ${this.toDateString(start)} по ${this.toDateString(end)}`
       this.setRange({ start, end })
-      this.showCalendar = false
     }
   },
   created () {
@@ -70,7 +141,7 @@ export default {
       })
   },
   components: {
-    DateRange
+    VueRangedatePicker
   }
 }
 </script>
