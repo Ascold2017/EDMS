@@ -3,7 +3,7 @@
   b-container
     b-row(align-h="center" align-v="center")
       b-col(sm="10" md="8" lg="5")
-        b-card(title="Авторизоваться")
+        b-card(title="Авторизуватись")
           sign-in
 </template>
 

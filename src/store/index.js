@@ -6,10 +6,8 @@ import groupsStore from './modules/groupsStore'
 import statStore from './modules/statStore'
 import { Api } from '../API-dev/Api'
 const openpgp = require('openpgp')
-// import fs from 'fs'
 
 Vue.use(Vuex)
-//  Import modules
 
 export const store = new Vuex.Store({
   state: {
@@ -55,18 +53,15 @@ export const store = new Vuex.Store({
   actions: {
     // before init - get user token and get user info from server
     initApp (context) {
-      return new Promise(resolve => {
-        const token = sessionStorage.getItem('token')
-        if (token) {
-          context.commit('setToken', token)
-          // context.commit('setKey', JSON.parse(sessionStorage.getItem('privateKey')))
-          store.dispatch('usersStore/getCurrentUser')
-            .then(() => store.dispatch('groupsStore/getCurrentGroup'))
-            .then(() => resolve())
-        } else {
-          resolve()
-        }
-      })
+      const token = sessionStorage.getItem('token')
+      if (token) {
+        context.commit('setToken', token)
+        // context.commit('setKey', JSON.parse(sessionStorage.getItem('privateKey')))
+        return store.dispatch('usersStore/getCurrentUser')
+          .then(() => store.dispatch('groupsStore/getCurrentGroup'))
+      } else {
+        return Promise.resolve()
+      }
     },
     // when logout - remove token an user info
     logout (context) {
@@ -79,16 +74,21 @@ export const store = new Vuex.Store({
         })
     },
     // when log in - set token and create in sessionStorage browser
+    // login user by login, passphrase and privateKey File
     logIn (context, { login, passphrase, privateKeyFile }) {
       return new Promise((resolve, reject) => {
+        // read privateKey File
         const fr = new FileReader()
         fr.readAsText(privateKeyFile, 'utf-8')
         fr.onload = (privKey) => {
           let message = ''
+          // decrypt privateKey content with passphrase
+          // then - create certificate message, which sign with decrypted private key,
+          // and send login and certificate
           context.dispatch('decryptPrivateKey', { privateKey: privKey.target.result, passphrase })
             .then(() => context.dispatch('createAuthCertificate'))
             .then(certificate => {
-              return Api.logIn({userLogin: login, certificate: certificate.data})
+              return Api.logIn({ userLogin: login, certificate: certificate.data })
                 .catch(e => { throw new Error(e.message) })
             })
             .then(response => {
@@ -96,12 +96,13 @@ export const store = new Vuex.Store({
               context.commit('setToken', response.token)
               return store.dispatch('usersStore/getCurrentUser')
             })
-            .then(response => resolve(message))
+            .then(() => resolve(message))
             .catch(err => reject(err))
         }
       })
     },
     logInAdmin (context, data) {
+      // admin just send login and password
       return Api.logInAdmin(data)
         .then(response => {
           context.commit('setToken', response.token)
@@ -119,16 +120,16 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         const privKeyObj = openpgp.key.readArmored(privateKey).keys[0]
         if (privKeyObj.decrypt(passphrase)) {
-          console.log('Privkey obj', privKeyObj)
           context.commit('setKey', privKeyObj)
           resolve()
         } else {
           context.commit('clearKey')
-          reject(new Error('Неверная парольная фраза!'))
+          reject(new Error('Неправильна парольна фраза!'))
         }
       })
     },
     createAuthCertificate (context) {
+      // certificate - is just some string, which is signing by private key
       const data = Date.now().toString()
       return openpgp.sign({
         data: data, // input as String (or Uint8Array)

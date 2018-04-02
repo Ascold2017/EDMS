@@ -1,47 +1,47 @@
 <template lang='pug'>
 b-tabs
-  b-tab(title='Как пользователь')
+  b-tab(title='Як користувач')
     b-form(@submit.prevent='signIn').mt-3
       b-alert(varinat='success' v-if='success' show) Вы успешно авторизовались!
       b-alert(variant='danger' v-if='error' show) {{ error }}
-      b-form-group(label='Ваш логин EDMS')
+      b-form-group(label='Ваш логін EDMS')
         b-form-input(
           v-model='userLogin'
-          placeholder='Логин'
+          placeholder='Логін'
           required)
-      b-form-group(label='Загрузите приватный ключ')
+      b-form-group(label='Завантажити приватний ключ')
         b-form-file(
           required
           v-model='privateKeyFile'
           accept='.key'
           placeholder='Файл приватного ключа')
-      b-form-group(label='Введите парольную фразу')
+      b-form-group(label='Введіть парольну фразу')
         b-form-input(
           v-model='passphrase'
           type='password'
-          placeholder='Парольная фраза ключа'
+          placeholder='Парольна фраза ключа'
           required
           )
-      b-button(type='submit') Авторизоваться
-  b-tab(title='Как администратор')
+      b-button(type='submit') Авторизуватись
+  b-tab(title='Як адміністратор')
     b-form(@submit.prevent='signInAdmin').mt-3
-      b-alert(varinat='success' v-if='success' show) Вы успешно авторизовались!
+      b-alert(varinat='success' v-if='success' show) Ви успішно авторизувались!
       b-alert(variant='danger' v-if='error' show) {{ error }}
       b-form-group(label='Введите логин')
         b-form-input(
           v-model='userLogin'
           type='text'
-          placeholder='Ваш логин'
-          required
-          )
-      b-form-group(label='Введите пароль')
+          placeholder='Ваш логін'
+          required)
+
+      b-form-group(label='Введіть пароль')
         b-form-input(
           v-model='userPassword'
           type='password'
           placeholder='Ваш пароль'
           required
           )
-      b-button(type='submit') Авторизоваться
+      b-button(type='submit') Авторизуватись
 </template>
 
 <script>

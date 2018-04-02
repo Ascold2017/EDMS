@@ -52,19 +52,17 @@ const docsStore = {
     postVote (context, { id, vote, comment, author }) {
       if (vote === 'resolve') {
         const privKey = store.getters['privateKey']
-        console.log('PrivateKey:', privKey)
         let fileContent = ''
-        // load file
+        // load file blob for sign
         return Api.documentsApi
           .getFileContent(context.state.document.versions[0].file,
             { ...store.getters['headerToken'], responseType: 'blob' })
           .then(blob => {
             // read file content
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
               const fr = new FileReader()
               fr.onload = function (e) {
                 fileContent = new Uint8Array(e.target.result)
-                console.log(fileContent)
                 resolve(fileContent)
               }
               fr.readAsArrayBuffer(blob)
@@ -154,6 +152,7 @@ const docsStore = {
         .catch(e => { throw new Error(e) })
     },
     checkSigns (context) {
+      // check signs - verify all signs on document, just in case :)
       return Api.documentsApi
         .checkSigns(context.state.document._id, store.getters['headerToken'])
         .then(response => { context.state.checked = response.message })
