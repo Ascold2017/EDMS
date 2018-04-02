@@ -1,26 +1,21 @@
 <template lang='pug'>
     b-card
-        b-form-group(
-            label='Создать новый список виз'
-            )
-            b-btn(type='button' @click='showEditor') Открыть редактор
-        b-modal(ref='routesEditor' title='Создать новый Маршрут' hide-footer)
-            b-form(@submit.prevent.stop='createNewPreset')
-                b-form-group(
-                    label='Задайте название Списка'
-                    )
-                    b-form-input(
-                        id='presetname'
-                        type='text'
-                        v-model='presetName'
-                        required
-                        placeholder='Введите название списка')
-                choose-authors(
-                    @updateSelectedUsers='updatePresetRoute'
-                    :selectedUsers='selectedUsers'
-                    )
-                authors-list(:selectedUsers='selectedUsers' @updateSelectedUser='updatePresetRoute')
-                b-btn(type='submit') Создать Маршрут
+      b-form-group(label='Створити новий список віз')
+        b-btn(type='button' @click='showEditor') Відкрити редактор
+      b-modal(ref='routesEditor' title='Створити новий маршрут' hide-footer)
+        b-form(@submit.prevent.stop='createNewPreset')
+          b-form-group(label='Введіть названу Списку')
+            b-form-input(
+              id='presetname'
+              type='text'
+              v-model='presetName'
+              required
+              placeholder='Введіть назву списку')
+          choose-authors(
+            @updateSelectedUsers='updatePresetRoute'
+            :selectedUsers='selectedUsers')
+          authors-list(:selectedUsers='selectedUsers' @updateSelectedUser='updatePresetRoute')
+          b-btn(type='submit') Создать Маршрут
 </template>
 
 <script>
