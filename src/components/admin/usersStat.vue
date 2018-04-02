@@ -15,6 +15,7 @@
       li Отказано документов за период: {{ docsRejected }}
       li Середній час між створенням та фінальним підписанням документа: {{ docsTimingResolve }}
       li Середній час одного підпису: {{ docsTimingSign }}
+    h4 Статистика за ролями:
     b-table(
       striped
       bordered

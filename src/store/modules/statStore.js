@@ -52,7 +52,7 @@ const statStore = {
       signTime /= docs.length
       // parse to time from milliseconds
       const time = msToTime(signTime)
-      return `Часов: ${time.hours}, минут: ${time.minutes}, секунд: ${time.seconds}`
+      return `Годин: ${time.hours}, хвилин: ${time.minutes}, секунд: ${time.seconds}`
     },
     docsTimingResolve (state) {
       const docs = state.docs
@@ -69,7 +69,7 @@ const statStore = {
       resolveTime /= docs.length
       const time = msToTime(resolveTime)
 
-      return `Часов: ${time.hours}, минут: ${time.minutes}, секунд: ${time.seconds}`
+      return `Годин: ${time.hours}, хвилин: ${time.minutes}, секунд: ${time.seconds}`
     },
     usersStat (state) {
       // stats for users
