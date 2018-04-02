@@ -1,6 +1,7 @@
 <template lang='pug'>
   div
-    b-form-group(label='Обрати проміжок зрізу статистики').mt-3
+    h4.mt-3 Статистика за {{ title }}
+    b-form-group(label='Обрати проміжок зрізу статистики')
       vue-rangedate-picker(
         i18n='EN'
         :month='datepickerConfig.month'
@@ -8,8 +9,6 @@
         :captions='datepickerConfig.captions'
         :presetRanges='datepickerConfig.presetRanges'
         @selected='submitStat')
-
-    h4 Статистика за {{ title }}
     ol
       li Створено усього документов за период: {{ docsCreated}}
       li Підписано усього документов за период: {{ docsSigned }}
