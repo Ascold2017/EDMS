@@ -3,7 +3,7 @@
     b-container
         b-list-group
             b-alert(variant='primary' show v-if='!loaded') Завантажується...
-            b-alert(variant='danger' show v-if='loaded && !sortingData.length') У вас немає опублікованиї документів!
+            b-alert(variant='danger' show v-if='loaded && !sortingData.length') У вас немає опублікованих документів!
             router-link(
               v-for='preview in sortingData'
               :key='preview._id'

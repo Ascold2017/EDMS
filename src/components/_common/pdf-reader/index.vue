@@ -1,11 +1,11 @@
 <template lang='pug'>
-    div.reader#pdfjs
-        pdf(
-            v-for='i in numPages'
-            :key='i'
-            :src='loadingTask'
-            :page='i'
-            style='display: block')
+  div.reader#pdfjs
+    pdf(
+      v-for='i in numPages'
+      :key='i'
+      :src='loadingTask'
+      :page='i'
+      style='display: block')
 </template>
 
 <script>
