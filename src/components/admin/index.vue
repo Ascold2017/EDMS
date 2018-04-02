@@ -1,6 +1,6 @@
 <template lang='pug'>
   b-container
-    h1.title Панель адміністратора {{ group.name }}
+    h1.title Панель адміністратора {{ currentGroup.name }}
     b-tabs.mt-3
       b-tab(title='Створити роль в групі')
         b-row
@@ -39,9 +39,9 @@
 
               b-button(type='submit') Створити
           b-col.mt-3
-              h2.subtitle Пользователи группы {{ group.name }}
+              h2.subtitle Пользователи группы {{ currentGroup.name }}
               b-list-group.users-list
-                b-list-group-item(v-for='сurrUser in users' :key='сurrUser._id')
+                b-list-group-item(v-for='сurrUser in currentGroup.users' :key='сurrUser._id')
                   h4 {{ сurrUser.author }}
                   p.mb-0 Роль: {{ сurrUser.role }}
                   p.mb-0 Зареєстрован: {{ toDateString(+сurrUser.dateRegistration) }}
@@ -70,21 +70,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('groupsStore', ['groups']),
-    ...mapGetters('usersStore', ['currentUser']),
-    users () {
-      return this.groups[0].users
-    },
-    group () {
-      return this.groups[0]
-    }
+    ...mapGetters('groupsStore', ['currentGroup']),
+    ...mapGetters('usersStore', ['currentUser'])
   },
   methods: {
     ...mapActions('groupsStore', ['createNewUser', 'getCurrentGroup']),
-    ...mapActions('usersStore', ['createKeys']),
     toDateString,
     createUser (e) {
-      this.createNewUser({ ...this.user, group: this.group._id })
+      this.createNewUser({ ...this.user, group: this.currentGroup._id })
         .then(response => {
           e.target.reset()
           this.info = response.message

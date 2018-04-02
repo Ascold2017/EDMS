@@ -45,11 +45,6 @@ const usersStore = {
     sendMail (context, data) {
       return Api.sendMail(data, store.getters['headerToken'])
         .then(response => response)
-    },
-    createKeys (context, { cert, userId }) {
-      return Api.usersApi.createKeys({ cert, userId }, store.getters['headerToken'])
-        .then(response => response.data)
-        .catch(e => { throw new Error(e.message) })
     }
   }
 }

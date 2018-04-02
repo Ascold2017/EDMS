@@ -4,11 +4,15 @@ import { store } from '../index'
 const groupsStore = {
   namespaced: true,
   state: {
-    data: []
+    data: [],
+    currentGroup: {}
   },
   getters: {
     groups (state) {
       return state.data
+    },
+    currentGroup (state) {
+      return state.currentGroup
     }
   },
   actions: {
@@ -18,7 +22,7 @@ const groupsStore = {
     },
     getCurrentGroup (context) {
       return Api.groupsApi.getGroupByToken(store.getters['usersStore/currentUser'].groupInvite, store.getters['headerToken'])
-        .then(response => { context.state.data = response; return null })
+        .then(response => { context.state.currentGroup = response; return null })
         .catch(e => { throw new Error(e) })
     },
     createNewGroup (context, { groupName, adminEmail }) {
