@@ -1,4 +1,4 @@
-import { Api } from './../../API-dev/Api'
+import { Api } from './../../API/Api'
 import { store } from '../index'
 import msToTime from '../../components/modulesJs/msToTime'
 
