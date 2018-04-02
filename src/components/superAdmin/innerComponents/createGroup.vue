@@ -2,35 +2,35 @@
   b-row
     b-col
       b-form(@submit.prevent='createGroup' ref='createGroupForm' class='mb-3')
-        h2.subtitle.mb-2 Создать новую группу
-        b-form-group(label='Введите название группы')
+        h2.subtitle.mb-2 Створити нову групу
+        b-form-group(label='Введіть назву групи')
           b-form-input(
           type='text'
           v-model='groupName'
           required
-          placeholder='Введите название группы')
+          placeholder='Назва групи')
         b-form-group(
-          label='e-mail администратора группы'
-          description='Внимание! На этот адрес будут высланы данные авторизации!')
+          label='E-mail адміністратора групи'
+          description='Увага! На цей адрес будуть відіслані дані фвторизації!')
           b-form-input(
             type='email'
             v-model='adminEmail'
             placeholder='example@gmail.com'
             required)
-        b-button(type='submit' variant='primary') Создать группу
+        b-button(type='submit' variant='primary') Створити групу
 
     b-modal(
       ref='alertModal'
-      title='Внимание!'
+      title='Увага!'
       @ok='submitForm')
       h3 Проверьте данные!
-      b-form-group(label='Название группы')
+      b-form-group(label='Назва группи')
         b-form-input(
           v-model='groupName'
           readonly)
       b-form-group(
-        label='Email админстратора'
-        description='На эту почту будут высланы логин и пароль')
+        label='Email адміністратора'
+        description='На цю пошту будуть відіслані логін та пароль')
         b-form-input(v-model='adminEmail')
 
 </template>

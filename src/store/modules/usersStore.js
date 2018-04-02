@@ -1,4 +1,4 @@
-import { Api } from './../../API/Api'
+import { Api } from './../../API-dev/Api'
 import { store } from '../index'
 
 const usersStore = {

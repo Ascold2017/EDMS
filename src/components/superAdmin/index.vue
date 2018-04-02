@@ -1,14 +1,13 @@
 <template lang='pug'>
     b-container
-      section.admin
-        h1.title.mb-3 Панель главного администратора EDMS
-        b-tabs
-          b-tab(title='Создать новую группу')
-            create-group(@alert="openInfo").mt-3
-          b-tab(title='Создать нового администратора')
-            create-admin(@alert="openInfo").mt-3
-          b-tab(title='Группы')
-            groups-list(@alert="openInfo").mt-3
+      h1.title.mb-3 Панель головного адміністратора EDMS
+      b-tabs
+        b-tab(title='Создать новую группу')
+          create-group(@alert="openInfo").mt-3
+        b-tab(title='Создать нового администратора')
+          create-admin(@alert="openInfo").mt-3
+        b-tab(title='Группы')
+          groups-list(@alert="openInfo").mt-3
       b-modal(ref='infoModal' title='Сообщение')
         | {{ info }}
 </template>
@@ -38,8 +37,6 @@ export default {
 }
 </script>
 <style lang='sass' scoped>
-.admin
-    padding: 40px 0
 ol
     list-style: inside
 </style>

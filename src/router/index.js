@@ -19,7 +19,7 @@ router.beforeResolve((to, from, next) => {
     access = false
     next()
   }
-  if (!userToken) {
+  if (!userToken || to.path === '/') {
     access = true
     if (to.path === '/') {
       next()
