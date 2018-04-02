@@ -13,11 +13,19 @@ const groupsApi = {
   },
   createNewGroup (group, config) {
     return axios.post('/api/createNewGroup', group, config)
-      .catch(e => { throw new Error(e) })
+      .catch(e => { throw new Error(e.response.data.message) })
   },
   createNewAdmin (admin, config) {
-    return axios.post('/api/createNewUser', admin, config)
-      .catch(e => { throw new Error(e) })
+    return axios.post('/api/createNewAdmin', admin, config)
+      .catch(e => { throw new Error(e.response.data.message) })
+  },
+  removeAdmin ({ adminId, groupId }, config) {
+    return axios.delete(`/api/removeAdmin/${groupId}/${adminId}`, config)
+      .catch(e => { throw new Error(e.response.data.message) })
+  },
+  sendInviteAdmin (admin, config) {
+    return axios.post('/api/sendInviteAdmin', admin, config)
+      .catch(e => { throw new Error(e.response.data.message) })
   }
 }
 export default groupsApi

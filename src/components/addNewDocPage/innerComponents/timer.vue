@@ -1,5 +1,5 @@
 <template lang='pug'>
-    time.date Текущее время: {{date}}
+    time.date Поточний час: {{date}}
 </template>
 
 <script>
@@ -24,7 +24,9 @@ export default {
           time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()
         let seconds =
           time.getSeconds() < 10 ? '0' + time.getSeconds() : time.getSeconds()
+
         this.date = `${day}.${month}.${time.getFullYear()} - ${hours}:${minutes}:${seconds}`
+
         this.$emit('dateUpdate', this.date)
       }, 1000)
     }

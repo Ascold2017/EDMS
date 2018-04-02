@@ -1,31 +1,23 @@
 <template lang='pug'>
-    b-card.mt-3
-        b-form-group(
-            label='Выстроить список виз:'
-            label-for='authors')
-            b-form-input(
-                type='text'
-                v-model='authorNameOrRole'
-                placeholder='Начните поиск по ФИО или Роли')
-        b-form-group(
-            label='Или выберите готовый список:'
-            )
-            b-form-select(
-                v-model='selectedPreset'
-                :options='presetsOptions'
-                )
-        b-form-group(
-            label='Список доступных ролей'
-            label-for='authors')
-            b-list-group(id='authors').authors-list
-                b-list-group-item(
-                    v-for='user in computedUsers'
-                    :key='user.author'
-                    @click='addAuthor(user)'
-                    class='authors-list__item'
-                    )
-                    h3.subtitle.subtitle_small ФИО: {{ user.author }}
-                    p.subtitle.subtitle_small Роль: {{ user.role }}
+  b-card.mt-3
+    b-form-group(label='Виставити список віз:')
+      b-form-input(
+        type='text'
+        v-model='authorNameOrRole'
+        placeholder='Почніть пошук за ПІБ або Роллю')
+    b-form-group(label='Або оберіть готовий список:')
+      b-form-select(
+        v-model='selectedPreset'
+        :options='presetsOptions')
+    b-form-group(label='Список доступних ролей')
+      b-list-group(id='authors').authors-list
+        b-list-group-item(
+          v-for='user in computedUsers'
+          :key='user.author'
+          @click='addAuthor(user)'
+          class='authors-list__item')
+          h3.subtitle.subtitle_small ПІБ: {{ user.author }}
+          p.subtitle.subtitle_small Роль: {{ user.role }}
 </template>
 
 <script>
@@ -44,25 +36,7 @@ export default {
     ...mapGetters('usersStore', ['users']),
     ...mapGetters('docsStore', ['presets']),
     computedUsers () {
-      // filtering selected users from result collection
-      const filterSelected = users => {
-        // if no selected users
-        if (!this.selectedUsers.length) return users
-        // filtering selected users
-        return users.filter(resultItem => {
-          let selectedUser = this.selectedUsers.find(
-            selectedUser => selectedUser._id === resultItem._id
-          )
-          // if user is selected - filtering from collection
-          if (!selectedUser) {
-            return resultItem
-          } else {
-            return null
-          }
-        })
-      }
-
-      if (!this.authorNameOrRole) return filterSelected(this.users)
+      if (!this.authorNameOrRole) return this.filterSelected(this.users)
       // live search by author or role
       let result = this.users.filter(user => {
         // are exist author with input name
@@ -80,10 +54,10 @@ export default {
         return null
       })
       // filtering selected users from collection
-      return filterSelected(result)
+      return this.filterSelected(result)
     },
     presetsOptions () {
-      let result = [{ value: [], text: 'Не выбрано' }]
+      let result = [{ value: [], text: 'Не обрано' }]
       for (let preset of this.presets) {
         result.push({ value: preset.routes, text: preset.title })
       }
@@ -101,6 +75,19 @@ export default {
       user.status = 'waiting'
       this.selectedUsers.push({ ...user })
       this.$emit('updateSelectedUsers', this.selectedUsers)
+    },
+    filterSelected  (users) {
+      // filtering selected users from result collection
+      // if no selected users
+      if (!this.selectedUsers.length) return users
+      // filtering selected users
+      return users.filter(resultItem => {
+        let selectedUser = this.selectedUsers.find(
+          selectedUser => selectedUser._id === resultItem._id
+        )
+        // if user is selected - filtering from collection
+        return !selectedUser
+      })
     }
   },
   watch: {
@@ -115,15 +102,15 @@ export default {
 </script>
 <style lang='sass' scoped>
 .authors-list
-    max-height: 335px
-    height: 100%
-    overflow-y: scroll
-    overflow-x: hidden
-    &__top
-        display: flex
-        justify-content: space-between
-    &__item
-        cursor: pointer
-        &:hover
-            background-color: #cccccc
+  max-height: 335px
+  height: 100%
+  overflow-y: scroll
+  overflow-x: hidden
+  &__top
+    display: flex
+    justify-content: space-between
+  &__item
+    cursor: pointer
+    &:hover
+      background-color: #cccccc
 </style>

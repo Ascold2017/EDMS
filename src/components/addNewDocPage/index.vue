@@ -2,10 +2,10 @@
 .bg-simple
   b-container
     b-row
-        b-col
-            b-card(class='mb-3')
-                h1.title Добавить новый документ
-                app-timer(@dateUpdate='dateUpd')
+      b-col
+        b-card(class='mb-3')
+          h1.title Додати новий документ
+          app-timer(@dateUpdate='date = $event')
     b-row
       b-col
         b-form(@submit.prevent.stop='addNewDoc' enctype='multipart/form-data')
@@ -13,52 +13,56 @@
             b-col(md='12' lg='6')
               b-card
                 b-form-group(
-                  label='Название документа:'
+                  label='Назва документа:'
                   label-for='docname'
-                  description='Добавьте название документа')
+                  description='Додайте назву документа')
                   b-form-input(
                     id='docname'
                     type='text'
                     v-model='docName'
                     required
-                    placeholder='Введите название документа')
+                    placeholder='Назва')
                 b-form-group(
                   label='Файл:'
                   label-for='file'
-                  description='Добавьте файл документа')
+                  description='Завантажте файл документа')
                   b-form-file(
-                      id='file'
-                      @change='getFile($event)'
-                      choose-label='Выберите файл'
-                      accept='.pdf'
-                      ref='fileInput'
-                      required)
+                    id='file'
+                    @change='getFile'
+                    choose-label='Оберіть файл'
+                    accept='.pdf'
+                    ref='fileInput'
+                    required)
                 pdfReader(
                   :src='previewDoc'
                   v-if='previewDoc')
                 .empty-pdf(v-else)
-                  | Загрузите файл документа
+                  | Завантажте файл документа
 
                 b-form-group(
-                  label='Введите краткое описание документа'
-                  class='mt-3'
-                  )
+                  label='Введіть короткий опис документа'
+                  class='mt-3')
                   b-form-textarea(
                     v-model='docDescription'
                     placeholder='Описание..'
                     :rows='3'
-                    :max-rows='6'
-                    )
+                    :max-rows='6')
             b-col(md='12' lg='6')
-              preset-routes(@choosePreset='updateSelectedUser')
-              choose-authors(:selectedUsers='selectedUsers' @updateSelectedUsers='updateSelectedUser')
+              // Completed presets
+              preset-routes(@choosePreset='updateSelectedUsers')
+              choose-authors(
+                :selectedUsers='selectedUsers'
+                @updateSelectedUsers='updateSelectedUsers')
 
           b-row(class='mt-3')
             b-col
               b-card
-                authors-list(:selectedUsers='selectedUsers' @updateSelectedUser='updateSelectedUser')
+                // List for choose document routes
+                authors-list(
+                  :selectedUsers='selectedUsers'
+                  @updateSelectedUser='updateSelectedUsers')
 
-        b-button(type='submit' class='mt-3' ref='submit') Опубликовать
+          b-button(type='submit' class='mt-3' ref='submit') Опублікувати
 
     b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
 </template>
@@ -69,7 +73,7 @@ export default {
     return {
       date: '',
       docName: '',
-      docVersion: '1.0.0',
+      docVersion: 'Перша версія',
       docDescription: '',
       file: '',
       selectedUsers: [],
@@ -84,23 +88,21 @@ export default {
   methods: {
     ...mapActions('docsStore', ['addNewDocument']),
     ...mapActions('usersStore', ['getAllUsersFromGroup']),
-    dateUpd (newDate) {
-      this.date = newDate
+    updateSelectedUsers (users) {
+      this.selectedUsers = users
     },
     getFile (event) {
       const file = event.target.files[0]
       if (!file) return
       // check size file
-      if (file.size / 1024 > 50000) {
-        this.showAlert('Загружаемый файл должен быть меньше 50 МБ!')
+      if (file.size / 1024 > 30000) {
+        this.showAlert('Файл має бути менше 30 МБ!')
         return
       }
       // save to send on server
       this.file = file
+      // and create preview
       this.previewDoc = `${URL.createObjectURL(file)}`
-    },
-    updateSelectedUser (users) {
-      this.selectedUsers = users
     },
     addNewDoc (e) {
       if (!this.selectedUsers.length) {
@@ -112,6 +114,7 @@ export default {
         return
       }
       this.$refs.submit.disabled = true
+      // create formdata and send
       const formData = new FormData()
       formData.append('title', this.docName)
       formData.append('date', Date.now())

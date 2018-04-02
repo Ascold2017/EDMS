@@ -1,54 +1,46 @@
 <template lang='pug'>
-b-navbar(toggleable='md' type='dark' variant='info')
-    div.acc-title {{ currentUser.author }}
+  b-navbar(toggleable='md' type='dark' variant='info')
+    b-navbar-brand( to='/edms')
+      img(src='~assets/img/logo.png').logo
+    div(v-if='show !== "indexBar"').acc-title {{ currentUser.author }}
     b-collapse(is-nav id='nav_collapse')
-        b-navbar-nav(
-            class='ml-auto'
-            v-if='show === "userBar"')
-            router-link(
-                to='/edms'
-                class='nav-item nav-link'
-                ) Новые
-            router-link(
-                to='/edms/addNew'
-                class='nav-item nav-link'
-                ) Добавить
-            router-link(
-                to='/edms/myDocuments'
-                class='nav-item nav-link'
-                ) Мои документы
-            router-link(
-                to='/edms/archive'
-                class='nav-item nav-link'
-                ) Архив
-            b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Выйти
-        b-navbar-nav(
-            class='ml-auto'
-            v-if='show === "adminBar"')
-            router-link(
-                to='/edms/admin'
-                class='nav-item nav-link'
-                ) Панель администрирования админа
-            b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Выйти
-        b-navbar-nav(
-            class='ml-auto'
-            v-if='show === "superadminBar"')
-            router-link(
-                to='/edms/superAdmin'
-                class='nav-item nav-link'
-                ) Панель администрирования суперадмина
-            b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Выйти
-        b-navbar-nav(
-            class='ml-auto'
-            v-if='show === "indexBar"')
-            router-link(
-                to='/auth'
-                class='nav-item nav-link'
-                ) Авторизоваться
-            router-link(
-                to='/registration'
-                class='nav-item nav-link'
-                ) Зарегистрироваться
+      b-navbar-nav(
+        class='ml-auto'
+        v-if='show === "userBar"')
+        router-link(
+          to='/edms'
+          class='nav-item nav-link'
+          ) Нові документи
+        router-link(
+          to='/edms/addNew'
+          class='nav-item nav-link'
+          ) Додати документ
+        router-link(
+          to='/edms/myDocuments'
+          class='nav-item nav-link'
+          ) Моі документи
+        router-link(
+          to='/edms/archive'
+          class='nav-item nav-link'
+          ) Архів
+        b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Вийти
+      b-navbar-nav(
+        class='ml-auto'
+        v-if='show === "adminBar"')
+        router-link(
+          to='/edms/admin'
+          class='nav-item nav-link'
+          ) Панель адміністрування
+        b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Вийти
+      b-navbar-nav(
+        class='ml-auto'
+        v-if='show === "superadminBar"')
+        router-link(
+          to='/edms/superAdmin'
+          class='nav-item nav-link'
+          ) Панель адміністрування
+        b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Вийти
+    b-navbar-toggle(target='nav_collapse' v-if='show !== "indexBar"')
 </template>
 
 <script>
@@ -77,8 +69,15 @@ export default {
   methods: {
     ...mapActions(['logout']),
     logOut () {
-      this.logout().then(() => this.$router.push('/'))
+      this.$router.push('/')
+      this.logout()
     }
   }
 }
 </script>
+<style lang="sass" scoped>
+.logo
+    display: block
+    height: 35px
+    width: auto
+</style>

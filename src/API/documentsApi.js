@@ -11,6 +11,11 @@ const documensApi = {
       .then(response => response.data)
       .catch(e => { throw new Error(e) })
   },
+  getFileContent (filename, config) {
+    return axios.get(`${filename}`, config)
+      .then(response => response.data)
+      .catch(e => { throw new Error(e) })
+  },
   getMyDocumentByIdJSON (id, config) {
     return axios.get(`/api/getMyDocument/${id}`, config)
       .then(response => response.data)
@@ -58,6 +63,11 @@ const documensApi = {
   },
   closeDocumentById (id, config) {
     return axios.post('/api/closeDocument', { id }, config)
+      .then(response => response.data)
+      .catch(err => { throw new Error(err) })
+  },
+  checkSigns (id, config) {
+    return axios.get(`/api/checkSigns/${id}`, config)
       .then(response => response.data)
       .catch(err => { throw new Error(err) })
   }

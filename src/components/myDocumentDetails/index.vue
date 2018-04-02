@@ -6,10 +6,10 @@
         b-card
           h1.title {{ document.title }}
       b-col(sm='12' class='mb-3')
-        b-card
-          time.text Дата первой публикации {{ toDateString(+document.date) }}
-          p.text(v-if='document.versions.lenght > 1') Текущая версия документа {{ document.versions[0].version }}
-          time.text(v-if='document.versions.lenght > 1') Дата публикации версии {{ document.versions[0].version }}: {{ document.versions[0].date }}
+        b-card(v-if='document.author && document.date && document.versions')
+          time.text Дата першої публикації {{ toDateString(+document.date) }}
+          p.text(v-if='document.versions.lenght > 1') Поточна версія документа {{ document.versions[0].version }}
+          time.text(v-if='document.versions.lenght > 1') Дата публикації версіх {{ document.versions[0].version }}: {{ document.versions[0].date }}
     b-row
       b-col
         doc-tabs
@@ -23,19 +23,19 @@
           v-if='document.globalStatus === "resolved"'
           class='mb-0'
           show
-          ) Документ успешно подписан, его можно найти в
-          router-link(:to='"/edms/archive/" + document._id') Архиве
+          ) Документ успішно підписа, його можна знайти у
+          router-link(:to='"/edms/archive/" + document._id') Архіві
         b-alert(
           variant='primary'
           v-if='document.globalStatus === "waiting"'
           class='mb-0'
           show
-          ) Документ на стадии рассмотрения. Сейчас его рассматривает: {{ closerViewer }}
+          ) Документ на стадії перегляду. Зараз його переглядає: {{ closerViewer }}
         div(v-if='document.globalStatus === "rejected"')
           b-alert(
             variant='danger'
             show
-            ) Документ отказан в подписи. Вы можете его доработать или закрыть.
+            ) Документ відмовлен в підписі. Ви можете его доробити або закрити.
             b-card.mb-3
               p.subtitle.subtitle_small {{ document.versions[0].rejectReason }}
           b-button(
@@ -43,14 +43,14 @@
             @click='closeDocument'
             size='md'
             class='mr-3 mb-3'
-            ) Закрыть документ
+            ) Закрити документ
           router-link(
             id='editDocument'
             :to='"/edms/myDocumentEdit/" + id'
             class='btn btn-success btn-md mb-3'
-            ) Доработать документ
-          b-tooltip(target='editDocument' title='Перейти в редактор версий')
-          b-tooltip(target='toArchive' title='Документ отправится в архив')
+            ) Доробити документ
+          b-tooltip(target='editDocument' title='Перейти в редактор версій')
+          b-tooltip(target='toArchive' title='Документ відправиться в архів')
 </template>
 
 <script>

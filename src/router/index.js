@@ -19,12 +19,12 @@ router.beforeResolve((to, from, next) => {
     access = false
     next()
   }
-  if (!userToken) {
+  if (!userToken || to.path === '/') {
     access = true
-    if (to.path === '/auth' || to.path === '/registration') {
+    if (to.path === '/') {
       next()
     } else {
-      next('/auth')
+      next('/')
     }
   } else {
     const userRole = store.state.usersStore.user.role
