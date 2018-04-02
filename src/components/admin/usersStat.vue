@@ -39,8 +39,7 @@ export default {
         shortDays: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
         captions: {
           'title': 'Оберить проміжок',
-          'ok_button': 'Обрати',
-          'today': 'За сьогодні'
+          'ok_button': 'Обрати'
         },
         presetRanges: {
           today: () => {

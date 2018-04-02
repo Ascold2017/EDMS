@@ -77,28 +77,30 @@ const statStore = {
         .filter(doc => doc.date >= state.dateRange.start && doc.date <= state.dateRange.end)
 
       let stat = []
-      const group = store.getters['groupsStore/groups'][0]
+      const group = store.getters['groupsStore/currentGroup']
       let users = null
 
-      if (group) {
+      if (group.users) {
+        // filter users no-admin only
         users = group.users.filter(user => user.role !== 'Admin')
       }
 
+      // stat object for table
+      stat = {
+        // table fields
+        fields: [
+          { key: 'author', label: 'ПІБ', sortable: true },
+          { key: 'role', label: 'Роль', sortable: true },
+          { key: 'created', label: 'Опублікував документів', sortable: true },
+          { key: 'resolvedDocs', label: 'Прийнятих документів', sortable: true },
+          { key: 'rejectedDocs', label: 'Відмовлених документів', sortable: true },
+          { key: 'signings', label: 'Піставлені підписи', sortable: true },
+          { key: 'rejecteds', label: 'Відмовлених підписів', sortable: true }
+        ],
+        items: []
+      }
+      // if users exist - create table rows
       if (users) {
-        // stat object for table
-        stat = {
-          // table fields
-          fields: [
-            { key: 'author', label: 'ПІБ', sortable: true },
-            { key: 'role', label: 'Роль', sortable: true },
-            { key: 'created', label: 'Опублікував документів', sortable: true },
-            { key: 'resolvedDocs', label: 'Прийнятих документів', sortable: true },
-            { key: 'rejectedDocs', label: 'Відмовлених документів', sortable: true },
-            { key: 'signings', label: 'Піставлені підписи', sortable: true },
-            { key: 'rejecteds', label: 'Відмовлених підписів', sortable: true }
-          ],
-          items: []
-        }
         // add table items
         users.forEach(user => {
           stat.items.push({

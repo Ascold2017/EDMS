@@ -29,7 +29,7 @@
                   required)
 
               b-form-group(
-                label='Введіть Уmail корстувача'
+                label='Введіть Еmail користувача'
                 description='Увага! На нього відправиться повідомлення та ключі цфрового підпису!')
                 b-form-input(
                   type='email'
@@ -39,7 +39,7 @@
 
               b-button(type='submit') Створити
           b-col.mt-3
-              h2.subtitle Пользователи группы {{ currentGroup.name }}
+              h2.subtitle Користувачі групи: {{ currentGroup.name }}
               b-list-group.users-list
                 b-list-group-item(v-for='сurrUser in currentGroup.users' :key='сurrUser._id')
                   h4 {{ сurrUser.author }}
