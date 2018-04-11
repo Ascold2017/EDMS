@@ -27,7 +27,7 @@ b-tabs
     b-form(@submit.prevent='signInAdmin').mt-3
       b-alert(varinat='success' v-if='success' show) Ви успішно авторизувались!
       b-alert(variant='danger' v-if='error' show) {{ error }}
-      b-form-group(label='Введите логин')
+      b-form-group(label='Введіть логін')
         b-form-input(
           v-model='userLogin'
           type='text'

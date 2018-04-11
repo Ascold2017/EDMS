@@ -4,7 +4,7 @@ import usersStore from './modules/usersStore'
 import docsStore from './modules/docsStore'
 import groupsStore from './modules/groupsStore'
 import statStore from './modules/statStore'
-import { Api } from '../API/Api'
+import { Api } from '../API-dev/Api'
 const openpgp = require('openpgp')
 
 Vue.use(Vuex)
@@ -34,34 +34,58 @@ export const store = new Vuex.Store({
   },
   mutations: {
     setToken (state, token) {
-      sessionStorage.setItem('token', token)
+      sessionStorage.setItem('edms-token', token)
       state.token = token
     },
     clearToken (state) {
-      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('edms-token')
       state.token = ''
     },
     setKey (state, privateKey) {
+      // stringify private key
+      const privateKeyString = JSON.stringify(privateKey, (key, value) => {
+        if (typeof value === 'function') {
+          console.log('Function:', key, value)
+          return '/funcStart(' + value.toString() + ')funcEnd/'
+        }
+        return value
+      })
+      console.log(privateKeyString)
       state.privateKey = privateKey
-      // sessionStorage.setItem('privateKey', privateKey)
+      sessionStorage.setItem('edms-privateKey', privateKeyString)
     },
     clearKey (state) {
-      sessionStorage.removeItem('privateKey')
+      sessionStorage.removeItem('edms-privateKey')
       state.privateKey = ''
     }
   },
   actions: {
     // before init - get user token and get user info from server
     initApp (context) {
-      const token = sessionStorage.getItem('token')
+      const token = sessionStorage.getItem('edms-token')
       if (token) {
         context.commit('setToken', token)
-        // context.commit('setKey', JSON.parse(sessionStorage.getItem('privateKey')))
+        context.dispatch('parsePrivateKey', sessionStorage.getItem('edms-privateKey'))
+          .then(parsedPrivateKey => {
+            console.log('From session storage: ', parsedPrivateKey)
+            context.commit('setKey', parsedPrivateKey)
+          })
         return store.dispatch('usersStore/getCurrentUser')
           .then(() => store.dispatch('groupsStore/getCurrentGroup'))
       } else {
         return Promise.resolve()
       }
+    },
+    parsePrivateKey (context, privateKeyString) {
+      return JSON.parse(privateKeyString, (key, value) => {
+        if (typeof value === 'string' &&
+          value.startsWith('/funcStart(') &&
+          value.endsWith(')funcEnd/')) {
+          value = value.substring(11, value.length - 9)
+          return eval('(' + value + ')')
+        }
+        return value
+      })
     },
     // when logout - remove token an user info
     logout (context) {
