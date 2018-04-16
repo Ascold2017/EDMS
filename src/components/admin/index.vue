@@ -1,56 +1,65 @@
 <template lang='pug'>
-  b-container
-    h1.title Панель адміністратора {{ currentGroup.name }}
-    b-tabs.mt-3
-      b-tab(title='Створити роль в групі')
-        b-row
-          b-col
-            b-form(@submit.prevent='createUser' class='mb-3 mt-3')
+  v-container(fluid app grid-list-md).bg-simple
+    v-subheader.headline Панель адміністратора {{ currentGroup.name }}
+    v-tabs
+      v-tab Створити роль в групі
+      v-tab-item
+        v-layout(row wrap)
+          v-flex(xs12 lg6)
+            v-card.px-3.py-3.mt-2
+              v-form(ref='adminForm' v-model='valid')
 
-              b-form-group(label='ПІБ власника')
-                b-form-input(
+                v-text-field(
                   type='text'
                   v-model='user.name'
+                  label='ПІБ власника'
                   placeholder='Фамілія, Иʼмя, По батькові'
-                  required)
+                  required
+                  :rules='rules')
 
-              b-form-group(label='Назва роли корстувача')
-                b-form-input(
+                v-text-field(
                   type='text'
                   v-model='user.role'
                   required
+                  :rules='rules'
+                  label='Назва роли корстувача'
                   placeholder='Роль')
 
-              b-form-group(label='Строк дії сертификата, діб')
-                b-form-input(
-                  type='number'
-                  v-model='user.cerTime'
-                  placeholder='0 - необмежено'
-                  required)
+                v-text-field(
+                    type='number'
+                    v-model='user.cerTime'
+                    label='Строк дії сертификата, діб'
+                    placeholder='0 - необмежено'
+                    :rules='rules'
+                    required)
 
-              b-form-group(
-                label='Введіть Еmail користувача'
-                description='Увага! На нього відправиться повідомлення та ключі цфрового підпису!')
-                b-form-input(
-                  type='email'
-                  v-model='user.email'
-                  required
-                  placeholder='example@mail.ua')
+                v-text-field(
+                    type='email'
+                    v-model='user.email'
+                    required
+                    label='Введіть Еmail користувача'
+                    description='Увага! На нього відправиться повідомлення та ключі цфрового підпису!'
+                    :rules='rules'
+                    placeholder='example@mail.ua')
 
-              b-button(type='submit') Створити
-          b-col.mt-3
-              h2.subtitle Користувачі групи: {{ currentGroup.name }}
-              b-list-group.users-list
-                b-list-group-item(v-for='сurrUser in currentGroup.users' :key='сurrUser._id')
-                  h4 {{ сurrUser.author }}
-                  p.mb-0 Роль: {{ сurrUser.role }}
-                  p.mb-0 Зареєстрован: {{ toDateString(+сurrUser.dateRegistration) }}
+                v-btn(@click.prevent='createUser' color='primary' :disabled='!valid') Створити
+          v-flex(xs12 lg6)
+            v-card.px-3.py-3.mt-2
+              v-subheader.headline Користувачі групи: {{ currentGroup.name }}
+              div.users-list
+                template(v-for='сurrUser in currentGroup.users')
+                  v-card.px-3
+                    v-subheader {{ сurrUser.author }}
+                    p.mb-0 Роль: {{ сurrUser.role }}
+                    p.mb-0 Зареєстрован: {{ toDateString(+сurrUser.dateRegistration) }}
+                  v-divider
 
-      b-tab(title='Статистика групи')
+      v-tab Статистика групи
+      v-tab-item
         users-stat
 
-    b-modal(ref='infoModal' title='Повідомлення')
-      | {{ info }}
+    v-dialog(v-model='showAlert')
+      v-card.px-3.py-4 {{ info }}
 </template>
 
 <script>
@@ -66,7 +75,10 @@ export default {
         name: '',
         certTime: 0
       },
-      info: ''
+      info: '',
+      showAlert: false,
+      valid: false,
+      rules: [ v => !!v || 'Поле обовʼязкове!' ]
     }
   },
   computed: {
@@ -79,13 +91,13 @@ export default {
     createUser (e) {
       this.createNewUser({ ...this.user, group: this.currentGroup._id })
         .then(response => {
-          e.target.reset()
+          this.$refs.adminForm.reset()
           this.info = response.message
-          this.$refs.infoModal.show()
+          this.showAlert = true
         })
         .catch(e => {
           this.info = e.message
-          this.$refs.infoModal.show()
+          this.showAlert = true
         })
     }
   },
@@ -97,4 +109,7 @@ export default {
 <style lang='sass' scoped>
 .admin
   padding: 40px 0
+.users-list
+  height: 297px
+  overflow-y: scroll
 </style>

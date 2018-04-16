@@ -1,28 +1,31 @@
 <template lang='pug'>
-  div
-    h4.mt-3 Статистика за {{ title }}
-    b-form-group(label='Обрати проміжок зрізу статистики')
-      vue-rangedate-picker(
-        i18n='EN'
-        :month='datepickerConfig.month'
-        :shortDays='datepickerConfig.shortDays'
-        :captions='datepickerConfig.captions'
-        :presetRanges='datepickerConfig.presetRanges'
-        @selected='submitStat')
+  v-card.px-3.py-3
+    v-subheader.headline Статистика за {{ title }}
+    v-subheader Обрати проміжок зрізу статистики
+    vue-rangedate-picker(
+      i18n='EN'
+      :month='datepickerConfig.month'
+      :shortDays='datepickerConfig.shortDays'
+      :captions='datepickerConfig.captions'
+      :presetRanges='datepickerConfig.presetRanges'
+      @selected='submitStat')
     ol
       li Створено усього документов за период: {{ docsCreated}}
       li Підписано усього документов за период: {{ docsSigned }}
       li Отказано документов за период: {{ docsRejected }}
       li Середній час між створенням та фінальним підписанням документа: {{ docsTimingResolve }}
       li Середній час одного підпису: {{ docsTimingSign }}
-    h4 Статистика за ролями:
-    b-table(
-      striped
-      bordered
-      hover
-      :fields='usersStat.fields'
-      :items='usersStat.items')
-
+    v-subheader Статистика за ролями:
+    v-data-table(:headers='usersStat.fields' :items='usersStat.items')
+      template(slot="items" slot-scope="props")
+        td {{ props.item.author }}
+        td {{ props.item.role }}
+        td {{ props.item.resolvedDocs }}
+        td {{ props.item.rejectedDocs }}
+        td {{ props.item.signings }}
+        td {{ props.item.rejecteds }}
+        td {{ props.item.created }}
+    </template>
 </template>
 
 <script>

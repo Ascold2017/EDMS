@@ -1,44 +1,47 @@
 <template lang='pug'>
-.bg-simple
-  b-container
-    b-row
-      b-col(sm='12' class='mb-3')
-        b-card
-          h1.title {{ document.title }}
-      b-col(sm='12' class='mb-3')
-        b-card(v-if='document.author && document.date && document.versions')
-          p.text Автор публикації {{ document.author}}
-          time.text Дата першої публикації {{ toDateString(+document.date) }}
-          div(v-if='document.versions.length > 1')
-            p.text Поточна версія документа {{ document.versions[0].version }}
-            time.text Дата публикації версії {{ document.versions[0].version }}: {{ toDateString(+document.versions[0].date) }}
-    b-row
-      b-col
+  v-container(app fluid fill-height grid-list-md).bg-simple
+    v-layout(row wrap)
+      v-flex(xs12)
+        v-card.px-3.py-3
+          v-subheader.headline {{ document.title }}
+          div(v-if='document.author && document.date && document.versions')
+            v-subheader Автор публикації {{ document.author}}
+            v-subheader Дата першої публикації {{ toDateString(+document.date) }}
+            div(v-if='document.versions.length > 1')
+              v-subheader Поточна версія документа {{ document.versions[0].version }}
+              v-subheader Дата публикації версії {{ document.versions[0].version }}: {{ toDateString(+document.versions[0].date) }}
+      v-flex(xs12)
         doc-tabs
-    b-row
-      b-col(sm='12' lg='6')
+      v-flex(xs12 lg6)
         signers-list(:rejected='rejected')
-      b-col(sm='12' lg='6')
+      v-flex(xs12 lg6)
         // sign form
-        b-form(@submit.prevent='submitDoc')
-          b-card
-            b-form-group(label='Оберіть дію')
-              b-form-radio-group(
-                v-model='selected'
-                name='radioSubComponent'
-                :options='options'
-                )
-            b-form-group(label='Ваш коментар')
-              b-form-textarea(
-                v-model='comment'
-                placeholder='Залиште коментар'
-                :rows='3'
-                :max-rows='6'
-                required
-                )
-            b-button(type='submit') Відправити
+        v-card.px-3.py-3
+          v-form(v-model='valid' ref='signForm')
+            v-subheader Оберіть дію
+            v-radio-group(
+              v-model='selected'
+              required
+              :rules='rules')
+              v-radio(
+                label='Підписати документ'
+                value='resolve')
+              v-radio(
+                label='Відмовити в підписі'
+                value='reject')
+            v-text-field(
+              v-model='comment'
+              placeholder='Залиште коментар'
+              multi-line
+              :rules='rules'
+              required)
+            v-btn(@click.prevent='submitDoc' :disabled='!valid || submitting' color='primary') Відправити
 
-  b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
+    v-dialog(v-model="alert" max-width="290")
+      v-card
+        v-card-text {{ infoAlert }}
+        v-card-actions
+          v-btn(flat @click.native='alert = false') Закрити
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
@@ -50,13 +53,13 @@ export default {
       id: this.$router.currentRoute.params.id,
       // current status of doc
       selected: '',
-      options: [
-        { value: 'resolve', text: 'Підписати документ' },
-        { value: 'reject', text: 'Відмовити в підписі' }
-      ],
       comment: '',
       infoAlert: '',
-      rejected: false
+      rejected: false,
+      valid: false,
+      rules: [ v => !!v || 'Поле обовʼязкове!' ],
+      submitting: false,
+      alert: false
     }
   },
   computed: {
@@ -70,6 +73,7 @@ export default {
     submitDoc (e) {
       if (this.selected && this.comment) {
         // post our vote to server
+        this.submitting = true
         this.postVote({
           id: this.id,
           vote: this.selected,
@@ -81,17 +85,19 @@ export default {
               this.rejected = true
             }
             this.showAlert(response.message)
-            e.target.reset()
+            this.$refs.signForm.reset()
             this.getDocumentById(this.id)
+            this.submitting = false
           })
           .catch(e => {
-            this.showAlert(`Произошла ошибка: ${e.message}`)
+            this.showAlert(`Виникла помилка: ${e.message}`)
+            this.submitting = false
           })
       }
     },
     showAlert (title) {
       this.infoAlert = title
-      this.$refs.alertModal.show()
+      this.alert = true
     }
   },
   created () {

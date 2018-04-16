@@ -1,73 +1,63 @@
 <template lang='pug'>
-.bg-simple
-  b-container
-    b-row
-      b-col
-        b-card(class='mb-3')
-          h1.title Додати новий документ
+
+  v-container(app fluid grid-list-md).bg-simple
+    v-layout(row wrap)
+      v-flex(xs12)
+        v-card.px-3.py-3
+          v-subheader.headline Додати новий документ
           app-timer(@dateUpdate='date = $event')
-    b-row
-      b-col
-        b-form(@submit.prevent.stop='addNewDoc' enctype='multipart/form-data')
-          b-row
-            b-col(md='12' lg='6')
-              b-card
-                b-form-group(
-                  label='Назва документа:'
-                  label-for='docname'
-                  description='Додайте назву документа')
-                  b-form-input(
-                    id='docname'
-                    type='text'
-                    v-model='docName'
-                    required
-                    placeholder='Назва')
-                b-form-group(
-                  label='Файл:'
-                  label-for='file'
-                  description='Завантажте файл документа')
-                  b-form-file(
-                    id='file'
-                    @change='getFile'
-                    choose-label='Оберіть файл'
-                    accept='.pdf'
-                    ref='fileInput'
-                    required)
-                pdfReader(
-                  :src='previewDoc'
-                  v-if='previewDoc')
-                .empty-pdf(v-else)
-                  | Завантажте файл документа
+      v-flex(xs12 lg6)
+        v-form(v-model='validForm' ref='docForm')
+          v-card.px-3.py-3
+            v-text-field(
+              v-model='docName'
+              required
+              :rules='rules'
+              label='Назва документа')
 
-                b-form-group(
-                  label='Введіть короткий опис документа'
-                  class='mt-3')
-                  b-form-textarea(
-                    v-model='docDescription'
-                    placeholder='Описание..'
-                    :rows='3'
-                    :max-rows='6')
-            b-col(md='12' lg='6')
-              // Completed presets
-              preset-routes(@choosePreset='updateSelectedUsers')
-              choose-authors(
-                :selectedUsers='selectedUsers'
-                @updateSelectedUsers='updateSelectedUsers')
+            file-input(
+              @file='getFile'
+              label='Завантажте файл документа'
+              accept='.pdf'
+              :required='true')
 
-          b-row(class='mt-3')
-            b-col
-              b-card
-                // List for choose document routes
-                authors-list(
-                  :selectedUsers='selectedUsers'
-                  @updateSelectedUser='updateSelectedUsers')
+            pdfReader(
+              :src='previewDoc'
+              v-if='previewDoc')
+            .empty-pdf(v-else)
+              | Завантажте файл документа
 
-          b-button(type='submit' class='mt-3' ref='submit') Опублікувати
+            v-text-field(
+              v-model='docDescription'
+              label='Введіть короткий опис документа'
+              required
+              :rules='rules'
+              multi-line)
+      v-flex(xs12 lg6)
+        // Completed presets
+        preset-routes(@choosePreset='updateSelectedUsers')
+        choose-authors(
+          :selectedUsers='selectedUsers'
+          @updateSelectedUsers='updateSelectedUsers')
 
-    b-modal(ref='alertModal' hide-footer) {{ infoAlert }}
+      v-flex(xs12)
+        v-card.px-3.py-3
+          // List for choose document routes
+          authors-list(
+            :selectedUsers='selectedUsers'
+            @updateSelectedUser='updateSelectedUsers')
+
+        v-btn(@click.prevent='addNewDoc' :disabled='!validForm || submitting' color='primary') Опублікувати
+
+    v-dialog(v-model='showModal' max-width="290")
+      v-card
+        v-card-text {{ infoAlert }}
+        v-card-actions
+          v-btn(flat @click.native='showModal = false') Закрити
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import fileInput from '../_common/fileInput'
 export default {
   data () {
     return {
@@ -79,7 +69,10 @@ export default {
       selectedUsers: [],
       infoAlert: '',
       previewDoc: '',
-      percentLoaded: 0
+      validForm: false,
+      rules: [ v => !!v || 'Обовʼязкове поле!' ],
+      submitting: false,
+      showModal: false
     }
   },
   computed: {
@@ -91,8 +84,7 @@ export default {
     updateSelectedUsers (users) {
       this.selectedUsers = users
     },
-    getFile (event) {
-      const file = event.target.files[0]
+    getFile (file) {
       if (!file) return
       // check size file
       if (file.size / 1024 > 30000) {
@@ -104,7 +96,7 @@ export default {
       // and create preview
       this.previewDoc = `${URL.createObjectURL(file)}`
     },
-    addNewDoc (e) {
+    addNewDoc () {
       if (!this.selectedUsers.length) {
         this.showAlert('Укажите исполнителей!')
         return
@@ -113,7 +105,7 @@ export default {
         this.showAlert('Укажите описание!')
         return
       }
-      this.$refs.submit.disabled = true
+      this.submitting = true
       // create formdata and send
       const formData = new FormData()
       formData.append('title', this.docName)
@@ -130,11 +122,10 @@ export default {
       this.addNewDocument(formData)
         .then(response => {
           this.showAlert(response.message)
-          e.target.reset()
-          this.$refs.fileInput.reset()
           this.selectedUsers = []
           this.previewDoc = ''
-          this.$refs.submit.disabled = false
+          this.$refs.docForm.reset()
+          this.submitting = false
         })
         .catch(e => {
           this.showAlert(e.message)
@@ -142,7 +133,7 @@ export default {
     },
     showAlert (title) {
       this.infoAlert = title
-      this.$refs.alertModal.show()
+      this.showModal = true
     }
   },
   created () {
@@ -153,7 +144,8 @@ export default {
     authorsList: require('./innerComponents/authorsList.vue'),
     appTimer: require('./innerComponents/timer.vue'),
     presetRoutes: require('./innerComponents/presetRoutes'),
-    pdfReader: require('../_common/pdf-reader')
+    pdfReader: require('../_common/pdf-reader'),
+    fileInput
   }
 }
 </script>

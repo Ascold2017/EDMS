@@ -1,23 +1,29 @@
 <template lang='pug'>
-.bg
-  b-container
-    b-card.mb-3
-      h2.title Документи к підписанню
-    b-list-group
-      b-alert(variant='primary' show v-if='!loaded') Завантажується...
-      b-alert(variant='danger' show v-if='loaded && !sortingData.length') Нових документів до розгляду немає
-      router-link(
-        v-for='preview in sortingData'
-        :key='preview._id'
-        :to='"/edms/" + preview._id'
-        class='list-group-item preview-item list-group-item-action')
-        .preview-item__icon(class='waiting')
-            i(class='fa fa-file-text-o' aria-hidden='true')
-        h2.preview-item__title {{ preview.title }}
-        time.preview-item__date Дата публікації: {{ toDateString(+preview.date) }}
-        span.preview-item__author Автор публікації: {{ preview.author }}
-        span.preview-item__state Поточний маршрут: {{ preview.state }} / {{ preview.total }}
-        span.preview-item__incoming Час відкриття візи: {{ incomingDate(preview) }}
+  v-container(app fluid fill-height).bg-simple
+    v-layout
+      v-flex
+        v-subheader.headline.mt-3 Документи к підписанню
+        v-alert(type='info' :value='!loaded') Завантажується...
+        v-alert(type='warning' :value='loaded && !sortingData.length') Нових документів до розгляду немає
+        template(v-for='preview in sortingData')
+          v-card
+            v-layout(row wrap)
+              v-flex(xs12 md6)
+                v-subheader.headline {{ preview.title }}
+              v-flex(xs12 md6)
+                v-subheader Дата публікації: {{ toDateString(+preview.date) }}
+              v-flex(xs12 md6)
+                v-subheader Автор публікації: {{ preview.author }}
+              v-flex(xs12 md6)
+                v-subheader Поточний маршрут: {{ preview.state }} / {{ preview.total }}
+              v-flex(xs12 md6)
+                v-subheader Час відкриття візи: {{ incomingDate(preview) }}
+              v-flex(xs12)
+                v-btn(
+                  :to='"/edms/" + preview._id' color='primary')
+                  | Перейти
+                  v-icon(right dark) exit_to_app
+          v-divider
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'

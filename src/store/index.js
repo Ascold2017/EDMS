@@ -4,7 +4,7 @@ import usersStore from './modules/usersStore'
 import docsStore from './modules/docsStore'
 import groupsStore from './modules/groupsStore'
 import statStore from './modules/statStore'
-import { Api } from '../API/Api'
+import { Api } from '../API-dev/Api'
 const openpgp = require('openpgp')
 
 Vue.use(Vuex)
@@ -34,34 +34,93 @@ export const store = new Vuex.Store({
   },
   mutations: {
     setToken (state, token) {
-      sessionStorage.setItem('token', token)
+      sessionStorage.setItem('edms-token', token)
       state.token = token
     },
     clearToken (state) {
-      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('edms-token')
       state.token = ''
     },
     setKey (state, privateKey) {
+      /*
+      // stringify private key
+      console.log(privateKey)
+      function otos (obj) {
+        let rs = ''
+        let notFirst = false
+
+        for (let k in obj) {
+          if (notFirst) rs += ','
+          if (typeof obj[k] === 'object') {
+            rs += '"' + k + '": {' + otos(obj[k]) + '}'
+          } else
+          if (typeof obj[k] === 'string' || typeof obj[k] === 'function') {
+            rs += '"' + k + '":"' + obj[k] + '"'
+          } else
+          if (typeof obj[k] === 'number') {
+            rs += '"' + k + '":' + obj[k] + ''
+          } else {
+            // if it gets here then we need to add another else if to handle it
+            console.log(typeof obj[k])
+          }
+          notFirst = true
+        }
+        return rs
+      }
+
+      const privateKeyString = otos(privateKey)
+      console.log(privateKeyString) */
       state.privateKey = privateKey
-      // sessionStorage.setItem('privateKey', privateKey)
+      // sessionStorage.setItem('edms-privateKey', privateKeyString)
     },
     clearKey (state) {
-      sessionStorage.removeItem('privateKey')
+      sessionStorage.removeItem('edms-privateKey')
       state.privateKey = ''
     }
   },
   actions: {
     // before init - get user token and get user info from server
     initApp (context) {
-      const token = sessionStorage.getItem('token')
+      const token = sessionStorage.getItem('edms-token')
       if (token) {
         context.commit('setToken', token)
-        // context.commit('setKey', JSON.parse(sessionStorage.getItem('privateKey')))
+        // context.dispatch('parsePrivateKey', sessionStorage.getItem('edms-privateKey'))
+        //  .then(parsedPrivateKey => {
+        //    context.commit('setKey', parsedPrivateKey)
+        //  })
         return store.dispatch('usersStore/getCurrentUser')
           .then(() => store.dispatch('groupsStore/getCurrentGroup'))
       } else {
         return Promise.resolve()
       }
+    },
+    parsePrivateKey (context, privateKeyString) {
+      // convert a string to object
+      function stoo (str) {
+        // we doing this recursively so after the first one it will be an object
+        let pStr = ''
+        try {
+          pStr = JSON.parse('{' + str + '}')
+        } catch (e) { pStr = str }
+
+        var obj = {}
+        for (let i in pStr) {
+          if (typeof pStr[i] === 'string') {
+            if (pStr[i].substring(0, 8) === 'function') {
+              eval('obj[i] = ' + pStr[i])
+            } else {
+              obj[i] = pStr[i]
+            }
+          } else
+          if (typeof pStr[i] === 'object') {
+            obj[i] = stoo(pStr[i])
+          }
+        }
+        return obj
+      }
+      const privateKeyObj = stoo(privateKeyString)
+      console.log(privateKeyObj)
+      return privateKeyObj
     },
     // when logout - remove token an user info
     logout (context) {

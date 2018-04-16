@@ -1,9 +1,8 @@
 <template lang="pug">
-.bg
-  b-container
-    b-row(align-h="center" align-v="center")
-      b-col(sm="10" md="8" lg="5")
-        b-card(title="Авторизуватись")
+  v-container(fluid fill-height).bg
+    v-layout(align-center justify-center)
+      v-flex(xs12 sm8 md4)
+        v-card(class='elevetion-12')
           sign-in
 </template>
 

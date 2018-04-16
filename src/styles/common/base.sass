@@ -21,60 +21,21 @@ body
     overflow-x: hidden
     opacity: 1
 
-.link
-    text-decoration: underline
-    color: black
-    &:hover
-        text-decoration: none
-.title
-    margin: 0
-    font-size: 32px
-
-.subtitle
-    margin: 0
-    padding-bottom: 12px
-    font-size: 24px
-    color: black
-    &_small
-        padding: 0
-        font-size: 18px
-.text
-    margin: 0
-    padding-bottom: 8px
-    font-size: 16px
-    display: block
-    color: black
-
-.container
-    padding-top: 40px
-    padding-bottom: 40px
-    min-height: calc(100vh - 66px - 60px)
 
 .bg, .bg-simple
-  background-image: url('~assets/img/bg.jpg')
+  // background-image: url('~assets/img/bg.jpg')
   background-size: cover
   background-position: center
+  background-color: #BDBDBD
 
 .bg-simple
-  background-image: url('~assets/img/bg-simple.jpg')
-  background-color: black
+  // background-image: url('~assets/img/bg-simple.jpg')
+  background-color: #BDBDBD
   background-blend-mode: hard-light
 .bg-info
     background-color: black!important
     border-bottom: 2px solid #222222
 
-.footer
-    padding: 15px
-    background-color: black!important
-    border-top: 2px solid #222222
-
-.acc-title
-    font-size: 20px
-    color: #ffffff
-    line-height: 32px
-
-.hidden
-    display: none!important
     
 .empty-pdf
     height: 288px
@@ -85,6 +46,35 @@ body
     text-align: center
     color: #222222
     font-size: 20px
-.tab-content
-    background-color: #ffffff
+
+::-webkit-scrollbar-button
+    background-image: url('')
+    background-repeat: no-repeat
+    width: 5px
+    height: 0px
+
+
+::-webkit-scrollbar-track
+    background-color: #ecedee
+
+
+::-webkit-scrollbar-thumb
+    -webkit-border-radius: 0px
+    border-radius: 0px
+    background-color: #212121
+
+
+::-webkit-scrollbar-thumb:hover
+    background-color: #56999f
+
+
+::-webkit-resizer
+    background-image: url('')
+    background-repeat: no-repeat
+    width: 6px
+    height: 0px
+
+::-webkit-scrollbar
+    width: 6px
+
 //BASE END

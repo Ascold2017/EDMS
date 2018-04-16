@@ -1,8 +1,10 @@
 <template lang='pug'>
   #app
-    app-header
-    router-view
-    app-footer
+    v-app(light)
+      app-header
+      v-content
+        router-view
+      app-footer
 </template>
 
 <script>

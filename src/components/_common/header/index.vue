@@ -1,46 +1,30 @@
 <template lang='pug'>
-  b-navbar(toggleable='md' type='dark' variant='info')
-    b-navbar-brand( to='/edms')
-      img(src='~assets/img/logo.png').logo
-    div(v-if='show !== "indexBar"').acc-title {{ currentUser.author }}
-    b-collapse(is-nav id='nav_collapse')
-      b-navbar-nav(
-        class='ml-auto'
-        v-if='show === "userBar"')
-        router-link(
-          to='/edms'
-          class='nav-item nav-link'
-          ) Нові документи
-        router-link(
-          to='/edms/addNew'
-          class='nav-item nav-link'
-          ) Додати документ
-        router-link(
-          to='/edms/myDocuments'
-          class='nav-item nav-link'
-          ) Моі документи
-        router-link(
-          to='/edms/archive'
-          class='nav-item nav-link'
-          ) Архів
-        b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Вийти
-      b-navbar-nav(
-        class='ml-auto'
-        v-if='show === "adminBar"')
-        router-link(
-          to='/edms/admin'
-          class='nav-item nav-link'
-          ) Панель адміністрування
-        b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Вийти
-      b-navbar-nav(
-        class='ml-auto'
-        v-if='show === "superadminBar"')
-        router-link(
-          to='/edms/superAdmin'
-          class='nav-item nav-link'
-          ) Панель адміністрування
-        b-button(size='sm' class='my-2 my-sm-0' type='button' @click='logOut') Вийти
-    b-navbar-toggle(target='nav_collapse' v-if='show !== "indexBar"')
+  div
+    v-navigation-drawer(
+      fixed
+      app
+      v-model='sidebar')
+      v-list(v-if='show === "userBar"')
+        v-list-tile
+          v-btn(to='/edms' flat) Нові документи
+        v-list-tile
+          v-btn(to='/edms/addNew' flat) Додати документ
+        v-list-tile
+          v-btn(to='/edms/myDocuments' flat) Моі документи
+        v-list-tile
+          v-btn(to='/edms/archive' flat) Архів
+      v-list(v-if='show === "adminBar"')
+        v-list-tile
+          v-btn(to='/edms/admin' flat) Панель адміністрування
+      v-list(v-if='show === "superadminBar"')
+        v-list-tile
+          v-btn(to='/edms/superAdmin' flat) Панель адміністрування
+    v-toolbar(app dense)
+      v-toolbar-side-icon(v-if='show !== "indexBar"' @click='sidebar = !sidebar')
+      v-toolbar-title(v-if='show !== "indexBar"') {{ currentUser.author }}
+      v-toolbar-title(v-if='show === "indexBar"') EDMS
+      v-spacer
+      v-btn(@click='logOut' color='secondary' small v-if='show !== "indexBar"') Вийти
 </template>
 
 <script>
@@ -49,7 +33,8 @@ export default {
   data () {
     return {
       // get id of current document
-      route: this.$router.currentRoute.fullPath
+      route: this.$router.currentRoute.fullPath,
+      sidebar: false
     }
   },
   computed: {
@@ -69,6 +54,7 @@ export default {
   methods: {
     ...mapActions(['logout']),
     logOut () {
+      this.sidebar = false
       this.$router.push('/')
       this.logout()
     }

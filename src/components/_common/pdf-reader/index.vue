@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     loadingTask () {
-      return pdf.createLoadingTask(this.src)
+      return pdf.createLoadingTask(this.src) // 'http://localhost:3000' +
     }
   },
   mounted () {

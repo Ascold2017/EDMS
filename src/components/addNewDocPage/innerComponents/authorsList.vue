@@ -1,22 +1,18 @@
 <template lang='pug'>
-    b-col
-      b-form-group(
-        label='Список віз:'
-        label-for='authors-selected'
-        v-if='selectedUsers.length')
-        draggable(id='authors-selected' class='list-group' v-model='usersList').authors-list
-          b-list-group-item(
-            v-for='user in selectedUsers'
-            :key='user.author'
-            variant='success'
-            class='authors-item'
-            href='#')
-            .authors-list__top
-              h3.subtitle.subtitle_small {{ user.author }}
-              button(type='button' @click='removeAuthor(user)').close X
-            p.subtitle.subtitle_small {{ user.role }}
-            p.subtitle.subtitle_small Порядок у списку: {{ selectedUsers.indexOf(user) + 1 }}
-      b-alert(variant='warning' show v-else) Оберіть виконувачів
+  div
+    v-subheader(v-if='selectedUsers.length') Список віз:
+    draggable(
+      id='authors-selected'
+      v-model='usersList'
+      v-if='selectedUsers.length').authors-list
+      v-card(color='success' v-for='user,i in selectedUsers' :key='i').px-3.py-3
+        v-layout(justify-space-between)
+          v-subheader {{ user.author }}
+          v-btn( @click.prevent.stop='removeAuthor(user)' flat icon)
+            v-icon close
+        p.mb-0 {{ user.role }}
+        p.mb-0 Порядок у списку: {{ selectedUsers.indexOf(user) + 1 }}
+    v-alert(type='warning' :value='true' v-else) Оберіть виконувачів
 </template>
 
 <script>

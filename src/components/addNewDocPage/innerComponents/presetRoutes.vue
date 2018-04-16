@@ -1,21 +1,21 @@
 <template lang='pug'>
-    b-card
-      b-form-group(label='Створити новий список віз')
-        b-btn(type='button' @click='showEditor') Відкрити редактор
-      b-modal(ref='routesEditor' title='Створити новий маршрут' hide-footer)
-        b-form(@submit.prevent.stop='createNewPreset')
-          b-form-group(label='Введіть названу Списку')
-            b-form-input(
-              id='presetname'
-              type='text'
-              v-model='presetName'
-              required
-              placeholder='Введіть назву списку')
+  div
+    v-card.px-3.py-3
+      v-subheader Створити новий список віз
+      v-btn(@click='showModal = true' color='secondary') Відкрити редактор
+    v-dialog(ref='routesEditor' title='Створити новий маршрут' v-model='showModal')
+      v-card.px-3.py-3
+        v-form(v-model='valid' ref='routesEditorForm')
+          v-text-field(
+            v-model='presetName'
+            required
+            :rules='rules'
+            label='Введіть назву списку')
           choose-authors(
             @updateSelectedUsers='updatePresetRoute'
             :selectedUsers='selectedUsers')
           authors-list(:selectedUsers='selectedUsers' @updateSelectedUser='updatePresetRoute')
-          b-btn(type='submit') Создать Маршрут
+          v-btn(@click.prevent='createNewPreset' color='primary' :disabled='!valid || !selectedUsers.length') Створити Маршрут
 </template>
 
 <script>
@@ -24,15 +24,15 @@ export default {
   data () {
     return {
       selectedUsers: [],
-      presetName: ''
+      presetName: '',
+      showModal: false,
+      rules: [ v => !!v || 'Обовʼязкове поле!' ],
+      valid: false
     }
   },
   computed: mapGetters('usersStore', ['currentUser']),
   methods: {
     ...mapActions('docsStore', ['createPreset', 'getPresets']),
-    showEditor () {
-      this.$refs.routesEditor.show()
-    },
     updatePresetRoute (selectedUsers) {
       this.selectedUsers = selectedUsers
     },
@@ -44,9 +44,9 @@ export default {
       }
       this.createPreset(newPreset)
         .then(response => {
-          e.target.reset()
+          this.$refs.routesEditorForm.reset()
           this.selectedUsers = []
-          this.$refs.routesEditor.hide()
+          this.showModal = false
           this.getPresets()
         })
     }

@@ -1,52 +1,66 @@
 <template lang='pug'>
-b-tabs
-  b-tab(title='Як користувач')
-    b-form(@submit.prevent='signIn').mt-3
-      b-alert(varinat='success' v-if='success' show) Вы успешно авторизовались!
-      b-alert(variant='danger' v-if='error' show) {{ error }}
-      b-form-group(label='Ваш логін EDMS')
-        b-form-input(
-          v-model='userLogin'
-          placeholder='Логін'
-          required)
-      b-form-group(label='Завантажити приватний ключ')
-        b-form-file(
-          required
-          v-model='privateKeyFile'
-          accept='.key'
-          placeholder='Файл приватного ключа')
-      b-form-group(label='Введіть парольну фразу')
-        b-form-input(
-          v-model='passphrase'
-          type='password'
-          placeholder='Парольна фраза ключа'
-          required
-          )
-      b-button(type='submit') Авторизуватись
-  b-tab(title='Як адміністратор')
-    b-form(@submit.prevent='signInAdmin').mt-3
-      b-alert(varinat='success' v-if='success' show) Ви успішно авторизувались!
-      b-alert(variant='danger' v-if='error' show) {{ error }}
-      b-form-group(label='Введите логин')
-        b-form-input(
-          v-model='userLogin'
-          type='text'
-          placeholder='Ваш логін'
-          required)
-
-      b-form-group(label='Введіть пароль')
-        b-form-input(
-          v-model='userPassword'
-          type='password'
-          placeholder='Ваш пароль'
-          required
-          )
-      b-button(type='submit') Авторизуватись
+v-tabs(app)
+  v-tab Як користувач
+  v-tab-item
+    v-card
+      v-card-text
+        v-alert(type='success' v-if='success' :value='true') Ви успішно авторизувались!
+        v-alert(type='error' v-if='error' :value='true') {{ error }}
+        v-form(v-model='validUser')
+          v-text-field(
+            prepend-icon='person'
+            v-model='userLogin'
+            label='Ваш логін'
+            :rules='rules'
+            required)
+          file-input(
+            @file="privateKeyFile = $event"
+            label='Завантажити приватний ключ'
+            :required='true'
+            accept='.key')
+          v-text-field(
+            prepend-icon='lock'
+            v-model='passphrase'
+            type='password'
+            label='Парольна фраза ключа'
+            :rules='rules'
+            required)
+      v-card-actions
+        v-spacer
+        v-btn(@click.prevent='signIn' :disabled='!validUser' color='primary') Авторизуватись
+  v-tab Як адміністратор
+  v-tab-item
+    v-card
+      v-card-text
+        v-alert(type='success' v-if='success' :value='true') Ви успішно авторизувались!
+        v-alert(type='error' v-if='error' :value='true') {{ error }}
+        v-form(v-model='validAdmin')
+          v-text-field(
+            prepend-icon='person'
+            v-model='userLogin'
+            type='text'
+            label='Ваш логін'
+            :rules='rules'
+            required)
+          v-text-field(
+            prepend-icon='lock'
+            v-model='userPassword'
+            type='password'
+            label='Ваш пароль'
+            :rules='rules'
+            required)
+      v-card-actions
+        v-spacer
+        v-btn(@click.prevent='signInAdmin' :disabled='!validAdmin' color='primary') Авторизуватись
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import fileInput from '../../_common/fileInput'
 export default {
+  components: {
+    fileInput
+  },
   data () {
     return {
       userLogin: '',
@@ -54,7 +68,10 @@ export default {
       passphrase: '',
       privateKeyFile: null,
       success: false,
-      error: ''
+      error: '',
+      validUser: false,
+      validAdmin: false,
+      rules: [ v => !!v || 'Обовʼязкове поле!' ]
     }
   },
   methods: {
