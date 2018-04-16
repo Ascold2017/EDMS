@@ -1,19 +1,16 @@
 <template lang='pug'>
-  .bg-simple
-    b-container
-        b-list-group
-            b-alert(variant='primary' show v-if='!loaded') Завантажується...
-            b-alert(variant='danger' show v-if='loaded && !sortingData.length') У вас немає опублікованих документів!
-            router-link(
-              v-for='preview in sortingData'
-              :key='preview._id'
-              :to='"/edms/myDocuments/" + preview._id'
-              class='list-group-item preview-item list-group-item-action'
-              )
-              .preview-item__icon(:class='preview.globalStatus')
-                i(class='fa fa-file-text-o' aria-hidden='true')
-              h2.preview-item__title {{ preview.title }}
-              time.preview-item__date {{ toDateString(+preview.date) }}
+  v-container(fluid grid-list-md app).bg-simple
+    v-alert(type='info' :value='!loaded') Завантажується...
+    v-alert(type='warning' :value='loaded && !sortingData.length') У вас немає опублікованих документів!
+    template(v-for='preview in sortingData')
+      v-card(:color='globalStatus(preview).color').px-3.py-3
+        v-subheader.headline {{ preview.title }}
+        v-subheader {{ 'Дата публікації: ' + toDateString(+preview.date) }}
+        v-subheader Статус: {{ globalStatus(preview).status }}
+        v-btn(:to='"/edms/myDocuments/" + preview._id' color='primary')
+          | Перейти
+          v-icon(right dark) exit_to_app
+      v-divider
 </template>
 
 <script>
@@ -33,7 +30,15 @@ export default {
   },
   methods: {
     ...mapActions('docsStore', ['getOurDocuments']),
-    toDateString
+    toDateString,
+    globalStatus (doc) {
+      switch (doc.globalStatus) {
+        case 'resolved': return { color: 'success', status: 'Прийнятий' }
+        case 'rejected': return { color: 'error', status: 'Відмовлен' }
+        case 'waiting': return { color: 'info', status: 'На розгляданні' }
+        case 'archived': return { color: 'secondary', status: 'Закритий' }
+      }
+    }
   },
   created () {
     this.getOurDocuments()

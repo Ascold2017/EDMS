@@ -1,5 +1,4 @@
 <template lang="pug">
-footer.footer
-  b-row(align-h="center")
-    p.text(style="color: #ffffff") 2018 Created by Mihail Pogosyan (Ascold)
+v-footer(app dark).px-3
+  span(class="white--text") &copy; 2018 Created by Mihail Pogosyan (Ascold)
 </template>

@@ -1,17 +1,17 @@
 <template lang="pug">
-.bg-simple
-  b-container
-    b-row
-      b-col
-        b-card.mb-3
-          h1.title {{ document.title }}
-    b-row
-      b-col
-        b-alert(show v-if='document.globalStatus==="resolved"' variant="success") Документ успішно прийнят
-        b-alert(show v-else variant="warning") Документ відмовлен в підписі и відправлен до архіву
+  v-container(fluid grid-list-md).bg-simple
+    v-layout(row wrap)
+      v-flex(xs12)
+        v-card
+          v-subheader.headline {{ document.title }}
+          v-alert(:value='document.globalStatus === "resolved"' type="success") Документ успішно прийнят
+          v-alert(:value='document.globalStatus !== "resolved"' type="error")
+            v-card(color='transparent').px-2.py-2
+              | Документ закритий.
+              | {{ document.versions[0].rejectReason }}
+      v-flex(xs12)
         doc-tabs
-    b-row
-      b-col(sm="12")
+      v-flex(xs12)
         signers-list(:rejected="false")
 </template>
 
@@ -34,7 +34,7 @@ export default {
   created () {
     this.getArchiveDocumentById(this.id)
       .catch(e => {
-        this.$router.push('404')
+        this.$router.push('/404')
       })
   },
   components: {

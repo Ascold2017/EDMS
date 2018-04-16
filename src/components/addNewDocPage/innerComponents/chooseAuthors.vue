@@ -1,23 +1,22 @@
 <template lang='pug'>
-  b-card.mt-3
-    b-form-group(label='Виставити список віз:')
-      b-form-input(
-        type='text'
-        v-model='authorNameOrRole'
-        placeholder='Почніть пошук за ПІБ або Роллю')
-    b-form-group(label='Або оберіть готовий список:')
-      b-form-select(
-        v-model='selectedPreset'
-        :options='presetsOptions')
-    b-form-group(label='Список доступних ролей')
-      b-list-group(id='authors').authors-list
-        b-list-group-item(
-          v-for='user in computedUsers'
-          :key='user.author'
-          @click='addAuthor(user)'
-          class='authors-list__item')
-          h3.subtitle.subtitle_small ПІБ: {{ user.author }}
-          p.subtitle.subtitle_small Роль: {{ user.role }}
+  v-card.px-3.py-3
+    v-subheader Виставити список віз:
+    v-text-field(
+      type='text'
+      v-model='authorNameOrRole'
+      placeholder='Почніть пошук за ПІБ або Роллю')
+    v-subheader Або оберіть готовий список:
+    v-select(
+      v-model='selectedPreset'
+      :items='presetsOptions')
+    v-subheader Список доступних ролей
+    div.authors-list
+      template(
+        v-for='user in computedUsers')
+        v-card(@click.native='addAuthor(user)').px-2.py-2
+          h3 ПІБ: {{ user.author }}
+          p.mb-0 Роль: {{ user.role }}
+        v-divider
 </template>
 
 <script>

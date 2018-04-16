@@ -89,13 +89,13 @@ const statStore = {
       stat = {
         // table fields
         fields: [
-          { key: 'author', label: 'ПІБ', sortable: true },
-          { key: 'role', label: 'Роль', sortable: true },
-          { key: 'created', label: 'Опублікував документів', sortable: true },
-          { key: 'resolvedDocs', label: 'Прийнятих документів', sortable: true },
-          { key: 'rejectedDocs', label: 'Відмовлених документів', sortable: true },
-          { key: 'signings', label: 'Піставлені підписи', sortable: true },
-          { key: 'rejecteds', label: 'Відмовлених підписів', sortable: true }
+          { value: 'author', text: 'ПІБ', sortable: true },
+          { value: 'role', text: 'Роль', sortable: true },
+          { value: 'created', text: 'Опублікував документів', sortable: true },
+          { value: 'resolvedDocs', text: 'Прийнятих документів', sortable: true },
+          { value: 'rejectedDocs', text: 'Відмовлених документів', sortable: true },
+          { value: 'signings', text: 'Піставлені підписи', sortable: true },
+          { value: 'rejecteds', text: 'Відмовлених підписів', sortable: true }
         ],
         items: []
       }
@@ -104,6 +104,8 @@ const statStore = {
         // add table items
         users.forEach(user => {
           stat.items.push({
+            value: false,
+
             author: user.author,
 
             role: user.role,

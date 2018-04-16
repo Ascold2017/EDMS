@@ -1,25 +1,22 @@
 <template lang='pug'>
-  b-row
-    b-col
-      b-form(@submit.prevent='createAdmin' ref='createAdminForm')
-          h2.subtitle Створити адміністратора групи
-          b-form-group(
-            label='Виберіть групу:'
-            description='Група, для якої створиться адміністратор')
-            b-form-select(
-              v-model='admin.groupId'
-              :options='groupsOptions'
-              class='mb-3')
-          b-form-group(
-            label='Е-mail адміністратора групи'
-            description='Увага! На цей адрес будуть відіслані данні авторизації!')
-            b-form-input(
-              type='email'
-              v-model='admin.email'
-              placeholder='example@gmail.com'
-              required)
+  v-form(v-model='valid')
+    v-subheader.headline Створити адміністратора групи
+    v-select(
+      v-model='admin.groupId'
+      :items='groupsOptions'
+      label='Виберіть групу:'
+      description='Група, для якої створиться адміністратор'
+      required)
+    v-text-field(
+      type='email'
+      v-model='admin.email'
+      placeholder='example@gmail.com'
+      label='Е-mail адміністратора групи'
+      description='Увага! На цей адрес будуть відіслані данні авторизації!'
+      required
+      :rules='rules')
 
-          b-button(type='submit' variant='primary') Створити адміністратора
+    v-btn(@click.prevent='createAdmin' color='primary' :disabled='!valid') Створити адміністратора
 </template>
 
 <script>
@@ -30,7 +27,9 @@ export default {
       admin: {
         email: '',
         groupId: ''
-      }
+      },
+      valid: false,
+      rules: [ v => !!v || 'Поле обовʼязкове!' ]
     }
   },
   methods: {

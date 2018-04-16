@@ -1,28 +1,32 @@
 <template lang='pug'>
-  b-row
-    b-col
-      h2.subtitle.mb-2 Список груп
-      b-tabs(vertical card pills).users-list
-        b-tab(v-for='group in groups' :key='group._id' :title='group.name + " Користувачів: " + group.users.length')
-          b-list-group
-            b-list-group-item(
-              v-for='user in group.users'
-              :key='user._id'
-              )
-              h4 {{ user.author ? user.author : 'Не зареєстрован' }}
+  div
+    v-subheader.headline Список груп
+    v-tabs(dark)
+      v-tab(v-for='group,i in groups' :key='i') {{ group.name + " Користувачів: " + group.users.length }}
+      v-tab-item(v-for='group,i in groups' :key='i')
+        template(v-for='user in group.users')
+          v-card
+            v-card-title
+              v-subheader {{ user.author ? user.author : 'Не зареєстрован' }}
+            v-card-text
               p.mb-0 Роль: {{ user.role ? user.role : 'Не зареєстрован' }}
               p.mb-0 Дата рeєстрації: {{ toDateString(+user.dateRegistration) }}
               p.mb-0 Email: {{ user.email }}
               p.mb-0 Логін: {{ user.login }}
-              b-button-group(v-if='user.role === "Admin"').mt-3
-                b-button(@click='openSendModal(user._id, user.email)' variant='secondary') Відправити доступи ща раз
-                b-button(@click='deleteAdmin(user._id, group._id)' variant='warning') Видалити адміністратора
-    b-modal(
-      ref='sendModal'
-      title='Вкажіть почту, на яку відправиться доступ'
-      @ok='submitSend')
-      b-form-group(label='Email адміністратора')
-        b-form-input(type='email' v-model='admin.email')
+
+            v-card-actions(v-if='user.role === "Admin"')
+              v-btn(@click='openSendModal(user._id, user.email)' color='primary') Відправити доступи ща раз
+              v-btn(@click='deleteAdmin(user._id, group._id)' color='error') Видалити адміністратора
+          v-divider
+    v-dialog(v-model='sendModal')
+      v-card
+        v-card-title
+          v-subheader Вкажіть почту, на яку відправиться доступ
+        v-card-text
+          v-text-field(type='email' v-model='admin.email' label='Email адміністратора')
+        v-card-actions
+          v-btn(@click.prevent='submitSend' color='primary') Відправити
+
 </template>
 
 <script>
@@ -34,7 +38,8 @@ export default {
       admin: {
         email: '',
         adminId: ''
-      }
+      },
+      sendModal: false
     }
   },
   computed: {
@@ -56,7 +61,7 @@ export default {
         email: adminEmail,
         adminId
       }
-      this.$refs.sendModal.show()
+      this.sendModal = true
     },
     submitSend () {
       this.sendInviteAdmin(this.admin)

@@ -1,5 +1,5 @@
 <template lang='pug'>
-    time.date Поточний час: {{date}}
+  v-subheader Поточний час: {{date}}
 </template>
 
 <script>

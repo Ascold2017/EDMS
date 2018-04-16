@@ -1,31 +1,27 @@
 <template lang='pug'>
-    b-tabs(v-if='!rejected')
-      b-tab(title='Подписавшие' v-if='signedAuthors.length')
-        b-list-group.signers-list
-          b-list-group-item(
-            v-for='author in signedAuthors'
-            :key='author._id'
-            variant='success'
-            )
-            p.subtitle.subtitle_small {{ author.author }}
-            p.subtitle.subtitle_small {{ author.role }}
-            p.subtitle.subtitle_small Час підпису: {{ toDateString(+author.dateSigning) }}
-            b-card(v-if='author.comment' class='mt-1')
-              p.text Коментар підписанта:
-              p.text {{ author.comment }}
-      b-tab(title='В черзі на підпис' v-if='waitingAuthors.length')
-        b-list-group.signers-list
-          b-list-group-item(
-            v-for='author in waitingAuthors'
-            :key='author._id'
-            variant='primary'
-            )
-            p.subtitle.subtitle_small {{ author.author }}
-            p.subtitle.subtitle_small {{ author.role }}
-            b-card(v-if='author.comment' class='mt-1')
-              p.text Коментар підписанта:
-              p.text {{ author.comment }}
-      b-alert( show variant='danger' v-else) Документ відмовлен в підписі Вами
+  v-card
+    v-tabs(v-if='!rejected')
+      v-tab(v-if='signedAuthors.length') Підписавщі
+      v-tab-item(v-if='signedAuthors.length')
+        div.signers-list
+          template(v-for='author in signedAuthors')
+            v-card(color='success').px-3.pb-3
+              v-subheader {{ author.author }}
+              v-subheader {{ author.role }}
+              v-subheader Час підпису: {{ toDateString(+author.dateSigning) }}
+              v-subheader Коментар підписанта:
+              v-card(v-if='author.comment' class='mt-1').px-2.py-2
+                p.mb-0 {{ author.comment }}
+            v-divider
+      v-tab(v-if='waitingAuthors.length') В черзі на підпис
+      v-tab-item(v-if='waitingAuthors.length')
+        div.signers-list
+          template(v-for='author in waitingAuthors')
+            v-card(color='info')
+              v-subheader {{ author.author }}
+              v-subheader {{ author.role }}
+            v-divider
+    v-alert(:value='true' type='error' v-else) Документ відмовлен в підписі Вами
 </template>
 
 <script>
@@ -53,6 +49,8 @@ export default {
 </script>
 <style lang="sass" scoped>
 .signers-list
-  max-height: 300px
+  height: 350px
   overflow-y: scroll
+  overflow-x: hidden
+  background-color: #ffffff
 </style>

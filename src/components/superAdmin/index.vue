@@ -1,15 +1,18 @@
 <template lang='pug'>
-    b-container
-      h1.title.mb-3 Панель головного адміністратора EDMS
-      b-tabs
-        b-tab(title='Создать новую группу')
-          create-group(@alert="openInfo").mt-3
-        b-tab(title='Создать нового администратора')
-          create-admin(@alert="openInfo").mt-3
-        b-tab(title='Группы')
-          groups-list(@alert="openInfo").mt-3
-      b-modal(ref='infoModal' title='Сообщение')
-        | {{ info }}
+    v-container(fluid app)
+      v-subheader.headline Панель головного адміністратора EDMS
+      v-tabs
+        v-tab Створити нову групу
+        v-tab-item
+          create-group(@alert="openInfo")
+        v-tab Создать нового администратора
+        v-tab-item
+          create-admin(@alert="openInfo")
+        v-tab Групи
+        v-tab-item
+          groups-list(@alert="openInfo")
+      v-dialog(v-model='showInfo')
+        v-card.px-3.py-3 {{ info }}
 </template>
 <script>
 export default {
@@ -20,13 +23,14 @@ export default {
         login: '',
         email: ''
       },
-      info: ''
+      info: '',
+      showInfo: false
     }
   },
   methods: {
     openInfo (info) {
       this.info = info
-      this.$refs.infoModal.show()
+      this.showInfo = true
     }
   },
   components: {

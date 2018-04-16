@@ -1,20 +1,20 @@
 <template lang="pug">
-    b-tabs(class='mb-3' v-if='document.versions' v-model='tabIndex')
-      b-tab(
-        title='Остання версія документа'
-        style='padding: 20px 0 0')
-        p.text.ml-3 Описання: {{ document.versions[0].description }}
-        p.text.ml-3 {{ checked }}
-        pdf-reader(:src='document.versions[0].file')
-      b-tab(
-        v-for='version,indx in document.versions.filter((doc, i) => i !== 0)'
-        v-if='document.versions.length > 1 && tabIndex === indx'
-        :key='indx'
-        :title='"Версія документа: " + version.version' style='padding: 20px 0 0'
-        )
-        p.text.ml-3 {{ version.rejectReason }}
-        p.text.ml-3 Описання: {{ version.description }}
-        pdf-reader(:src='version.file')
+    v-tabs(v-if='document.versions' v-model='tabIndex' app)
+      v-tab Остання версія документа
+      v-tab-item
+        v-card.px-3.py-3
+          v-subheader Описання:
+          p {{ document.versions[0].description }}
+          v-alert(type='info' :value='true') {{ checked }}
+          pdf-reader(:src='document.versions[0].file')
+      template(
+        v-for='version in document.versions.filter((doc, i) => i !== 0)')
+        v-tab {{ "Версія документа: " + version.version }}
+        v-tab-item
+          v-card.px-3.py-3
+            p {{ version.rejectReason }}
+            p Описання: {{ version.description }}
+            pdf-reader(:src='version.file')
 </template>
 
 <script>
