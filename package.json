@@ -18,6 +18,7 @@
     "bootstrap-vue": "^2.0.0-rc.2",
     "fs": "0.0.1-security",
     "openpgp": "^3.0.0",
+    "serialize-javascript": "^1.5.0",
     "vue": "^2.5.2",
     "vue-date-range": "^3.0.0",
     "vue-hotel-datepicker": "^2.2.0",

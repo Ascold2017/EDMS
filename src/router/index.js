@@ -30,13 +30,24 @@ router.beforeResolve((to, from, next) => {
     const userRole = store.state.usersStore.user.role
     switch (userRole) {
       case 'Admin': {
-        access = true
-        next('/edms/admin')
+        if (to.path === '/edms/admin/createUser' || '/edms/admin/usersStats') {
+          next()
+        } else {
+          access = true
+          next('/edms/admin')
+        }
         break
       }
       case 'superAdmin': {
-        access = true
-        next('/edms/superAdmin')
+        if (to.path === '/edms/superAdmin' ||
+          '/edms/superAdmin/createGroup' ||
+          '/edms/superAdmin/createAdmin' ||
+          '/edms/superAdmin/groups') {
+          next()
+        } else {
+          access = true
+          next('/edms/superAdmin')
+        }
         break
       }
       default: {

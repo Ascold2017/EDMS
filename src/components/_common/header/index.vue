@@ -3,8 +3,9 @@
     v-navigation-drawer(
       fixed
       app
-      v-model='sidebar')
-      v-list(v-if='show === "userBar"')
+      v-model='sidebar'
+      v-if='show !== "adminBar" && show !== "superadminBar"')
+      v-list
         v-list-tile
           v-btn(to='/edms' flat) Нові документи
         v-list-tile
@@ -13,12 +14,29 @@
           v-btn(to='/edms/myDocuments' flat) Моі документи
         v-list-tile
           v-btn(to='/edms/archive' flat) Архів
-      v-list(v-if='show === "adminBar"')
+    v-navigation-drawer(
+      fixed
+      app
+      v-model='sidebar'
+      v-if='show === "superadminBar"')
+      v-list
         v-list-tile
-          v-btn(to='/edms/admin' flat) Панель адміністрування
-      v-list(v-if='show === "superadminBar"')
+          v-btn(to='/edms/superAdmin/createGroup' flat) Створити нову групу
         v-list-tile
-          v-btn(to='/edms/superAdmin' flat) Панель адміністрування
+          v-btn(to='/edms/superAdmin/createAdmin' flat) Створити адміністратора
+        v-list-tile
+          v-btn(to='/edms/superAdmin/groups' flat) Групи
+    v-navigation-drawer(
+      fixed
+      app
+      v-model='sidebar'
+      v-if='show === "adminBar"')
+      v-list
+        v-list-tile
+          v-btn(to='/edms/admin/createUser' flat) Створити нового користувача
+        v-list-tile
+          v-btn(to='/edms/admin/usersStats' flat) Статистика
+
     v-toolbar(app dense)
       v-toolbar-side-icon(v-if='show !== "indexBar"' @click='sidebar = !sidebar')
       v-toolbar-title(v-if='show !== "indexBar"') {{ currentUser.author }}

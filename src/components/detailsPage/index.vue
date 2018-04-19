@@ -37,11 +37,10 @@
               required)
             v-btn(@click.prevent='submitDoc' :disabled='!valid || submitting' color='primary') Відправити
 
-    v-dialog(v-model="alert" max-width="290")
-      v-card
-        v-card-text {{ infoAlert }}
-        v-card-actions
-          v-btn(flat @click.native='alert = false') Закрити
+    v-snackbar(v-model="alert" top right)
+      | {{ infoAlert }}
+      v-btn(flat @click.native='alert = false' color="pink") Закрити
+
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'

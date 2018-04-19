@@ -30,8 +30,10 @@
           required
           :rules='rules')
         v-btn(@click='addNewVersion' :disabled='!valid || !file || submitting' color='primary') Опублікувати
-    v-dialog(v-model='showModal')
-      v-card.px-3.py-3 {{ infoAlert }}
+
+    v-snackbar(v-model='showModal' top right)
+      | {{ infoAlert }}
+      v-btn(flat @click.native='showModal = false' color='pink') Закрити
 </template>
 
 <script>

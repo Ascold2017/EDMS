@@ -49,11 +49,9 @@
 
         v-btn(@click.prevent='addNewDoc' :disabled='!validForm || submitting' color='primary') Опублікувати
 
-    v-dialog(v-model='showModal' max-width="290")
-      v-card
-        v-card-text {{ infoAlert }}
-        v-card-actions
-          v-btn(flat @click.native='showModal = false') Закрити
+    v-snackbar(v-model='showModal' top right)
+      | {{ infoAlert }}
+      v-btn(flat @click.native='showModal = false' color='pink') Закрити
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
