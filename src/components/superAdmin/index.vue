@@ -1,18 +1,16 @@
 <template lang='pug'>
     v-container(fluid app)
       v-subheader.headline Панель головного адміністратора EDMS
-      v-tabs
-        v-tab Створити нову групу
-        v-tab-item
-          create-group(@alert="openInfo")
-        v-tab Создать нового администратора
-        v-tab-item
-          create-admin(@alert="openInfo")
-        v-tab Групи
-        v-tab-item
-          groups-list(@alert="openInfo")
-      v-dialog(v-model='showInfo')
-        v-card.px-3.py-3 {{ info }}
+      div(v-if='showBlank === "" || showBlank === "createGroup"')
+        create-group(@alert="openInfo")
+      div(v-if='showBlank === "createAdmin"')
+        create-admin(@alert="openInfo")
+      div(v-if='showBlank === "groups"')
+        groups-list(@alert="openInfo")
+
+      v-snackbar(v-model='showInfo' top right)
+        | {{ info }}
+        v-btn(flat @click.native='showInfo = false' color='pink') Закрити
 </template>
 <script>
 export default {
@@ -24,13 +22,20 @@ export default {
         email: ''
       },
       info: '',
-      showInfo: false
+      showInfo: false,
+      showBlank: ''
     }
   },
   methods: {
     openInfo (info) {
       this.info = info
       this.showInfo = true
+    }
+  },
+  watch: {
+    '$route': function (val) {
+      console.log(val)
+      this.showBlank = this.$route.params.blank
     }
   },
   components: {
@@ -42,5 +47,5 @@ export default {
 </script>
 <style lang='sass' scoped>
 ol
-    list-style: inside
+  list-style: inside
 </style>

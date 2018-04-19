@@ -41,41 +41,15 @@ export const store = new Vuex.Store({
       sessionStorage.removeItem('edms-token')
       state.token = ''
     },
-    setKey (state, privateKey) {
-      /*
-      // stringify private key
-      console.log(privateKey)
-      function otos (obj) {
-        let rs = ''
-        let notFirst = false
-
-        for (let k in obj) {
-          if (notFirst) rs += ','
-          if (typeof obj[k] === 'object') {
-            rs += '"' + k + '": {' + otos(obj[k]) + '}'
-          } else
-          if (typeof obj[k] === 'string' || typeof obj[k] === 'function') {
-            rs += '"' + k + '":"' + obj[k] + '"'
-          } else
-          if (typeof obj[k] === 'number') {
-            rs += '"' + k + '":' + obj[k] + ''
-          } else {
-            // if it gets here then we need to add another else if to handle it
-            console.log(typeof obj[k])
-          }
-          notFirst = true
-        }
-        return rs
-      }
-
-      const privateKeyString = otos(privateKey)
-      console.log(privateKeyString) */
-      state.privateKey = privateKey
-      // sessionStorage.setItem('edms-privateKey', privateKeyString)
+    setKey (state, { privateKey, passphrase, privKeyObj }) {
+      state.privateKey = privKeyObj
+      sessionStorage.setItem('edms-privateKey', privateKey)
+      sessionStorage.setItem('edms-passphrase', passphrase)
     },
     clearKey (state) {
       sessionStorage.removeItem('edms-privateKey')
-      state.privateKey = ''
+      sessionStorage.removeItem('edms-passphrase')
+      state.privateKey = {}
     }
   },
   actions: {
@@ -84,43 +58,17 @@ export const store = new Vuex.Store({
       const token = sessionStorage.getItem('edms-token')
       if (token) {
         context.commit('setToken', token)
-        // context.dispatch('parsePrivateKey', sessionStorage.getItem('edms-privateKey'))
-        //  .then(parsedPrivateKey => {
-        //    context.commit('setKey', parsedPrivateKey)
-        //  })
+
+        context.dispatch('decryptPrivateKey', {
+          privateKey: sessionStorage.getItem('edms-privateKey'),
+          passphrase: sessionStorage.getItem('edms-passphrase')
+        })
+
         return store.dispatch('usersStore/getCurrentUser')
           .then(() => store.dispatch('groupsStore/getCurrentGroup'))
       } else {
         return Promise.resolve()
       }
-    },
-    parsePrivateKey (context, privateKeyString) {
-      // convert a string to object
-      function stoo (str) {
-        // we doing this recursively so after the first one it will be an object
-        let pStr = ''
-        try {
-          pStr = JSON.parse('{' + str + '}')
-        } catch (e) { pStr = str }
-
-        var obj = {}
-        for (let i in pStr) {
-          if (typeof pStr[i] === 'string') {
-            if (pStr[i].substring(0, 8) === 'function') {
-              eval('obj[i] = ' + pStr[i])
-            } else {
-              obj[i] = pStr[i]
-            }
-          } else
-          if (typeof pStr[i] === 'object') {
-            obj[i] = stoo(pStr[i])
-          }
-        }
-        return obj
-      }
-      const privateKeyObj = stoo(privateKeyString)
-      console.log(privateKeyObj)
-      return privateKeyObj
     },
     // when logout - remove token an user info
     logout (context) {
@@ -176,16 +124,18 @@ export const store = new Vuex.Store({
         .catch(err => { throw new Error(err.message) })
     },
     decryptPrivateKey (context, { privateKey, passphrase }) {
-      return new Promise((resolve, reject) => {
-        const privKeyObj = openpgp.key.readArmored(privateKey).keys[0]
-        if (privKeyObj.decrypt(passphrase)) {
-          context.commit('setKey', privKeyObj)
-          resolve()
-        } else {
-          context.commit('clearKey')
-          reject(new Error('Неправильна парольна фраза!'))
-        }
-      })
+      if (privateKey && passphrase) {
+        return new Promise((resolve, reject) => {
+          const privKeyObj = openpgp.key.readArmored(privateKey).keys[0]
+          if (privKeyObj.decrypt(passphrase)) {
+            context.commit('setKey', { privateKey, passphrase, privKeyObj })
+            resolve()
+          } else {
+            context.commit('clearKey')
+            reject(new Error('Неправильна парольна фраза!'))
+          }
+        })
+      }
     },
     createAuthCertificate (context) {
       // certificate - is just some string, which is signing by private key
